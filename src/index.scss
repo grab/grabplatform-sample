@@ -1,0 +1,64 @@
+/**
+ * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
+ * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
+ */
+@import "./_global";
+
+* {
+  font-size: 14px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+#root {
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+input {
+  height: 40px;
+  outline: none;
+  padding: 0 8px;
+
+  &:disabled {
+    color: grey;
+  }
+}
+
+a {
+  color: black;
+  text-decoration: none;
+
+  &[aria-current="page"] {
+    color: $grab-primary-color;
+    font-weight: bold;
+  }
+
+  &:hover {
+    background: lightgrey;
+    color: white;
+    font-weight: bold;
+  }
+}
+
+.divider {
+  background: $grab-primary-color;
+}

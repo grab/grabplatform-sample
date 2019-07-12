@@ -1,0 +1,133 @@
+/**
+ * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
+ * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
+ */
+@mixin sm {
+  @media (min-width: 576px) {
+    @content;
+  }
+}
+
+@mixin md {
+  @media (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (min-width: 992px) {
+    @content;
+  }
+}
+
+@mixin xl {
+  @media (min-width: 1200px) {
+    @content;
+  }
+}
+
+@mixin confirm-button {
+  align-items: center;
+  background: $grab-primary-color;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  font-weight: bold;
+  height: 48px;
+  justify-content: center;
+  margin-left: auto;
+  padding: 0 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: calc(100% / 3);
+
+  &:hover {
+    background: rgba($grab-primary-color, 0.8);
+  }
+}
+
+@mixin stage-container {
+  border: 1px solid $grab-primary-color;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+
+  & > * {
+    margin: 0 8px;
+
+    &:not(.stage-description),
+    &:not(:first-child) {
+      margin-top: 8px;
+    }
+
+    &:last-child {
+      margin-bottom: 8px;
+    }
+
+    &.divider {
+      height: 1px;
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    &.intro-title {
+      background: $grab-primary-color;
+      color: white;
+      display: flex;
+      font-size: 24px;
+      justify-content: center;
+      margin: 0;
+      padding: 8px;
+    }
+
+    &.stage-description {
+      background: rgba(0, 0, 0, 0.1);
+      margin: 0 0 -8px 0;
+      padding: 0 8px;
+
+      .source-code {
+        display: none;
+
+        @include md {
+          display: initial;
+        }
+
+        pre {
+          border: 1px solid grey;
+          padding: 8px;
+
+          code {
+            font-size: 11px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@mixin tab-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  & > .tab {
+    align-items: center;
+    border-bottom: 0.1px solid lightgrey;
+    display: flex;
+    flex: 0 0 calc(100% / 3);
+    justify-content: center;
+    padding: 8px 0 8px 0;
+
+    @include md {
+      flex: 0 0 calc(100% / 4);
+    }
+
+    @include lg {
+      flex: 0 0 calc(100% / 6);
+    }
+  }
+}
+
+$grab-primary-color: rgba(0, 177, 79, 1);

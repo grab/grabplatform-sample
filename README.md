@@ -1,68 +1,42 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# GrabPlatform-Sample
 
-## Available Scripts
+This is a consolidated sample for all products offered on [Grab's Developer Portal](https://developer.grab.com/products).
 
-In the project directory, you can run:
+## Prerequisites
 
-### `npm start`
+1. `Homebrew`: Run `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"` in terminal.
+2. `yarn`: `brew install yarn`.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## How to run
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+1. Go to root of the project, `cd server` and run this command to generate a self-signed certificate for HTTPS:
 
-### `npm test`
+```shell
+openssl req -nodes -new -x509 -keyout server.key -out server.cert
+```
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. Edit `/etc/hosts` with `sudo vi /etc/hosts` and append `127.0.0.1 grabplatform.stg-myteksi.com` and `127.0.0.1 grabplatform.grab.com`. Save the file with `:x`. This must be done because GrabID does not accept `localhost`.
+3. In the root folder, run `yarn` to install dependencies, and `yarn start:stg` to start the project. `https://grabplatform.grab.com:3000/` will open in your browser of choice.
+4. Configure the redirect URLs for your OAuth client in `https://developer-beta.stg-myteksi.com` (under your project > OAuth clients > Platform configurations) to add both:
 
-### `npm run build`
+- `https://grabplatform.grab.com`
+- `https://grabplatform.grab.com/**`
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+5. Navigate to specific products by clicking the categories, and then clicking the underlying products.
+6. Authorize with GrabID first, then follow instructions on screen to access the related endpoint.
+7. (Optional) Create an `env` file in root directory and add:
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+- `REACT_APP_CLIENT_ID` to automatically fill out `clientID`.
+- `REACT_APP_CLIENT_SECRET` to automatically fill out `clientSecret`.
+- `REACT_APP_COUNTRY_CODE` to automatically fill out `countryCode`.
+- `REACT_APP_MERCHANT_ID` to automatically fill out `merchantID`.
+- `REACT_APP_PARTNER_HMAC_SECRET` to automatically fill out `partnerHMACSecret`.
+- `REACT_APP_PARTNER_ID` to automatically fill out `partnerID`.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Testing in production
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+- Open `package.json` and change `host` to `grabplatform.grab.com` and `proxy` to `https://grabplatform.grab.com:8000`. Please change back to `stg-myteksi.com` for staging tests.
+- Update `env` with production credentials.
+- Configure the redirect URLs for your OAuth client in `https://developer.stg-myteksi.com` to be the same as above.
+- Run `yarn start:prd` instead of `yarn start:stg`.
+- After you are done, revert the above changes to clean up.

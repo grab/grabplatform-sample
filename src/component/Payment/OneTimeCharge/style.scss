@@ -1,0 +1,33 @@
+/**
+ * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
+ * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
+ */
+@import "src/_global";
+
+.one-time-charge-container {
+  display: flex;
+  flex-direction: column;
+
+  & > * {
+    &:not(:first-child) {
+      margin-top: 8px;
+    }
+
+    &.init-charge-container,
+    &.confirm-charge-container {
+      @include stage-container;
+
+      & > * {
+        &.init-charge,
+        &.confirm-charge {
+          @include confirm-button;
+        }
+
+        &.transaction-status {
+          border: 1px solid lightgrey;
+          padding: 8px;
+        }
+      }
+    }
+  }
+}

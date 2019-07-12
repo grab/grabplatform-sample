@@ -1,0 +1,4 @@
+{
+  "watch": ["server/**/*", "node_modules/**/*"],
+  "exec": "node server/index.js"
+}
