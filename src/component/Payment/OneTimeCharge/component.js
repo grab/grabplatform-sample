@@ -233,9 +233,9 @@ export default compose(
       initOneTimeCharge: () =>
         dispatch(GrabPayActionCreators.OneTimeCharge.triggerInit()),
       makeAuthorizationRequest: () =>
-        dispatch(GrabPayActionCreators.triggerMakeAuthorizationRequest()),
+        dispatch(GrabIDActionCreators.payment.triggerAuthorize()),
       makeTokenRequest: () =>
-        dispatch(GrabPayActionCreators.triggerMakeTokenRequest()),
+        dispatch(GrabIDActionCreators.payment.triggerRequestToken()),
       setScopes: scopes => dispatch(GrabIDActionCreators.setScopes(scopes))
     })
   ),

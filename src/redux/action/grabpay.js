@@ -2,7 +2,6 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import { CommonActionCreators } from "./common";
 import { GrabIDActionCreators } from "./grabid";
 
 export const GrabPayActions = {
@@ -18,9 +17,6 @@ export const GrabPayActions = {
 
   OneTimeCharge: {
     TRIGGER_INIT: "GRABPAY.OTC.TRIGGER_INIT",
-    TRIGGER_MAKE_AUTHORIZATION_REQUEST:
-      "GRABPAY.OTC.TRIGGER_MAKE_AUTHORIZATION_REQUEST",
-    TRIGGER_MAKE_TOKEN_REQUEST: "GRABPAY.OTC.TRIGGER_MAKE_TOKEN_REQUEST",
     TRIGGER_CONFIRM: "GRABPAY.OTC.TRIGGER_CONFIRM"
   },
 
@@ -82,65 +78,6 @@ export const GrabPayActionCreators = {
       dispatch(GrabPayActionCreators.setWallet(wallet));
     },
     type: GrabPayActions.TRIGGER_CHECK_WALLET
-  }),
-  /** GrabPay requires an additional request parameter. */
-  triggerMakeAuthorizationRequest: () => ({
-    payload: async (
-      dispatch,
-      getState,
-      {
-        grabid: {
-          payment: { authorize }
-        }
-      }
-    ) => {
-      const {
-        grabid: { clientID, countryCode, scopes },
-        grabpay: { currency, request }
-      } = getState();
-
-      const { codeVerifier } = await authorize({
-        clientID,
-        countryCode,
-        currency,
-        request,
-        scopes
-      });
-
-      dispatch(GrabIDActionCreators.setCodeVerifier(codeVerifier));
-    },
-    type: GrabPayActions.OneTimeCharge.TRIGGER_MAKE_AUTHORIZATION_REQUEST
-  }),
-  /** GrabPay requires an additional request parameter. */
-  triggerMakeTokenRequest: () => ({
-    payload: async (
-      dispatch,
-      getState,
-      {
-        grabid: {
-          payment: { requestToken }
-        }
-      }
-    ) => {
-      try {
-        const {
-          grabid: { code, codeVerifier, clientID, clientSecret }
-        } = getState();
-
-        const { accessToken, idToken } = await requestToken({
-          code,
-          codeVerifier,
-          clientID,
-          clientSecret
-        });
-
-        dispatch(GrabIDActionCreators.setAccessToken(accessToken));
-        dispatch(GrabIDActionCreators.setIDToken(idToken));
-      } catch (e) {
-        dispatch(CommonActionCreators.setError(e));
-      }
-    },
-    type: GrabPayActions.OneTimeCharge.TRIGGER_MAKE_TOKEN_REQUEST
   }),
   OneTimeCharge: {
     triggerInit: () => ({

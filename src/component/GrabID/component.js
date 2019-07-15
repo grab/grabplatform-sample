@@ -183,7 +183,7 @@ export const GrabID = compose(
          */
         !!makeAuthorizationRequest
           ? makeAuthorizationRequest()
-          : dispatch(GrabIDActionCreators.triggerMakeAuthorizationRequest()),
+          : dispatch(GrabIDActionCreators.nonPOP.triggerAuthorize()),
       makeTokenRequest: () =>
         /**
          * If makeTokenRequest is specified in props, do not override it, e.g.
@@ -191,7 +191,7 @@ export const GrabID = compose(
          */
         !!makeTokenRequest
           ? makeTokenRequest()
-          : dispatch(GrabIDActionCreators.triggerMakeTokenRequest())
+          : dispatch(GrabIDActionCreators.nonPOP.triggerRequestToken())
     })
   )
 )(PrivateGrabID);

@@ -80,57 +80,120 @@ export const GrabIDActionCreators = {
     },
     type: GrabIDActions.TRIGGER_HANDLE_REDIRECT
   }),
-  triggerMakeAuthorizationRequest: () => ({
-    payload: async (
-      dispatch,
-      getState,
-      {
-        grabid: {
-          nonPOP: { authorize }
+  nonPOP: {
+    triggerAuthorize: () => ({
+      payload: async (
+        dispatch,
+        getState,
+        {
+          grabid: {
+            nonPOP: { authorize }
+          }
         }
-      }
-    ) => {
-      const {
-        grabid: { clientID, countryCode, scopes }
-      } = getState();
-
-      const { codeVerifier } = await authorize({
-        clientID,
-        countryCode,
-        scopes
-      });
-
-      dispatch(GrabIDActionCreators.setCodeVerifier(codeVerifier));
-    },
-    type: GrabIDActions.TRIGGER_MAKE_AUTHORIZATION_REQUEST
-  }),
-  triggerMakeTokenRequest: () => ({
-    payload: async (
-      dispatch,
-      getState,
-      {
-        grabid: {
-          nonPOP: { requestToken }
-        }
-      }
-    ) => {
-      try {
+      ) => {
         const {
           grabid: { clientID, countryCode, scopes }
         } = getState();
 
-        const { accessToken, idToken } = await requestToken({
+        const { codeVerifier } = await authorize({
           clientID,
           countryCode,
           scopes
         });
 
-        dispatch(GrabIDActionCreators.setAccessToken(accessToken));
-        dispatch(GrabIDActionCreators.setIDToken(idToken));
-      } catch (e) {
-        dispatch(CommonActionCreators.setError(e));
-      }
-    },
-    type: GrabIDActions.TRIGGER_MAKE_TOKEN_REQUEST
-  })
+        dispatch(GrabIDActionCreators.setCodeVerifier(codeVerifier));
+      },
+      type: GrabIDActions.TRIGGER_MAKE_AUTHORIZATION_REQUEST
+    }),
+    triggerRequestToken: () => ({
+      payload: async (
+        dispatch,
+        getState,
+        {
+          grabid: {
+            nonPOP: { requestToken }
+          }
+        }
+      ) => {
+        try {
+          const {
+            grabid: { clientID, countryCode, scopes }
+          } = getState();
+
+          const { accessToken, idToken } = await requestToken({
+            clientID,
+            countryCode,
+            scopes
+          });
+
+          dispatch(GrabIDActionCreators.setAccessToken(accessToken));
+          dispatch(GrabIDActionCreators.setIDToken(idToken));
+        } catch (e) {
+          dispatch(CommonActionCreators.setError(e));
+        }
+      },
+      type: GrabIDActions.TRIGGER_MAKE_TOKEN_REQUEST
+    })
+  },
+  payment: {
+    /** GrabPay requires an additional request parameter. */
+    triggerAuthorize: () => ({
+      payload: async (
+        dispatch,
+        getState,
+        {
+          grabid: {
+            payment: { authorize }
+          }
+        }
+      ) => {
+        const {
+          grabid: { clientID, countryCode, scopes },
+          grabpay: { currency, request }
+        } = getState();
+
+        const { codeVerifier } = await authorize({
+          clientID,
+          countryCode,
+          currency,
+          request,
+          scopes
+        });
+
+        dispatch(GrabIDActionCreators.setCodeVerifier(codeVerifier));
+      },
+      type: GrabIDActions.TRIGGER_MAKE_AUTHORIZATION_REQUEST
+    }),
+    /** GrabPay requires an additional request parameter. */
+    triggerRequestToken: () => ({
+      payload: async (
+        dispatch,
+        getState,
+        {
+          grabid: {
+            payment: { requestToken }
+          }
+        }
+      ) => {
+        try {
+          const {
+            grabid: { code, codeVerifier, clientID, clientSecret }
+          } = getState();
+
+          const { accessToken, idToken } = await requestToken({
+            code,
+            codeVerifier,
+            clientID,
+            clientSecret
+          });
+
+          dispatch(GrabIDActionCreators.setAccessToken(accessToken));
+          dispatch(GrabIDActionCreators.setIDToken(idToken));
+        } catch (e) {
+          dispatch(CommonActionCreators.setError(e));
+        }
+      },
+      type: GrabIDActions.TRIGGER_MAKE_TOKEN_REQUEST
+    })
+  }
 };
