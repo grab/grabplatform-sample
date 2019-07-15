@@ -67,11 +67,6 @@ async function makeRequest(
 }
 
 export function createGrabIDRepository(window) {
-  const extraConfig = {
-    additionalACRValues: { service: "PASSENGER" },
-    redirectURI: "/grabid/redirect"
-  };
-
   return {
     grabid: {
       handleAuthorizationCodeFlowResponse: async () => {
@@ -79,70 +74,100 @@ export function createGrabIDRepository(window) {
         GrabID.handleAuthorizationCodeFlowResponse();
         return getRelativeURLPath(returnURI);
       },
-      makeAuthorizationRequest: async ({ clientID, countryCode, scopes }) => {
-        const client = createGrabIDClient(window, {
-          clientID,
-          countryCode,
-          scopes,
-          ...extraConfig
-        });
+      nonPOP: (() => {
+        const extraConfig = {
+          additionalACRValues: { service: "PASSENGER" },
+          redirectURI: "/grabid/redirect"
+        };
 
-        const result = await client.makeAuthorizationRequest();
-        const { codeVerifier } = GrabID.getResult();
-        return { ...result, codeVerifier };
-      },
-      makeTokenRequest: async ({ clientID, countryCode, scopes }) => {
-        const client = createGrabIDClient(window, {
-          clientID,
-          countryCode,
-          scopes,
-          ...extraConfig
-        });
+        return {
+          authorize: async ({ clientID, countryCode, scopes }) => {
+            const client = createGrabIDClient(window, {
+              clientID,
+              countryCode,
+              scopes,
+              ...extraConfig
+            });
 
-        await client.makeTokenRequest();
-        return GrabID.getResult();
-      }
+            const result = await client.makeAuthorizationRequest();
+            const { codeVerifier } = GrabID.getResult();
+            return { ...result, codeVerifier };
+          },
+          requestToken: async ({ clientID, countryCode, scopes }) => {
+            const client = createGrabIDClient(window, {
+              clientID,
+              countryCode,
+              scopes,
+              ...extraConfig
+            });
+
+            await client.makeTokenRequest();
+            return GrabID.getResult();
+          }
+        };
+      })(),
+      payment: (() => {
+        const redirectURI = "/grabpay/redirect";
+
+        function extraGrabIDConfig(currency) {
+          return {
+            additionalACRValues: { consentContext: { currency } },
+            redirectURI
+          };
+        }
+
+        return {
+          authorize: async ({
+            clientID,
+            countryCode,
+            currency,
+            request,
+            scopes
+          }) => {
+            const client = createGrabIDClient(window, {
+              clientID,
+              countryCode,
+              request,
+              scopes,
+              ...extraGrabIDConfig(currency)
+            });
+
+            const result = await client.makeAuthorizationRequest();
+            const { codeVerifier } = GrabID.getResult();
+            return { ...result, codeVerifier };
+          },
+          requestToken: async ({
+            code,
+            codeVerifier,
+            clientID,
+            clientSecret
+          }) =>
+            makeRequest(window, {
+              body: {
+                code,
+                codeVerifier,
+                clientID,
+                clientSecret,
+                redirectURI: getAbsoluteURLPath(window, redirectURI)
+              },
+              method: "POST",
+              relativePath: "/token"
+            })
+        };
+      })()
     }
   };
 }
 
 export function createGrabPayRepository(window) {
-  const redirectURI = "/grabpay/redirect";
-
-  function extraGrabIDConfig(currency) {
-    return {
-      additionalACRValues: { consentContext: { currency } },
-      redirectURI
-    };
-  }
-
   return {
     grabpay: {
-      authorize: async ({ currency, ...rest }) => {
-        const client = createGrabIDClient(window, {
-          ...rest,
-          ...extraGrabIDConfig(currency)
-        });
-
-        const result = await client.makeAuthorizationRequest();
-        const { codeVerifier } = GrabID.getResult();
-        return { ...result, codeVerifier };
-      },
       checkWallet: async ({ accessToken, ...body }) =>
         makeRequest(window, {
           additionalHeaders: { Authorization: `Bearer ${accessToken}` },
           body,
           method: "POST",
           relativePath: "/wallet"
-        }),
-      requestToken: async args =>
-        makeRequest(window, {
-          body: {
-            ...args,
-            redirectURI: getAbsoluteURLPath(window, redirectURI)
-          },
-          method: "POST",
-          relativePath: "/token"
         }),
       oneTimeCharge: {
         init: async ({

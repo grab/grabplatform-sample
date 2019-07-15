@@ -84,13 +84,17 @@ export const GrabIDActionCreators = {
     payload: async (
       dispatch,
       getState,
-      { grabid: { makeAuthorizationRequest } }
+      {
+        grabid: {
+          nonPOP: { authorize }
+        }
+      }
     ) => {
       const {
         grabid: { clientID, countryCode, scopes }
       } = getState();
 
-      const { codeVerifier } = await makeAuthorizationRequest({
+      const { codeVerifier } = await authorize({
         clientID,
         countryCode,
         scopes
@@ -101,13 +105,21 @@ export const GrabIDActionCreators = {
     type: GrabIDActions.TRIGGER_MAKE_AUTHORIZATION_REQUEST
   }),
   triggerMakeTokenRequest: () => ({
-    payload: async (dispatch, getState, { grabid: { makeTokenRequest } }) => {
+    payload: async (
+      dispatch,
+      getState,
+      {
+        grabid: {
+          nonPOP: { requestToken }
+        }
+      }
+    ) => {
       try {
         const {
           grabid: { clientID, countryCode, scopes }
         } = getState();
 
-        const { accessToken, idToken } = await makeTokenRequest({
+        const { accessToken, idToken } = await requestToken({
           clientID,
           countryCode,
           scopes

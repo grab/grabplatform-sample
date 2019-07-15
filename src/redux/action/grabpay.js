@@ -85,16 +85,26 @@ export const GrabPayActionCreators = {
   }),
   /** GrabPay requires an additional request parameter. */
   triggerMakeAuthorizationRequest: () => ({
-    payload: async (dispatch, getState, { grabpay: { authorize } }) => {
+    payload: async (
+      dispatch,
+      getState,
+      {
+        grabid: {
+          payment: { authorize }
+        }
+      }
+    ) => {
       const {
-        grabid,
+        grabid: { clientID, countryCode, scopes },
         grabpay: { currency, request }
       } = getState();
 
       const { codeVerifier } = await authorize({
-        ...grabid,
+        clientID,
+        countryCode,
         currency,
-        request
+        request,
+        scopes
       });
 
       dispatch(GrabIDActionCreators.setCodeVerifier(codeVerifier));
@@ -103,10 +113,27 @@ export const GrabPayActionCreators = {
   }),
   /** GrabPay requires an additional request parameter. */
   triggerMakeTokenRequest: () => ({
-    payload: async (dispatch, getState, { grabpay: { requestToken } }) => {
+    payload: async (
+      dispatch,
+      getState,
+      {
+        grabid: {
+          payment: { requestToken }
+        }
+      }
+    ) => {
       try {
-        const { grabid } = getState();
-        const { accessToken, idToken } = await requestToken(grabid);
+        const {
+          grabid: { code, codeVerifier, clientID, clientSecret }
+        } = getState();
+
+        const { accessToken, idToken } = await requestToken({
+          code,
+          codeVerifier,
+          clientID,
+          clientSecret
+        });
+
         dispatch(GrabIDActionCreators.setAccessToken(accessToken));
         dispatch(GrabIDActionCreators.setIDToken(idToken));
       } catch (e) {
