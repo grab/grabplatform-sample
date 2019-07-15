@@ -8,21 +8,33 @@ import Markdown from "react-markdown";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { compose, lifecycle, mapProps } from "recompose";
+import { CommonActionCreators } from "redux/action/common";
 import { GrabIDActionCreators } from "redux/action/grabid";
 import "./style.scss";
 
 // ############################### GRABID LOGIN ###############################
 
-function PrivateGrabIDLogin() {
+function PrivateGrabIDLogin({ clearCredentials }) {
   return (
     <div className="grabid-login-container">
       <div className="login">Log in as a user</div>
-      <div className="clear-credentials">Clear credentials</div>
+
+      <div className="clear-credentials" onClick={clearCredentials}>
+        Clear state
+      </div>
     </div>
   );
 }
 
-export const GrabIDLogin = PrivateGrabIDLogin;
+export const GrabIDLogin = compose(
+  connect(
+    () => ({}),
+    dispatch => ({
+      clearCredentials: () =>
+        dispatch(CommonActionCreators.triggerClearCredentials())
+    })
+  )
+)(PrivateGrabIDLogin);
 
 // ############################## GRABID TRIGGER ##############################
 
