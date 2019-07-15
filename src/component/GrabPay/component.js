@@ -7,7 +7,8 @@ import React from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { compose, lifecycle, mapProps } from "recompose";
-import { GrabIDActionCreators, GrabPayActionCreators } from "redux/action";
+import { GrabIDActionCreators } from "redux/action/grabid";
+import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
 
 function PrivateGrabPay({

@@ -20,7 +20,8 @@ import React from "react";
 import Markdown from "react-markdown";
 import { connect } from "react-redux";
 import { compose, lifecycle, mapProps } from "recompose";
-import { GrabIDActionCreators, GrabPayActionCreators } from "redux/action";
+import { GrabIDActionCreators } from "redux/action/grabid";
+import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
 
 const initDescription = `

@@ -3,12 +3,10 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 import { combineReducers } from "redux";
-import {
-  GrabIDActions,
-  GrabPayActions,
-  IdentityActions,
-  LoyaltyActions
-} from "./action";
+import { GrabIDActions } from "./action/grabid";
+import { GrabPayActions } from "./action/grabpay";
+import { IdentityActions } from "./action/identity";
+import { LoyaltyActions } from "./action/loyalty";
 
 function grabid(state = {}, { type, payload }) {
   switch (type) {

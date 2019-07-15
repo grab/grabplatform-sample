@@ -7,7 +7,8 @@ import { GrabID } from "component/GrabID/component";
 import React from "react";
 import { connect } from "react-redux";
 import { compose, lifecycle, mapProps } from "recompose";
-import { GrabIDActionCreators, IdentityActionCreators } from "redux/action";
+import { GrabIDActionCreators } from "redux/action/grabid";
+import { IdentityActionCreators } from "redux/action/identity";
 import "./style.scss";
 
 function PrivateBasicProfile({ currentStage, profile, getBasicProfile }) {

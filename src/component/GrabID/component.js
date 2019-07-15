@@ -8,7 +8,7 @@ import Markdown from "react-markdown";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { compose, lifecycle, mapProps } from "recompose";
-import { GrabIDActionCreators } from "redux/action";
+import { GrabIDActionCreators } from "redux/action/grabid";
 import "./style.scss";
 
 // ############################### GRABID LOGIN ###############################

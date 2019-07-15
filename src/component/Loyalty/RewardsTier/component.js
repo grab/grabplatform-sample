@@ -7,7 +7,8 @@ import { GrabID } from "component/GrabID/component";
 import React from "react";
 import { connect } from "react-redux";
 import { compose, lifecycle, mapProps } from "recompose";
-import { GrabIDActionCreators, LoyaltyActionCreators } from "redux/action";
+import { GrabIDActionCreators } from "redux/action/grabid";
+import { LoyaltyActionCreators } from "redux/action/loyalty";
 import "./style.scss";
 
 function PrivateRewardsTier({ currentStage, rewardsTier, getRewardsTier }) {

@@ -5,7 +5,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose } from "recompose";
-import { GrabPayActionCreators } from "redux/action";
+import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
 
 function PrivateTransaction({

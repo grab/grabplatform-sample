@@ -4,7 +4,8 @@
  */
 import { connect } from "react-redux";
 import { compose, lifecycle } from "recompose";
-import { GrabIDActionCreators, GrabPayActionCreators } from "redux/action";
+import { GrabIDActionCreators } from "redux/action/grabid";
+import { GrabPayActionCreators } from "redux/action/grabpay";
 
 /** Take care of GrabID-specific tasks. */
 export function grabIDHandlerHOC() {
