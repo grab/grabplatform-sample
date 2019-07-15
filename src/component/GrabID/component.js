@@ -67,14 +67,18 @@ function PrivateGrabID({
         value={clientID}
       />
 
-      <div className="title">Client secret</div>
+      {!!popRequired && (
+        <>
+          <div className="title">Client secret</div>
 
-      <input
-        onChange={({ target: { value } }) => setClientSecret(value)}
-        placeholder="Enter your client secret"
-        spellCheck={false}
-        value={clientSecret}
-      />
+          <input
+            onChange={({ target: { value } }) => setClientSecret(value)}
+            placeholder="Enter your client secret"
+            spellCheck={false}
+            value={clientSecret}
+          />
+        </>
+      )}
 
       <div className="title">Requested scopes</div>
 

@@ -177,6 +177,7 @@ function PrivateOneTimeCharge({
           currentStage={3}
           makeAuthorizationRequest={makeAuthorizationRequest}
           makeTokenRequest={makeTokenRequest}
+          popRequired
           stageDescription={
             <Markdown className="source-code" source={grabidDescription} />
           }

@@ -26,6 +26,14 @@
   }
 }
 
+@mixin product-container {
+  & > * {
+    &:not(:first-child) {
+      margin-top: 24px;
+    }
+  }
+}
+
 @mixin confirm-button {
   align-items: center;
   background: $grab-primary-color;
