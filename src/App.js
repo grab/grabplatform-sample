@@ -2,7 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import { GrabIDRedirect } from "component/GrabID/component";
+import { GrabIDLogin, GrabIDRedirect } from "component/GrabID/component";
 import { GrabPayRedirect } from "component/GrabPay/component";
 import Identity from "component/Identity/component";
 import Loyalty from "component/Loyalty/component";
@@ -14,10 +14,7 @@ import "./App.scss";
 const categories = [
   ["Identity", Identity],
   ["Payment", Payment],
-  // ["Rides", ""],
-  // ["Delivery", ""],
   ["Loyalty", Loyalty]
-  // ["Audience", ""]
 ];
 
 function App() {
@@ -29,16 +26,21 @@ function App() {
         render={() => (
           <div className="App">
             <div className="app-bar">
-              {categories.map(([category]) => (
-                <NavLink
-                  activeClassName="active-tab"
-                  className="tab"
-                  key={category}
-                  to={`/${category.toLowerCase()}`}
-                >
-                  {category}
-                </NavLink>
-              ))}
+              <GrabIDLogin />
+              <div className="divider" />
+
+              <div className="category-container">
+                {categories.map(([category]) => (
+                  <NavLink
+                    activeClassName="active-tab"
+                    className="tab"
+                    key={category}
+                    to={`/${category.toLowerCase()}`}
+                  >
+                    {category}
+                  </NavLink>
+                ))}
+              </div>
             </div>
             <div className="app-content">
               <Switch>

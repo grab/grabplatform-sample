@@ -4,6 +4,33 @@
  */
 @import "src/global";
 
+.grabid-login-container {
+  display: flex;
+  padding: 8px;
+  flex-direction: column;
+
+  @include md {
+    flex-direction: row;
+  }
+
+  & > * {
+    &.clear-credentials,
+    &.login {
+      @include confirm-button;
+    }
+
+    &:not(:first-child) {
+      margin: 8px 0 0 0;
+    }
+
+    @include md {
+      &:not(:first-child) {
+        margin: 0 0 0 8px;
+      }
+    }
+  }
+}
+
 .grabid-container {
   @include stage-container;
 

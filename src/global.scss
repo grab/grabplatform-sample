@@ -44,15 +44,18 @@
   font-weight: bold;
   height: 48px;
   justify-content: center;
-  margin-left: auto;
   padding: 0 8px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: calc(100% / 3);
 
   &:hover {
     background: rgba($grab-primary-color, 0.8);
+  }
+
+  @include md {
+    margin-left: auto;
+    width: 250px;
   }
 }
 

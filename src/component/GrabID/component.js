@@ -11,6 +11,21 @@ import { compose, lifecycle, mapProps } from "recompose";
 import { GrabIDActionCreators } from "redux/action";
 import "./style.scss";
 
+// ############################### GRABID LOGIN ###############################
+
+function PrivateGrabIDLogin() {
+  return (
+    <div className="grabid-login-container">
+      <div className="login">Log in as a user</div>
+      <div className="clear-credentials">Clear credentials</div>
+    </div>
+  );
+}
+
+export const GrabIDLogin = PrivateGrabIDLogin;
+
+// ############################## GRABID TRIGGER ##############################
+
 const grabidDescription = `
 GrabID flow is as follows:
 - Authorize with user's consent for permission to access user information. A
@@ -168,6 +183,8 @@ export const GrabID = compose(
     })
   )
 )(PrivateGrabID);
+
+// ############################# GRABID REDIRECT #############################
 
 function PrivateGrabIDRedirect({ returnPath }) {
   return (

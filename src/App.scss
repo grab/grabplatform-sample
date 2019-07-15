@@ -12,7 +12,18 @@
   width: 100%;
 
   & > .app-bar {
-    @include tab-bar;
+    display: flex;
+    flex-direction: column;
+
+    & > * {
+      &.category-container {
+        @include tab-bar;
+      }
+
+      &.divider {
+        height: 1px;
+      }
+    }
   }
 
   & > .app-content {
