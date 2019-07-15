@@ -86,8 +86,16 @@ export const GrabIDActionCreators = {
       getState,
       { grabid: { makeAuthorizationRequest } }
     ) => {
-      const { grabid } = getState();
-      const { codeVerifier } = await makeAuthorizationRequest(grabid);
+      const {
+        grabid: { clientID, countryCode, scopes }
+      } = getState();
+
+      const { codeVerifier } = await makeAuthorizationRequest({
+        clientID,
+        countryCode,
+        scopes
+      });
+
       dispatch(GrabIDActionCreators.setCodeVerifier(codeVerifier));
     },
     type: GrabIDActions.TRIGGER_MAKE_AUTHORIZATION_REQUEST
@@ -95,8 +103,16 @@ export const GrabIDActionCreators = {
   triggerMakeTokenRequest: () => ({
     payload: async (dispatch, getState, { grabid: { makeTokenRequest } }) => {
       try {
-        const { grabid } = getState();
-        const { accessToken, idToken } = await makeTokenRequest(grabid);
+        const {
+          grabid: { clientID, countryCode, scopes }
+        } = getState();
+
+        const { accessToken, idToken } = await makeTokenRequest({
+          clientID,
+          countryCode,
+          scopes
+        });
+
         dispatch(GrabIDActionCreators.setAccessToken(accessToken));
         dispatch(GrabIDActionCreators.setIDToken(idToken));
       } catch (e) {

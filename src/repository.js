@@ -79,14 +79,26 @@ export function createGrabIDRepository(window) {
         GrabID.handleAuthorizationCodeFlowResponse();
         return getRelativeURLPath(returnURI);
       },
-      makeAuthorizationRequest: async args => {
-        const client = createGrabIDClient(window, { ...args, ...extraConfig });
+      makeAuthorizationRequest: async ({ clientID, countryCode, scopes }) => {
+        const client = createGrabIDClient(window, {
+          clientID,
+          countryCode,
+          scopes,
+          ...extraConfig
+        });
+
         const result = await client.makeAuthorizationRequest();
         const { codeVerifier } = GrabID.getResult();
         return { ...result, codeVerifier };
       },
-      makeTokenRequest: async args => {
-        const client = createGrabIDClient(window, { ...args, ...extraConfig });
+      makeTokenRequest: async ({ clientID, countryCode, scopes }) => {
+        const client = createGrabIDClient(window, {
+          clientID,
+          countryCode,
+          scopes,
+          ...extraConfig
+        });
+
         await client.makeTokenRequest();
         return GrabID.getResult();
       }
