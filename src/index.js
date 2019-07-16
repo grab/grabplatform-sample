@@ -34,7 +34,6 @@ let storedState = !!cachedData
         countryCode: "",
         idToken: "",
         returnPath: "",
-        scopes: [],
         state: ""
       },
       grabpay: {

@@ -19,7 +19,7 @@ import Transaction from "component/Payment/Transaction/component";
 import React from "react";
 import Markdown from "react-markdown";
 import { connect } from "react-redux";
-import { compose, lifecycle, mapProps } from "recompose";
+import { compose, mapProps } from "recompose";
 import { GrabIDActionCreators } from "redux/action/grabid";
 import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
@@ -179,6 +179,7 @@ function PrivateOneTimeCharge({
           makeAuthorizationRequest={makeAuthorizationRequest}
           makeTokenRequest={makeTokenRequest}
           popRequired
+          scopes={["payment.one_time_charge", "payment.online_acceptance"]}
           stageDescription={
             <Markdown className="source-code" source={grabidDescription} />
           }
@@ -232,11 +233,10 @@ export default compose(
         dispatch(GrabPayActionCreators.OneTimeCharge.triggerConfirm()),
       initOneTimeCharge: () =>
         dispatch(GrabPayActionCreators.OneTimeCharge.triggerInit()),
-      makeAuthorizationRequest: () =>
-        dispatch(GrabIDActionCreators.payment.triggerAuthorize()),
-      makeTokenRequest: () =>
-        dispatch(GrabIDActionCreators.payment.triggerRequestToken()),
-      setScopes: scopes => dispatch(GrabIDActionCreators.setScopes(scopes))
+      makeAuthorizationRequest: scopes =>
+        dispatch(GrabIDActionCreators.payment.triggerAuthorize(scopes)),
+      makeTokenRequest: scopes =>
+        dispatch(GrabIDActionCreators.payment.triggerRequestToken(scopes))
     })
   ),
   mapProps(({ isGrabPaySatisfied, ...rest }) => ({
@@ -250,13 +250,5 @@ export default compose(
   mapProps(({ isGrabIDSatisfied, currentStage, ...rest }) => ({
     ...rest,
     currentStage: currentStage + !!isGrabIDSatisfied
-  })),
-  lifecycle({
-    componentDidMount() {
-      this.props.setScopes([
-        "payment.one_time_charge",
-        "payment.online_acceptance"
-      ]);
-    }
-  })
+  }))
 )(PrivateOneTimeCharge);

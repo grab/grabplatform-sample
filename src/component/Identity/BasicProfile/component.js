@@ -6,15 +6,16 @@ import { grabIDHandlerHOC, Stage } from "component/custom-hoc";
 import { GrabID } from "component/GrabID/component";
 import React from "react";
 import { connect } from "react-redux";
-import { compose, lifecycle, mapProps } from "recompose";
-import { GrabIDActionCreators } from "redux/action/grabid";
+import { compose, mapProps } from "recompose";
 import { IdentityActionCreators } from "redux/action/identity";
 import "./style.scss";
 
 function PrivateBasicProfile({ currentStage, profile, getBasicProfile }) {
   return (
     <div className="basic-profile-container">
-      {currentStage >= Stage.ONE && <GrabID currentStage={1} />}
+      {currentStage >= Stage.ONE && (
+        <GrabID currentStage={1} scopes={["profile.read"]} />
+      )}
 
       {currentStage >= Stage.TWO && (
         <div className="main-container">
@@ -55,17 +56,11 @@ export default compose(
     ({ identity: { basicProfile: profile } }) => ({ profile }),
     dispatch => ({
       getBasicProfile: () =>
-        dispatch(IdentityActionCreators.triggerGetBasicProfile()),
-      setScopes: scopes => dispatch(GrabIDActionCreators.setScopes(scopes))
+        dispatch(IdentityActionCreators.triggerGetBasicProfile())
     })
   ),
   mapProps(({ isGrabIDSatisfied, ...rest }) => ({
     ...rest,
     currentStage: Stage.ONE + !!isGrabIDSatisfied
-  })),
-  lifecycle({
-    componentDidMount() {
-      this.props.setScopes(["profile.read"]);
-    }
-  })
+  }))
 )(PrivateBasicProfile);

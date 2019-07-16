@@ -17,7 +17,6 @@ function grabid(state = {}, { type, payload }) {
         code: "",
         codeVerifier: "",
         idToken: "",
-        scopes: "",
         state: "",
         returnPath: ""
       };
@@ -45,9 +44,6 @@ function grabid(state = {}, { type, payload }) {
 
     case GrabIDActions.SET_RETURN_PATH:
       return { ...state, returnPath: payload };
-
-    case GrabIDActions.SET_SCOPES:
-      return { ...state, scopes: payload };
 
     case GrabIDActions.SET_STATE:
       return { ...state, state: payload };

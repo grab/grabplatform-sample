@@ -14,7 +14,6 @@ export const GrabIDActions = {
   SET_COUNTRY_CODE: "GRABID.SET_COUNTRY_CODE",
   SET_ID_TOKEN: "GRABID.SET_ID_TOKEN",
   SET_RETURN_PATH: "GRABID.SET_RETURN_PATH",
-  SET_SCOPES: "GRABID.SET_SCOPES",
   SET_STATE: "GRABID.SET_STATE",
 
   TRIGGER_HANDLE_REDIRECT: "GRABID.TRIGGER_HANDLE_REDIRECT",
@@ -57,10 +56,6 @@ export const GrabIDActionCreators = {
     payload: returnPath,
     type: GrabIDActions.SET_RETURN_PATH
   }),
-  setScopes: (scopes = []) => ({
-    payload: scopes,
-    type: GrabIDActions.SET_SCOPES
-  }),
   setState: (state = "") => ({
     payload: state,
     type: GrabIDActions.SET_STATE
@@ -81,7 +76,8 @@ export const GrabIDActionCreators = {
     type: GrabIDActions.TRIGGER_HANDLE_REDIRECT
   }),
   nonPOP: {
-    triggerAuthorize: () => ({
+    triggerAuthorize: scopes => ({
+      params: scopes,
       payload: async (
         dispatch,
         getState,
@@ -92,7 +88,7 @@ export const GrabIDActionCreators = {
         }
       ) => {
         const {
-          grabid: { clientID, countryCode, scopes }
+          grabid: { clientID, countryCode }
         } = getState();
 
         const { codeVerifier } = await authorize({
@@ -105,7 +101,8 @@ export const GrabIDActionCreators = {
       },
       type: GrabIDActions.TRIGGER_MAKE_AUTHORIZATION_REQUEST
     }),
-    triggerRequestToken: () => ({
+    triggerRequestToken: scopes => ({
+      params: scopes,
       payload: async (
         dispatch,
         getState,
@@ -117,7 +114,7 @@ export const GrabIDActionCreators = {
       ) => {
         try {
           const {
-            grabid: { clientID, countryCode, scopes }
+            grabid: { clientID, countryCode }
           } = getState();
 
           const { accessToken, idToken } = await requestToken({
@@ -137,7 +134,8 @@ export const GrabIDActionCreators = {
   },
   payment: {
     /** GrabPay requires an additional request parameter. */
-    triggerAuthorize: () => ({
+    triggerAuthorize: scopes => ({
+      params: scopes,
       payload: async (
         dispatch,
         getState,
@@ -148,7 +146,7 @@ export const GrabIDActionCreators = {
         }
       ) => {
         const {
-          grabid: { clientID, countryCode, scopes },
+          grabid: { clientID, countryCode },
           grabpay: { currency, request }
         } = getState();
 

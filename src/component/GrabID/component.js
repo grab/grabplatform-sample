@@ -153,25 +153,16 @@ function PrivateGrabID({
 export const GrabID = compose(
   connect(
     ({
-      grabid: {
-        accessToken,
-        clientID,
-        clientSecret,
-        code,
-        idToken,
-        scopes,
-        state
-      }
+      grabid: { accessToken, clientID, clientSecret, code, idToken, state }
     }) => ({
       accessToken,
       clientID,
       clientSecret,
       code,
       idToken,
-      scopes,
       state
     }),
-    (dispatch, { makeAuthorizationRequest, makeTokenRequest }) => ({
+    (dispatch, { scopes, makeAuthorizationRequest, makeTokenRequest }) => ({
       setClientID: clientID =>
         dispatch(GrabIDActionCreators.setClientID(clientID)),
       setClientSecret: clientSecret =>
@@ -182,16 +173,16 @@ export const GrabID = compose(
          * it, e.g. GrabPay requires additional query parameters.
          */
         !!makeAuthorizationRequest
-          ? makeAuthorizationRequest()
-          : dispatch(GrabIDActionCreators.nonPOP.triggerAuthorize()),
+          ? makeAuthorizationRequest(scopes)
+          : dispatch(GrabIDActionCreators.nonPOP.triggerAuthorize(scopes)),
       makeTokenRequest: () =>
         /**
          * If makeTokenRequest is specified in props, do not override it, e.g.
          * GrabPay requires additional query parameters.
          */
         !!makeTokenRequest
-          ? makeTokenRequest()
-          : dispatch(GrabIDActionCreators.nonPOP.triggerRequestToken())
+          ? makeTokenRequest(scopes)
+          : dispatch(GrabIDActionCreators.nonPOP.triggerRequestToken(scopes))
     })
   )
 )(PrivateGrabID);

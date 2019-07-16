@@ -19,7 +19,7 @@ import Transaction from "component/Payment/Transaction/component";
 import React from "react";
 import Markdown from "react-markdown";
 import { connect } from "react-redux";
-import { compose, lifecycle, mapProps } from "recompose";
+import { compose, mapProps } from "recompose";
 import { GrabIDActionCreators } from "redux/action/grabid";
 import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
@@ -242,6 +242,7 @@ function RecurringCharge({
           makeAuthorizationRequest={makeAuthorizationRequest}
           makeTokenRequest={makeTokenRequest}
           popRequired
+          scopes={["payment.recurring_charge", "payment.online_acceptance"]}
           stageDescription={
             <Markdown className="source-code" source={grabidDescription} />
           }
@@ -346,11 +347,10 @@ export default compose(
       chargeUser: () =>
         dispatch(GrabPayActionCreators.RecurringCharge.triggerCharge()),
       checkWallet: () => dispatch(GrabPayActionCreators.triggerCheckWallet()),
-      makeAuthorizationRequest: () =>
-        dispatch(GrabIDActionCreators.payment.triggerAuthorize()),
-      makeTokenRequest: () =>
-        dispatch(GrabIDActionCreators.payment.triggerRequestToken()),
-      setScopes: scopes => dispatch(GrabIDActionCreators.setScopes(scopes)),
+      makeAuthorizationRequest: scopes =>
+        dispatch(GrabIDActionCreators.payment.triggerAuthorize(scopes)),
+      makeTokenRequest: scopes =>
+        dispatch(GrabIDActionCreators.payment.triggerRequestToken(scopes)),
       unbindCharge: () =>
         dispatch(GrabPayActionCreators.RecurringCharge.triggerUnbind())
     })
@@ -366,13 +366,5 @@ export default compose(
   mapProps(({ currentStage, isGrabIDSatisfied, ...rest }) => ({
     ...rest,
     currentStage: currentStage + !!isGrabIDSatisfied
-  })),
-  lifecycle({
-    componentDidMount() {
-      this.props.setScopes([
-        "payment.recurring_charge",
-        "payment.online_acceptance"
-      ]);
-    }
-  })
+  }))
 )(RecurringCharge);

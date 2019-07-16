@@ -6,15 +6,16 @@ import { grabIDHandlerHOC, Stage } from "component/custom-hoc";
 import { GrabID } from "component/GrabID/component";
 import React from "react";
 import { connect } from "react-redux";
-import { compose, lifecycle, mapProps } from "recompose";
-import { GrabIDActionCreators } from "redux/action/grabid";
+import { compose, mapProps } from "recompose";
 import { LoyaltyActionCreators } from "redux/action/loyalty";
 import "./style.scss";
 
 function PrivateRewardsTier({ currentStage, rewardsTier, getRewardsTier }) {
   return (
     <div className="rewards-tier-container">
-      {currentStage >= Stage.ONE && <GrabID currentStage={1} />}
+      {currentStage >= Stage.ONE && (
+        <GrabID currentStage={1} scopes={["rewards.tierinfo"]} />
+      )}
 
       {currentStage >= Stage.TWO && (
         <div className="main-container">
@@ -47,17 +48,11 @@ export default compose(
     }),
     dispatch => ({
       getRewardsTier: () =>
-        dispatch(LoyaltyActionCreators.triggerGetRewardsTier()),
-      setScopes: scopes => dispatch(GrabIDActionCreators.setScopes(scopes))
+        dispatch(LoyaltyActionCreators.triggerGetRewardsTier())
     })
   ),
   mapProps(({ isGrabIDSatisfied, ...rest }) => ({
     ...rest,
     currentStage: Stage.ONE + !!isGrabIDSatisfied
-  })),
-  lifecycle({
-    componentDidMount() {
-      this.props.setScopes(["rewards.tierinfo"]);
-    }
-  })
+  }))
 )(PrivateRewardsTier);
