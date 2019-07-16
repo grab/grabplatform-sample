@@ -54,8 +54,15 @@
   }
 
   @include md {
-    margin-left: auto;
     width: 250px;
+  }
+}
+
+@mixin stage-confirm-button {
+  @include confirm-button;
+
+  @include md {
+    margin-left: auto;
   }
 }
 

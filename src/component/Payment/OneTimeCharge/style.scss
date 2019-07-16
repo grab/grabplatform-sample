@@ -17,7 +17,7 @@
       & > * {
         &.init-charge,
         &.confirm-charge {
-          @include confirm-button;
+          @include stage-confirm-button;
         }
 
         &.transaction-status {

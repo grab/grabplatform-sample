@@ -48,7 +48,7 @@
 
     &.authorize,
     &.request-token {
-      @include confirm-button;
+      @include stage-confirm-button;
     }
   }
 }

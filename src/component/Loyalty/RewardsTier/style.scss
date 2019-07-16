@@ -23,7 +23,7 @@
         }
 
         &.get-tier {
-          @include confirm-button;
+          @include stage-confirm-button;
         }
       }
     }

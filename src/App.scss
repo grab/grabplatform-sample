@@ -20,8 +20,8 @@
       }
 
       & > * {
-        &.clear-credentials {
-          @include confirm-button;
+        &.clear-everything {
+          @include stage-confirm-button;
         }
 
         &:not(:first-child) {

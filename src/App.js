@@ -20,7 +20,7 @@ const categories = [
   ["Loyalty", Loyalty]
 ];
 
-function PrivateApp({ accessToken, clearCredentials }) {
+function PrivateApp({ accessToken, clearEverything }) {
   return (
     <Switch>
       <Route component={GrabIDGlobalLogin} exact path={"/login"} />
@@ -32,7 +32,7 @@ function PrivateApp({ accessToken, clearCredentials }) {
             {!!accessToken ? (
               <>
                 <div className="global-action-container">
-                  <div className="clear-credentials" onClick={clearCredentials}>
+                  <div className="clear-everything" onClick={clearEverything}>
                     Clear everything
                   </div>
                 </div>
@@ -78,8 +78,8 @@ export default compose(
   connect(
     ({ grabid: { accessToken } }) => ({ accessToken }),
     dispatch => ({
-      clearCredentials: () =>
-        dispatch(CommonActionCreators.triggerClearCredentials())
+      clearEverything: () =>
+        dispatch(CommonActionCreators.triggerClearEverything())
     })
   )
 )(PrivateApp);

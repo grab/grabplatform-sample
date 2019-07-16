@@ -20,7 +20,7 @@
         &.confirm-charge,
         &.check-wallet,
         &.unbind-charge {
-          @include confirm-button;
+          @include stage-confirm-button;
         }
 
         &.transaction-status {

@@ -8,17 +8,17 @@ import { GrabPayActionCreators } from "./grabpay";
 export const CommonActions = {
   SET_ERROR: "COMMON.SET_ERROR",
 
-  TRIGGER_CLEAR_CREDENTIALS: "COMMON.TRIGGER_CLEAR_CREDENTIALS"
+  TRIGGER_CLEAR_EVERYTHING: "COMMON.TRIGGER_CLEAR_EVERYTHING"
 };
 
 export const CommonActionCreators = {
   setError: error => ({ payload: error, type: CommonActions.SET_ERROR }),
 
-  triggerClearCredentials: () => ({
+  triggerClearEverything: () => ({
     payload: dispatch => {
       dispatch(GrabIDActionCreators.clearCredentials());
       dispatch(GrabPayActionCreators.clearCredentials());
     },
-    type: CommonActions.TRIGGER_CLEAR_CREDENTIALS
+    type: CommonActions.TRIGGER_CLEAR_EVERYTHING
   })
 };
