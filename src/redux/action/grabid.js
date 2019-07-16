@@ -76,7 +76,7 @@ export const GrabIDActionCreators = {
     type: GrabIDActions.TRIGGER_HANDLE_REDIRECT
   }),
   nonPOP: {
-    triggerAuthorize: scopes => ({
+    triggerAuthorize: (scopes = []) => ({
       params: scopes,
       payload: async (
         dispatch,
@@ -101,7 +101,7 @@ export const GrabIDActionCreators = {
       },
       type: GrabIDActions.TRIGGER_MAKE_AUTHORIZATION_REQUEST
     }),
-    triggerRequestToken: scopes => ({
+    triggerRequestToken: (scopes = []) => ({
       params: scopes,
       payload: async (
         dispatch,
@@ -134,7 +134,7 @@ export const GrabIDActionCreators = {
   },
   payment: {
     /** GrabPay requires an additional request parameter. */
-    triggerAuthorize: scopes => ({
+    triggerAuthorize: (scopes = []) => ({
       params: scopes,
       payload: async (
         dispatch,

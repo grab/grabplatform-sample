@@ -2,6 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
+import { Stage } from "component/custom-hoc";
 import { parse } from "querystring";
 import React from "react";
 import Markdown from "react-markdown";
@@ -14,10 +15,25 @@ import "./style.scss";
 
 // ############################### GRABID LOGIN ###############################
 
-function PrivateGrabIDGlobalLogin({ clearCredentials }) {
+function PrivateGrabIDGlobalLogin({
+  currentStage,
+  clearCredentials,
+  makeAuthorizationRequest,
+  makeTokenRequest
+}) {
   return (
     <div className="grabid-login-container">
-      <div className="login">Log in as a user</div>
+      {currentStage === Stage.ONE && (
+        <div className="login" onClick={makeAuthorizationRequest}>
+          Log in as a user
+        </div>
+      )}
+
+      {currentStage === Stage.TWO && (
+        <div className="request-token" onClick={makeTokenRequest}>
+          Request user token
+        </div>
+      )}
 
       <div className="clear-credentials" onClick={clearCredentials}>
         Clear state
@@ -28,12 +44,28 @@ function PrivateGrabIDGlobalLogin({ clearCredentials }) {
 
 export const GrabIDGlobalLogin = compose(
   connect(
-    () => ({}),
+    ({ grabid: { accessToken, code, state } }) => ({
+      accessToken,
+      code,
+      state
+    }),
     dispatch => ({
       clearCredentials: () =>
-        dispatch(CommonActionCreators.triggerClearCredentials())
+        dispatch(CommonActionCreators.triggerClearCredentials()),
+      makeAuthorizationRequest: () =>
+        dispatch(GrabIDActionCreators.nonPOP.triggerAuthorize()),
+      makeTokenRequest: () =>
+        dispatch(GrabIDActionCreators.nonPOP.triggerRequestToken())
     })
-  )
+  ),
+  mapProps(({ currentStage, code, state, ...rest }) => ({
+    ...rest,
+    currentStage: Stage.ONE + (!!code && !!state)
+  })),
+  mapProps(({ currentStage, accessToken, ...rest }) => ({
+    ...rest,
+    currentStage: currentStage + !!accessToken
+  }))
 )(PrivateGrabIDGlobalLogin);
 
 // ############################## GRABID TRIGGER ##############################
