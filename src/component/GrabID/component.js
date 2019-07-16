@@ -9,7 +9,6 @@ import Markdown from "react-markdown";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { compose, lifecycle, mapProps } from "recompose";
-import { CommonActionCreators } from "redux/action/common";
 import { GrabIDActionCreators } from "redux/action/grabid";
 import "./style.scss";
 
@@ -21,7 +20,7 @@ function PrivateGrabIDGlobalLogin({
   makeTokenRequest
 }) {
   return (
-    <div className="grabid-login-container">
+    <div className="grabid-global-login-container">
       {currentStage === Stage.ONE && (
         <div className="login" onClick={makeAuthorizationRequest}>
           Log in as a user
@@ -33,6 +32,8 @@ function PrivateGrabIDGlobalLogin({
           Request user token
         </div>
       )}
+
+      {currentStage === Stage.THREE && <Redirect to="/" />}
     </div>
   );
 }

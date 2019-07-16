@@ -4,30 +4,17 @@
  */
 @import "src/global";
 
-.grabid-login-container {
+.grabid-global-login-container {
+  align-items: center;
   display: flex;
   padding: 8px;
+  justify-content: center;
   flex-direction: column;
 
-  @include md {
-    flex-direction: row;
-  }
-
   & > * {
-    &.clear-credentials,
     &.login,
     &.request-token {
       @include confirm-button;
-    }
-
-    &:not(:first-child) {
-      margin: 8px 0 0 0;
-    }
-
-    @include md {
-      &:not(:first-child) {
-        margin: 0 0 0 8px;
-      }
     }
   }
 }
