@@ -3,7 +3,7 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 import { grabIDHandlerHOC, Stage } from "component/custom-hoc";
-import { GrabID } from "component/GrabID/component";
+import { GrabIDLogin } from "component/GrabID/component";
 import React from "react";
 import { connect } from "react-redux";
 import { compose, mapProps } from "recompose";
@@ -14,7 +14,7 @@ function PrivateBasicProfile({ currentStage, profile, getBasicProfile }) {
   return (
     <div className="basic-profile-container">
       {currentStage >= Stage.ONE && (
-        <GrabID currentStage={1} scopes={["profile.read"]} />
+        <GrabIDLogin currentStage={1} scopes={["profile.read"]} />
       )}
 
       {currentStage >= Stage.TWO && (

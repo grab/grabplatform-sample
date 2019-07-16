@@ -14,7 +14,7 @@ import "./style.scss";
 
 // ############################### GRABID LOGIN ###############################
 
-function PrivateGrabIDLogin({ clearCredentials }) {
+function PrivateGrabIDGlobalLogin({ clearCredentials }) {
   return (
     <div className="grabid-login-container">
       <div className="login">Log in as a user</div>
@@ -26,7 +26,7 @@ function PrivateGrabIDLogin({ clearCredentials }) {
   );
 }
 
-export const GrabIDLogin = compose(
+export const GrabIDGlobalLogin = compose(
   connect(
     () => ({}),
     dispatch => ({
@@ -34,7 +34,7 @@ export const GrabIDLogin = compose(
         dispatch(CommonActionCreators.triggerClearCredentials())
     })
   )
-)(PrivateGrabIDLogin);
+)(PrivateGrabIDGlobalLogin);
 
 // ############################## GRABID TRIGGER ##############################
 
@@ -59,7 +59,7 @@ grabIDClient.makeAuthorizationRequest(null, id_token)
 ${"```"}
 `;
 
-function PrivateGrabID({
+function PrivateGrabIDLogin({
   accessToken,
   clientID,
   clientSecret,
@@ -150,7 +150,7 @@ function PrivateGrabID({
   );
 }
 
-export const GrabID = compose(
+export const GrabIDLogin = compose(
   connect(
     ({
       grabid: { accessToken, clientID, clientSecret, code, idToken, state }
@@ -185,7 +185,7 @@ export const GrabID = compose(
           : dispatch(GrabIDActionCreators.nonPOP.triggerRequestToken(scopes))
     })
   )
-)(PrivateGrabID);
+)(PrivateGrabIDLogin);
 
 // ############################# GRABID REDIRECT #############################
 

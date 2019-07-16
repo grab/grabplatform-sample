@@ -7,7 +7,7 @@ import {
   grabPayHandlerHOC,
   Stage
 } from "component/custom-hoc";
-import { GrabID } from "component/GrabID/component";
+import { GrabIDLogin } from "component/GrabID/component";
 import { GrabPay } from "component/GrabPay/component";
 import {
   grabidDescription,
@@ -237,7 +237,7 @@ function RecurringCharge({
       )}
 
       {currentStage >= Stage.THREE && (
-        <GrabID
+        <GrabIDLogin
           currentStage={3}
           makeAuthorizationRequest={makeAuthorizationRequest}
           makeTokenRequest={makeTokenRequest}

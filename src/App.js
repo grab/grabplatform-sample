@@ -2,7 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import { GrabIDLogin, GrabIDRedirect } from "component/GrabID/component";
+import { GrabIDGlobalLogin, GrabIDRedirect } from "component/GrabID/component";
 import { GrabPayRedirect } from "component/GrabPay/component";
 import Identity from "component/Identity/component";
 import Loyalty from "component/Loyalty/component";
@@ -26,7 +26,7 @@ function App() {
         render={() => (
           <div className="App">
             <div className="app-bar">
-              <GrabIDLogin />
+              <GrabIDGlobalLogin />
               <div className="divider" />
 
               <div className="category-container">
