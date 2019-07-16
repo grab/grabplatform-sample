@@ -17,7 +17,6 @@ import "./style.scss";
 
 function PrivateGrabIDGlobalLogin({
   currentStage,
-  clearCredentials,
   makeAuthorizationRequest,
   makeTokenRequest
 }) {
@@ -34,10 +33,6 @@ function PrivateGrabIDGlobalLogin({
           Request user token
         </div>
       )}
-
-      <div className="clear-credentials" onClick={clearCredentials}>
-        Clear state
-      </div>
     </div>
   );
 }
@@ -50,8 +45,6 @@ export const GrabIDGlobalLogin = compose(
       state
     }),
     dispatch => ({
-      clearCredentials: () =>
-        dispatch(CommonActionCreators.triggerClearCredentials()),
       makeAuthorizationRequest: () =>
         dispatch(GrabIDActionCreators.nonPOP.triggerAuthorize()),
       makeTokenRequest: () =>

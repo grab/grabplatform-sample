@@ -9,7 +9,10 @@ import Loyalty from "component/Loyalty/component";
 import Payment from "component/Payment/component";
 import React from "react";
 import { NavLink, Route, Switch } from "react-router-dom";
+import { CommonActionCreators } from "redux/action/common";
 import "./App.scss";
+import { compose } from "recompose";
+import { connect } from "react-redux";
 
 const categories = [
   ["Identity", Identity],
@@ -17,7 +20,7 @@ const categories = [
   ["Loyalty", Loyalty]
 ];
 
-function App() {
+function PrivateApp({ clearCredentials }) {
   return (
     <Switch>
       <Route component={GrabIDRedirect} exact path={"/grabid/redirect"} />
@@ -25,10 +28,14 @@ function App() {
       <Route
         render={() => (
           <div className="App">
-            <div className="app-bar">
-              <GrabIDGlobalLogin />
-              <div className="divider" />
+            <div className="global-action-container">
+              <div className="clear-credentials" onClick={clearCredentials}>
+                Clear state
+              </div>
+            </div>
 
+            <div className="divider" />
+            <div className="app-bar">
               <div className="category-container">
                 {categories.map(([category]) => (
                   <NavLink
@@ -60,4 +67,12 @@ function App() {
   );
 }
 
-export default App;
+export default compose(
+  connect(
+    ({}) => ({}),
+    dispatch => ({
+      clearCredentials: () =>
+        dispatch(CommonActionCreators.triggerClearCredentials())
+    })
+  )
+)(PrivateApp);

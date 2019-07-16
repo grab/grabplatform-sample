@@ -11,28 +11,56 @@
   overflow: auto;
   width: 100%;
 
-  & > .app-bar {
-    display: flex;
-    flex-direction: column;
+  & > * {
+    &.global-action-container {
+      display: flex;
+      padding: 8px;
+      flex-direction: column;
 
-    & > * {
-      &.category-container {
-        @include tab-bar;
+      @include md {
+        flex-direction: row;
       }
 
-      &.divider {
-        height: 1px;
+      & > * {
+        &.clear-credentials {
+          @include confirm-button;
+        }
+
+        &:not(:first-child) {
+          margin: 8px 0 0 0;
+        }
+
+        @include md {
+          &:not(:first-child) {
+            margin: 0 0 0 8px;
+          }
+        }
       }
     }
-  }
 
-  & > .app-content {
-    display: flex;
-    flex: 1 0 0;
-    flex-direction: column;
+    &.app-bar {
+      display: flex;
+      flex-direction: column;
 
-    & > * {
+      & > * {
+        &.category-container {
+          @include tab-bar;
+        }
+      }
+    }
+
+    &.app-content {
+      display: flex;
       flex: 1 0 0;
+      flex-direction: column;
+
+      & > * {
+        flex: 1 0 0;
+      }
+    }
+
+    &.divider {
+      height: 1px;
     }
   }
 }
