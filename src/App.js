@@ -7,10 +7,11 @@ import { GrabPayRedirect } from "component/GrabPay/component";
 import Identity from "component/Identity/component";
 import Loyalty from "component/Loyalty/component";
 import Payment from "component/Payment/component";
+import querystring from "querystring";
 import React from "react";
 import { connect } from "react-redux";
 import { NavLink, Redirect, Route, Switch } from "react-router-dom";
-import { compose } from "recompose";
+import { compose, mapProps } from "recompose";
 import { CommonActionCreators } from "redux/action/common";
 import "./App.scss";
 
@@ -22,61 +23,57 @@ const categories = [
 
 const globalLoginEnabled = false;
 
-function PrivateApp({ accessToken, clearEverything }) {
+function PrivateAppContent({ accessToken, idToken, clearEverything }) {
   return (
-    <Switch>
-      <Route component={GrabIDGlobalLogin} exact path={"/login"} />
-      <Route component={GrabIDRedirect} exact path={"/grabid/redirect"} />
-      <Route component={GrabPayRedirect} exact path={"/grabpay/redirect"} />
-      <Route
-        render={() => (
-          <div className="App">
-            {!globalLoginEnabled || !!accessToken ? (
-              <>
-                <div className="global-action-container">
-                  <div className="clear-everything" onClick={clearEverything}>
-                    Clear everything
-                  </div>
-                </div>
-
-                <div className="divider" />
-                <div className="app-bar">
-                  <div className="category-container">
-                    {categories.map(([category]) => (
-                      <NavLink
-                        activeClassName="active-tab"
-                        className="tab"
-                        key={category}
-                        to={`/${category.toLowerCase()}`}
-                      >
-                        {category}
-                      </NavLink>
-                    ))}
-                  </div>
-                </div>
-                <div className="app-content">
-                  <Switch>
-                    {categories.map(([category, component]) => (
-                      <Route
-                        component={component}
-                        key={category}
-                        path={`/${category.toLowerCase()}`}
-                      />
-                    ))}
-                  </Switch>
-                </div>
-              </>
-            ) : (
-              <Redirect to={"/login"} />
-            )}
+    <div className="App">
+      {!globalLoginEnabled || !!accessToken ? (
+        <>
+          <div className="global-action-container">
+            <div className="clear-everything" onClick={clearEverything}>
+              Clear everything
+            </div>
           </div>
-        )}
-      />
-    </Switch>
+
+          <div className="divider" />
+          <div className="app-bar">
+            <div className="category-container">
+              {categories.map(([category]) => (
+                <NavLink
+                  activeClassName="active-tab"
+                  className="tab"
+                  key={category}
+                  to={`/${category.toLowerCase()}`}
+                >
+                  {category}
+                </NavLink>
+              ))}
+            </div>
+          </div>
+          <div className="app-content">
+            <Switch>
+              {categories.map(([category, component]) => (
+                <Route
+                  component={component}
+                  key={category}
+                  path={`/${category.toLowerCase()}`}
+                />
+              ))}
+            </Switch>
+          </div>
+        </>
+      ) : (
+        <Redirect to={"/login"} />
+      )}
+    </div>
   );
 }
 
-export default compose(
+const AppContent = compose(
+  mapProps(({ location: { hash }, ...rest }) => ({
+    ...rest,
+    ...querystring.parse(hash.substr(1))
+  })),
+  mapProps(({ id_token: idToken, ...rest }) => ({ ...rest, idToken })),
   connect(
     ({ grabid: { accessToken } }) => ({ accessToken }),
     dispatch => ({
@@ -84,4 +81,17 @@ export default compose(
         dispatch(CommonActionCreators.triggerClearEverything())
     })
   )
-)(PrivateApp);
+)(PrivateAppContent);
+
+function PrivateApp() {
+  return (
+    <Switch>
+      <Route component={GrabIDGlobalLogin} exact path={"/login"} />
+      <Route component={GrabIDRedirect} exact path={"/grabid/redirect"} />
+      <Route component={GrabPayRedirect} exact path={"/grabpay/redirect"} />
+      <Route component={AppContent} />
+    </Switch>
+  );
+}
+
+export default PrivateApp;
