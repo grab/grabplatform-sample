@@ -17,12 +17,8 @@ export const LoyaltyActionCreators = {
   }),
   triggerGetRewardsTier: () => ({
     payload: async (dispatch, getState, { loyalty: { getRewardsTier } }) => {
-      const {
-        grabid: { accessToken }
-      } = getState();
-
       try {
-        const tier = await getRewardsTier(accessToken);
+        const tier = await getRewardsTier();
         dispatch(LoyaltyActionCreators.setRewardsTier(tier));
       } catch (e) {
         dispatch(CommonActionCreators.setError(e));

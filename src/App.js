@@ -20,6 +20,8 @@ const categories = [
   ["Loyalty", Loyalty]
 ];
 
+const globalLoginEnabled = false;
+
 function PrivateApp({ accessToken, clearEverything }) {
   return (
     <Switch>
@@ -29,7 +31,7 @@ function PrivateApp({ accessToken, clearEverything }) {
       <Route
         render={() => (
           <div className="App">
-            {!!accessToken ? (
+            {!globalLoginEnabled || !!accessToken ? (
               <>
                 <div className="global-action-container">
                   <div className="clear-everything" onClick={clearEverything}>

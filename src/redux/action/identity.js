@@ -17,12 +17,8 @@ export const IdentityActionCreators = {
   }),
   triggerGetBasicProfile: () => ({
     payload: async (dispatch, getState, { identity: { getBasicProfile } }) => {
-      const {
-        grabid: { accessToken }
-      } = getState();
-
       try {
-        const profile = await getBasicProfile(accessToken);
+        const profile = await getBasicProfile();
         dispatch(IdentityActionCreators.setBasicProfile(profile));
       } catch (e) {
         dispatch(CommonActionCreators.setError(e));

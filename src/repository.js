@@ -48,11 +48,14 @@ async function makeRequest(
   window,
   { additionalHeaders = {}, body, method, relativePath = "" }
 ) {
+  const { accessToken } = GrabID.getResult();
+
   const config = {
     body: JSON.stringify(body),
     method,
     headers: {
       "Content-Type": "application/json",
+      ...(!!accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       ...additionalHeaders
     },
     mode: "cors"
@@ -245,18 +248,10 @@ export function createGrabPayRepository(window) {
 export function createGrabAPIRepository(window) {
   return {
     identity: {
-      getBasicProfile: async accessToken =>
-        makeRequest(window, {
-          additionalHeaders: { Authorization: `Bearer ${accessToken}` },
-          method: "GET"
-        })
+      getBasicProfile: () => makeRequest(window, { method: "GET" })
     },
     loyalty: {
-      getRewardsTier: async accessToken =>
-        makeRequest(window, {
-          additionalHeaders: { Authorization: `Bearer ${accessToken}` },
-          method: "GET"
-        })
+      getRewardsTier: () => makeRequest(window, { method: "GET" })
     }
   };
 }
