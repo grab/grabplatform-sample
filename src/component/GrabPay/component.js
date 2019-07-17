@@ -6,7 +6,7 @@ import { parse } from "querystring";
 import React from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
-import { compose, lifecycle, mapProps } from "recompose";
+import { compose, lifecycle, mapProps, withState } from "recompose";
 import { GrabIDActionCreators } from "redux/action/grabid";
 import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
@@ -85,11 +85,11 @@ export const GrabPay = compose(
   )
 )(PrivateGrabPay);
 
-function PrivateGrabPayRedirect({ returnPath }) {
+function PrivateGrabPayRedirect({ returnURI }) {
   return (
     <div className="grabpay-redirect-container">
       You are being redirected...
-      {!!returnPath && <Redirect to={returnPath} />}
+      {!!returnURI && <Redirect to={returnURI} />}
     </div>
   );
 }
@@ -97,7 +97,11 @@ function PrivateGrabPayRedirect({ returnPath }) {
 export const GrabPayRedirect = compose(
   mapProps(({ location: { search } }) => parse(search.slice(1))),
   connect(
-    ({ grabid: { returnPath } }) => ({ returnPath }),
+    ({
+      repository: {
+        grabid: { getLoginReturnURI }
+      }
+    }) => ({ getLoginReturnURI }),
     (dispatch, { code, state }) => ({
       handleGrabPayRedirect: () =>
         dispatch(GrabIDActionCreators.triggerHandleGrabIDRedirect()),
@@ -105,11 +109,22 @@ export const GrabPayRedirect = compose(
       setState: () => dispatch(GrabIDActionCreators.setState(state))
     })
   ),
+  withState("returnURI", "setReturnURI", ""),
   lifecycle({
-    componentDidMount() {
-      this.props.setCode();
-      this.props.setState();
-      this.props.handleGrabPayRedirect();
+    async componentDidMount() {
+      const {
+        getLoginReturnURI,
+        handleGrabPayRedirect,
+        setCode,
+        setReturnURI,
+        setState
+      } = this.props;
+
+      setCode();
+      setState();
+      handleGrabPayRedirect();
+      const returnURI = await getLoginReturnURI();
+      setReturnURI(returnURI);
     }
   })
 )(PrivateGrabPayRedirect);

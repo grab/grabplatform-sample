@@ -33,7 +33,6 @@ let storedState = !!cachedData
         codeVerifier: "",
         countryCode: "",
         idToken: "",
-        returnPath: "",
         state: ""
       },
       grabpay: {
@@ -93,17 +92,19 @@ if (!!Object.keys(storedState).length) {
   };
 }
 
+const repository = {
+  ...createGrabIDRepository(window),
+  ...createGrabPayRepository(window),
+  ...createGrabAPIRepository(window)
+};
+
 const store = createStore(
   reducer,
-  storedState,
+  { repository, ...storedState },
   applyMiddleware(
     alertMiddleware,
     thunkUnwrapMiddleware,
-    thunkMiddleware.withExtraArgument({
-      ...createGrabIDRepository(window),
-      ...createGrabPayRepository(window),
-      ...createGrabAPIRepository(window)
-    })
+    thunkMiddleware.withExtraArgument(repository)
   )
 );
 

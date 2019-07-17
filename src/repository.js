@@ -69,10 +69,9 @@ async function makeRequest(
 export function createGrabIDRepository(window) {
   return {
     grabid: {
+      getLoginReturnURI: () => getRelativeURLPath(GrabID.getLoginReturnURI()),
       handleAuthorizationCodeFlowResponse: async () => {
-        let returnURI = GrabID.getLoginReturnURI();
         GrabID.handleAuthorizationCodeFlowResponse();
-        return getRelativeURLPath(returnURI);
       },
       nonPOP: (() => {
         const extraConfig = {

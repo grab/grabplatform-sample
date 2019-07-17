@@ -8,7 +8,7 @@ import React from "react";
 import Markdown from "react-markdown";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
-import { compose, lifecycle, mapProps } from "recompose";
+import { compose, lifecycle, mapProps, withState } from "recompose";
 import { GrabIDActionCreators } from "redux/action/grabid";
 import "./style.scss";
 
@@ -215,11 +215,11 @@ export const GrabIDLogin = compose(
 
 // ############################# GRABID REDIRECT #############################
 
-function PrivateGrabIDRedirect({ returnPath }) {
+function PrivateGrabIDRedirect({ returnURI }) {
   return (
     <div className="grabid-redirect-container">
       You are being redirected...
-      {!!returnPath && <Redirect to={returnPath} />}
+      {!!returnURI && <Redirect to={returnURI} />}
     </div>
   );
 }
@@ -227,7 +227,11 @@ function PrivateGrabIDRedirect({ returnPath }) {
 export const GrabIDRedirect = compose(
   mapProps(({ location: { search } }) => parse(search.slice(1))),
   connect(
-    ({ grabid: { returnPath } }) => ({ returnPath }),
+    ({
+      repository: {
+        grabid: { getLoginReturnURI }
+      }
+    }) => ({ getLoginReturnURI }),
     (dispatch, { code, state }) => ({
       handleGrabIDRedirect: () =>
         dispatch(GrabIDActionCreators.triggerHandleGrabIDRedirect()),
@@ -235,11 +239,22 @@ export const GrabIDRedirect = compose(
       setState: () => dispatch(GrabIDActionCreators.setState(state))
     })
   ),
+  withState("returnURI", "setReturnURI", ""),
   lifecycle({
-    componentDidMount() {
-      this.props.setCode();
-      this.props.setState();
-      this.props.handleGrabIDRedirect();
+    async componentDidMount() {
+      const {
+        getLoginReturnURI,
+        handleGrabIDRedirect,
+        setCode,
+        setReturnURI,
+        setState
+      } = this.props;
+
+      setCode();
+      setState();
+      handleGrabIDRedirect();
+      const returnURI = await getLoginReturnURI();
+      setReturnURI(returnURI);
     }
   })
 )(PrivateGrabIDRedirect);

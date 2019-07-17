@@ -17,8 +17,7 @@ function grabid(state = {}, { type, payload }) {
         code: "",
         codeVerifier: "",
         idToken: "",
-        state: "",
-        returnPath: ""
+        state: ""
       };
 
     case GrabIDActions.SET_ACCESS_TOKEN:
@@ -41,9 +40,6 @@ function grabid(state = {}, { type, payload }) {
 
     case GrabIDActions.SET_ID_TOKEN:
       return { ...state, idToken: payload };
-
-    case GrabIDActions.SET_RETURN_PATH:
-      return { ...state, returnPath: payload };
 
     case GrabIDActions.SET_STATE:
       return { ...state, state: payload };
@@ -137,4 +133,10 @@ function loyalty(state = {}, { type, payload }) {
   }
 }
 
-export default combineReducers({ identity, grabid, grabpay, loyalty });
+export default combineReducers({
+  identity,
+  grabid,
+  grabpay,
+  loyalty,
+  repository: (state = {}) => state
+});

@@ -13,7 +13,6 @@ export const GrabIDActions = {
   SET_CODE_VERIFIER: "GRABID.SET_CODE_VERIFIER",
   SET_COUNTRY_CODE: "GRABID.SET_COUNTRY_CODE",
   SET_ID_TOKEN: "GRABID.SET_ID_TOKEN",
-  SET_RETURN_PATH: "GRABID.SET_RETURN_PATH",
   SET_STATE: "GRABID.SET_STATE",
 
   TRIGGER_HANDLE_REDIRECT: "GRABID.TRIGGER_HANDLE_REDIRECT",
@@ -52,10 +51,6 @@ export const GrabIDActionCreators = {
     payload: idToken,
     type: GrabIDActions.SET_ID_TOKEN
   }),
-  setReturnPath: (returnPath = "") => ({
-    payload: returnPath,
-    type: GrabIDActions.SET_RETURN_PATH
-  }),
   setState: (state = "") => ({
     payload: state,
     type: GrabIDActions.SET_STATE
@@ -67,8 +62,7 @@ export const GrabIDActionCreators = {
       { grabid: { handleAuthorizationCodeFlowResponse } }
     ) => {
       try {
-        const returnPath = await handleAuthorizationCodeFlowResponse();
-        dispatch(GrabIDActionCreators.setReturnPath(returnPath));
+        await handleAuthorizationCodeFlowResponse();
       } catch (e) {
         dispatch(CommonActionCreators.setError(e));
       }
