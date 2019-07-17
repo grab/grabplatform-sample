@@ -12,57 +12,7 @@ import { compose, lifecycle, mapProps, withState } from "recompose";
 import { GrabIDActionCreators } from "redux/action/grabid";
 import "./style.scss";
 
-// ############################### GRABID LOGIN ###############################
-
-function PrivateGrabIDGlobalLogin({
-  currentStage,
-  makeAuthorizationRequest,
-  makeTokenRequest
-}) {
-  return (
-    <div className="grabid-global-login-container">
-      {currentStage === Stage.ONE && (
-        <div className="login" onClick={makeAuthorizationRequest}>
-          Log in as a user
-        </div>
-      )}
-
-      {currentStage === Stage.TWO && (
-        <div className="request-token" onClick={makeTokenRequest}>
-          Request user token
-        </div>
-      )}
-
-      {currentStage === Stage.THREE && <Redirect to="/" />}
-    </div>
-  );
-}
-
-export const GrabIDGlobalLogin = compose(
-  connect(
-    ({ grabid: { accessToken, code, state } }) => ({
-      accessToken,
-      code,
-      state
-    }),
-    dispatch => ({
-      makeAuthorizationRequest: () =>
-        dispatch(GrabIDActionCreators.nonPOP.triggerAuthorize()),
-      makeTokenRequest: () =>
-        dispatch(GrabIDActionCreators.nonPOP.triggerRequestToken())
-    })
-  ),
-  mapProps(({ currentStage, code, state, ...rest }) => ({
-    ...rest,
-    currentStage: Stage.ONE + (!!code && !!state)
-  })),
-  mapProps(({ currentStage, accessToken, ...rest }) => ({
-    ...rest,
-    currentStage: currentStage + !!accessToken
-  }))
-)(PrivateGrabIDGlobalLogin);
-
-// ############################## GRABID TRIGGER ##############################
+// ############################## GRABID AUTH ##############################
 
 const grabidDescription = `
 GrabID flow is as follows:
