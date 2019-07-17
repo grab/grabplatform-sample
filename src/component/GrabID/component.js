@@ -40,7 +40,7 @@ function PrivateGrabIDLogin({
   clientID,
   clientSecret,
   currentStage,
-  code,
+  currentProductStageFlow,
   idToken,
   popRequired,
   scopes,
@@ -53,75 +53,77 @@ function PrivateGrabIDLogin({
 }) {
   return (
     <div className="grabid-container">
-      <div className="intro-title">{`Stage ${currentStage}: GrabID`}</div>
+      <div className="intro-title">{`Stage ${currentProductStageFlow}: GrabID`}</div>
 
       <div className="stage-description">
         <Markdown className="source-code" source={grabidDescription} />
         {!!stageDescription && stageDescription}
       </div>
 
-      <div className="divider" />
-      <div className="title">Client ID</div>
-
-      <input
-        onChange={({ target: { value } }) => setClientID(value)}
-        placeholder="Enter your client ID"
-        spellCheck={false}
-        value={clientID}
-      />
-
-      {!!popRequired && (
-        <>
-          <div className="title">Client secret</div>
-
-          <input
-            onChange={({ target: { value } }) => setClientSecret(value)}
-            placeholder="Enter your client secret"
-            spellCheck={false}
-            value={clientSecret}
-          />
-        </>
-      )}
-
-      <div className="title">Requested scopes</div>
-
-      <div className="scope-container">
-        {["openid"]
-          .concat(scopes)
-          .filter(scope => !!scope)
-          .map(scope => (
-            <div className="scope" key={scope}>
-              <div className="internal">{scope}</div>
-            </div>
-          ))}
-      </div>
-
-      <div className="authorize" onClick={makeAuthorizationRequest}>
-        Authorize
-      </div>
-
-      {!!code && !!state && (
+      {currentStage >= Stage.ONE && (
         <>
           <div className="divider" />
-          <div className="title">Code</div>
-          <input disabled spellCheck={false} readOnly value={code} />
-          <div className="title">State</div>
-          <input disabled spellCheck={false} readOnly value={state} />
+          <div className="title">Client ID</div>
 
-          {!!accessToken && !!idToken && (
+          <input
+            onChange={({ target: { value } }) => setClientID(value)}
+            placeholder="Enter your client ID"
+            spellCheck={false}
+            value={clientID}
+          />
+
+          {!!popRequired && (
             <>
-              <div className="title">Access token</div>
-              <input disabled spellCheck={false} readOnly value={accessToken} />
-              <div className="title">ID token</div>
-              <input disabled spellCheck={false} readOnly value={idToken} />
+              <div className="title">Client secret</div>
+
+              <input
+                onChange={({ target: { value } }) => setClientSecret(value)}
+                placeholder="Enter your client secret"
+                spellCheck={false}
+                value={clientSecret}
+              />
             </>
           )}
 
-          <div className="request-token" onClick={makeTokenRequest}>
-            Request token
+          <div className="title">Requested scopes</div>
+
+          <div className="scope-container">
+            {["openid"]
+              .concat(scopes)
+              .filter(scope => !!scope)
+              .map(scope => (
+                <div className="scope" key={scope}>
+                  <div className="internal">{scope}</div>
+                </div>
+              ))}
+          </div>
+
+          <div className="authorize" onClick={makeAuthorizationRequest}>
+            Authorize
           </div>
         </>
       )}
+
+      {currentStage >= Stage.TWO && (
+        <>
+          <div className="divider" />
+          <div className="title">State</div>
+          <input disabled spellCheck={false} readOnly value={state} />
+        </>
+      )}
+
+      {currentStage >= Stage.THREE && (
+        <>
+          <div className="title">Access token</div>
+          <input disabled spellCheck={false} readOnly value={accessToken} />
+          <div className="title">ID token</div>
+          <input disabled spellCheck={false} readOnly value={idToken} />
+        </>
+      )}
+
+      <div className="request-token" onClick={makeTokenRequest}>
+        Request token
+      </div>
     </div>
   );
 }
@@ -129,14 +131,16 @@ function PrivateGrabIDLogin({
 export const GrabIDLogin = compose(
   connect(
     ({
-      grabid: { accessToken, clientID, clientSecret, code, idToken, state }
+      grabid: { accessToken, clientID, clientSecret, idToken },
+      repository: {
+        grabid: { getGrabIDResult }
+      }
     }) => ({
       accessToken,
       clientID,
       clientSecret,
-      code,
       idToken,
-      state
+      getGrabIDResult
     }),
     (dispatch, { scopes, makeAuthorizationRequest, makeTokenRequest }) => ({
       setClientID: clientID =>
@@ -160,7 +164,26 @@ export const GrabIDLogin = compose(
           ? makeTokenRequest(scopes)
           : dispatch(GrabIDActionCreators.nonPOP.triggerRequestToken(scopes))
     })
-  )
+  ),
+  withState("state", "setState", ""),
+  mapProps(({ state, ...rest }) => ({
+    currentStage: Stage.ONE + !!state,
+    state,
+    ...rest
+  })),
+  mapProps(({ accessToken, currentStage, idToken, ...rest }) => ({
+    accessToken,
+    currentStage: currentStage + (!!accessToken && !!idToken),
+    idToken,
+    ...rest
+  })),
+  lifecycle({
+    async componentDidMount() {
+      const { getGrabIDResult, setState } = this.props;
+      const { state } = await getGrabIDResult();
+      setState(state);
+    }
+  })
 )(PrivateGrabIDLogin);
 
 // ############################# GRABID REDIRECT #############################
@@ -182,11 +205,9 @@ export const GrabIDRedirect = compose(
         grabid: { getLoginReturnURI }
       }
     }) => ({ getLoginReturnURI }),
-    (dispatch, { code, state }) => ({
+    dispatch => ({
       handleGrabIDRedirect: () =>
-        dispatch(GrabIDActionCreators.triggerHandleGrabIDRedirect()),
-      setCode: () => dispatch(GrabIDActionCreators.setCode(code)),
-      setState: () => dispatch(GrabIDActionCreators.setState(state))
+        dispatch(GrabIDActionCreators.triggerHandleGrabIDRedirect())
     })
   ),
   withState("returnURI", "setReturnURI", ""),
@@ -195,13 +216,9 @@ export const GrabIDRedirect = compose(
       const {
         getLoginReturnURI,
         handleGrabIDRedirect,
-        setCode,
-        setReturnURI,
-        setState
+        setReturnURI
       } = this.props;
 
-      setCode();
-      setState();
       handleGrabIDRedirect();
       const returnURI = await getLoginReturnURI();
       setReturnURI(returnURI);

@@ -104,9 +104,7 @@ export const GrabPayRedirect = compose(
     }) => ({ getLoginReturnURI }),
     (dispatch, { code, state }) => ({
       handleGrabPayRedirect: () =>
-        dispatch(GrabIDActionCreators.triggerHandleGrabIDRedirect()),
-      setCode: () => dispatch(GrabIDActionCreators.setCode(code)),
-      setState: () => dispatch(GrabIDActionCreators.setState(state))
+        dispatch(GrabIDActionCreators.triggerHandleGrabIDRedirect())
     })
   ),
   withState("returnURI", "setReturnURI", ""),
@@ -115,13 +113,9 @@ export const GrabPayRedirect = compose(
       const {
         getLoginReturnURI,
         handleGrabPayRedirect,
-        setCode,
-        setReturnURI,
-        setState
+        setReturnURI
       } = this.props;
 
-      setCode();
-      setState();
       handleGrabPayRedirect();
       const returnURI = await getLoginReturnURI();
       setReturnURI(returnURI);

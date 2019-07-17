@@ -29,11 +29,9 @@ let storedState = !!cachedData
         accessToken: "",
         clientID: "",
         clientSecret: "",
-        code: "",
         codeVerifier: "",
         countryCode: "",
-        idToken: "",
-        state: ""
+        idToken: ""
       },
       grabpay: {
         currency: "",

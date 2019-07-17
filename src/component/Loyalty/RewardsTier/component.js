@@ -14,7 +14,10 @@ function PrivateRewardsTier({ currentStage, rewardsTier, getRewardsTier }) {
   return (
     <div className="rewards-tier-container">
       {currentStage >= Stage.ONE && (
-        <GrabIDLogin currentStage={1} scopes={["rewards.tierinfo"]} />
+        <GrabIDLogin
+          currentProductStageFlow={1}
+          scopes={["rewards.tierinfo"]}
+        />
       )}
 
       {currentStage >= Stage.TWO && (

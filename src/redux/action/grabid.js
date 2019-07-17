@@ -9,11 +9,9 @@ export const GrabIDActions = {
   SET_ACCESS_TOKEN: "GRABID.SET_ACCESS_TOKEN",
   SET_CLIENT_ID: "GRABID.SET_CLIENT_ID",
   SET_CLIENT_SECRET: "GRABID.SET_CLIENT_SECRET",
-  SET_CODE: "GRABID.SET_CODE",
   SET_CODE_VERIFIER: "GRABID.SET_CODE_VERIFIER",
   SET_COUNTRY_CODE: "GRABID.SET_COUNTRY_CODE",
   SET_ID_TOKEN: "GRABID.SET_ID_TOKEN",
-  SET_STATE: "GRABID.SET_STATE",
 
   TRIGGER_HANDLE_REDIRECT: "GRABID.TRIGGER_HANDLE_REDIRECT",
   TRIGGER_MAKE_AUTHORIZATION_REQUEST:
@@ -35,10 +33,6 @@ export const GrabIDActionCreators = {
     payload: clientSecret,
     type: GrabIDActions.SET_CLIENT_SECRET
   }),
-  setCode: (code = "") => ({
-    payload: code,
-    type: GrabIDActions.SET_CODE
-  }),
   setCodeVerifier: (codeVerifier = "") => ({
     payload: codeVerifier,
     type: GrabIDActions.SET_CODE_VERIFIER
@@ -50,10 +44,6 @@ export const GrabIDActionCreators = {
   setIDToken: (idToken = "") => ({
     payload: idToken,
     type: GrabIDActions.SET_ID_TOKEN
-  }),
-  setState: (state = "") => ({
-    payload: state,
-    type: GrabIDActions.SET_STATE
   }),
   triggerHandleGrabIDRedirect: () => ({
     payload: async (

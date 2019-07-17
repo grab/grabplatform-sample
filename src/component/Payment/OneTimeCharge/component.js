@@ -175,7 +175,7 @@ function PrivateOneTimeCharge({
 
       {currentStage >= Stage.THREE && (
         <GrabIDLogin
-          currentStage={3}
+          currentProductStageFlow={3}
           makeAuthorizationRequest={makeAuthorizationRequest}
           makeTokenRequest={makeTokenRequest}
           popRequired

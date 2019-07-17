@@ -14,7 +14,7 @@ function PrivateBasicProfile({ currentStage, profile, getBasicProfile }) {
   return (
     <div className="basic-profile-container">
       {currentStage >= Stage.ONE && (
-        <GrabIDLogin currentStage={1} scopes={["profile.read"]} />
+        <GrabIDLogin currentProductStageFlow={1} scopes={["profile.read"]} />
       )}
 
       {currentStage >= Stage.TWO && (

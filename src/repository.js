@@ -74,6 +74,7 @@ export function createGrabIDRepository(window) {
 
   return {
     grabid: {
+      getGrabIDResult: async () => GrabID.getResult(),
       getLoginReturnURI: async () =>
         getRelativeURLPath(GrabID.getLoginReturnURI()),
       storeIDTokenLocally: async idToken =>
