@@ -70,9 +70,14 @@ async function makeRequest(
 }
 
 export function createGrabIDRepository(window) {
+  const LOCAL_ID_TOKEN_KEY = "your_id_token_key";
+
   return {
     grabid: {
-      getLoginReturnURI: () => getRelativeURLPath(GrabID.getLoginReturnURI()),
+      getLoginReturnURI: async () =>
+        getRelativeURLPath(GrabID.getLoginReturnURI()),
+      storeIDTokenLocally: async idToken =>
+        window.localStorage.setItem(LOCAL_ID_TOKEN_KEY, idToken),
       handleAuthorizationCodeFlowResponse: async () => {
         GrabID.handleAuthorizationCodeFlowResponse();
       },
@@ -91,7 +96,13 @@ export function createGrabIDRepository(window) {
               ...extraConfig
             });
 
-            const result = await client.makeAuthorizationRequest();
+            const idTokenHint = window.localStorage.getItem(LOCAL_ID_TOKEN_KEY);
+
+            const result = await client.makeAuthorizationRequest(
+              undefined,
+              idTokenHint
+            );
+
             const { codeVerifier } = GrabID.getResult();
             return { ...result, codeVerifier };
           },

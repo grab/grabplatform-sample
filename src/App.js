@@ -11,7 +11,7 @@ import querystring from "querystring";
 import React from "react";
 import { connect } from "react-redux";
 import { NavLink, Redirect, Route, Switch } from "react-router-dom";
-import { compose, mapProps } from "recompose";
+import { compose, lifecycle, mapProps } from "recompose";
 import { CommonActionCreators } from "redux/action/common";
 import "./App.scss";
 
@@ -23,7 +23,7 @@ const categories = [
 
 const globalLoginEnabled = false;
 
-function PrivateAppContent({ accessToken, idToken, clearEverything }) {
+function PrivateAppContent({ accessToken, clearEverything }) {
   return (
     <div className="App">
       {!globalLoginEnabled || !!accessToken ? (
@@ -75,12 +75,23 @@ const AppContent = compose(
   })),
   mapProps(({ id_token: idToken, ...rest }) => ({ ...rest, idToken })),
   connect(
-    ({ grabid: { accessToken } }) => ({ accessToken }),
+    ({
+      repository: {
+        grabid: { storeIDTokenLocally }
+      },
+      grabid: { accessToken }
+    }) => ({ accessToken, storeIDTokenLocally }),
     dispatch => ({
       clearEverything: () =>
         dispatch(CommonActionCreators.triggerClearEverything())
     })
-  )
+  ),
+  lifecycle({
+    async componentDidMount() {
+      const { idToken, storeIDTokenLocally } = this.props;
+      await storeIDTokenLocally(idToken);
+    }
+  })
 )(PrivateAppContent);
 
 function PrivateApp() {
