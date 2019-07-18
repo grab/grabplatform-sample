@@ -11,19 +11,13 @@ import { LoyaltyActions } from "./action/loyalty";
 function grabid(state = {}, { type, payload }) {
   switch (type) {
     case GrabIDActions.CLEAR_CREDENTIALS:
-      return { ...state, codeVerifier: "" };
+      return { ...state };
 
     case GrabIDActions.SET_CLIENT_ID:
       return { ...state, clientID: payload };
 
     case GrabIDActions.SET_CLIENT_SECRET:
       return { ...state, clientSecret: payload };
-
-    case GrabIDActions.SET_CODE:
-      return { ...state, code: payload };
-
-    case GrabIDActions.SET_CODE_VERIFIER:
-      return { ...state, codeVerifier: payload };
 
     case GrabIDActions.SET_COUNTRY_CODE:
       return { ...state, countryCode: payload };

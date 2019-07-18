@@ -29,7 +29,6 @@ let storedState = !!cachedData
       grabid: {
         clientID: "",
         clientSecret: "",
-        codeVerifier: "",
         countryCode: ""
       },
       grabpay: {
@@ -51,7 +50,7 @@ let storedState = !!cachedData
 
 if (!!Object.keys(storedState).length) {
   const {
-    grabid: { clientID, clientSecret, codeVerifier, countryCode },
+    grabid: { clientID, clientSecret, countryCode },
     grabpay: {
       currency,
       merchantID,
@@ -66,7 +65,6 @@ if (!!Object.keys(storedState).length) {
     grabid: {
       clientID: clientID || process.env.REACT_APP_CLIENT_ID || "",
       clientSecret: clientSecret || process.env.REACT_APP_CLIENT_SECRET || "",
-      codeVerifier: codeVerifier || "",
       countryCode: countryCode || process.env.REACT_APP_COUNTRY_CODE || "SG"
     },
     grabpay: {

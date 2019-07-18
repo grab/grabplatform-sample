@@ -86,10 +86,9 @@ async function makeRequest(
 export function createGrabIDRepository(window) {
   const LOCAL_ID_TOKEN_KEY = "your_id_token_key";
 
-  const grabIDRepository = {
+  const repository = {
     grabid: {
       getGrabIDResult: async () => GrabID.getResult(),
-      getGrabIDCode: async () => window.localStorage.getItem("grabid:code"),
       getLoginReturnURI: async () =>
         getRelativeURLPath(GrabID.getLoginReturnURI()),
       storeIDTokenLocally: async idToken =>
@@ -113,14 +112,7 @@ export function createGrabIDRepository(window) {
             });
 
             const idTokenHint = window.localStorage.getItem(LOCAL_ID_TOKEN_KEY);
-
-            const result = await client.makeAuthorizationRequest(
-              undefined,
-              idTokenHint
-            );
-
-            const { codeVerifier } = GrabID.getResult();
-            return { ...result, codeVerifier };
+            await client.makeAuthorizationRequest(undefined, idTokenHint);
           },
           requestToken: async ({ clientID, countryCode, scopes }) => {
             const client = createGrabIDClient(window, {
@@ -131,18 +123,13 @@ export function createGrabIDRepository(window) {
             });
 
             await client.makeTokenRequest();
-            return GrabID.getResult();
           }
         };
       })(),
       pop: {
-        requestToken: async ({
-          codeVerifier,
-          clientID,
-          clientSecret,
-          redirectURI
-        }) => {
-          const code = await grabIDRepository.grabid.getGrabIDCode();
+        requestToken: async ({ clientID, clientSecret, redirectURI }) => {
+          const code = window.localStorage.getItem("grabid:code");
+          const { codeVerifier } = await repository.grabid.getGrabIDResult();
 
           makeRequest(window, {
             body: {
@@ -183,13 +170,10 @@ export function createGrabIDRepository(window) {
               ...extraGrabIDConfig(currency)
             });
 
-            const result = await client.makeAuthorizationRequest();
-            const { codeVerifier } = GrabID.getResult();
-            return { ...result, codeVerifier };
+            await client.makeAuthorizationRequest();
           },
-          requestToken: async ({ codeVerifier, clientID, clientSecret }) =>
-            grabIDRepository.grabid.pop.requestToken({
-              codeVerifier,
+          requestToken: async ({ clientID, clientSecret }) =>
+            repository.grabid.pop.requestToken({
               clientID,
               clientSecret,
               redirectURI
@@ -199,7 +183,7 @@ export function createGrabIDRepository(window) {
     }
   };
 
-  return grabIDRepository;
+  return repository;
 }
 
 export function createGrabPayRepository(window) {

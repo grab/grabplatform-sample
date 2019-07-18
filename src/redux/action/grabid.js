@@ -8,7 +8,6 @@ export const GrabIDActions = {
   CLEAR_CREDENTIALS: "GRABID.CLEAR_CREDENTIALS",
   SET_CLIENT_ID: "GRABID.SET_CLIENT_ID",
   SET_CLIENT_SECRET: "GRABID.SET_CLIENT_SECRET",
-  SET_CODE_VERIFIER: "GRABID.SET_CODE_VERIFIER",
   SET_COUNTRY_CODE: "GRABID.SET_COUNTRY_CODE",
 
   TRIGGER_HANDLE_REDIRECT: "GRABID.TRIGGER_HANDLE_REDIRECT",
@@ -26,10 +25,6 @@ export const GrabIDActionCreators = {
   setClientSecret: (clientSecret = "") => ({
     payload: clientSecret,
     type: GrabIDActions.SET_CLIENT_SECRET
-  }),
-  setCodeVerifier: (codeVerifier = "") => ({
-    payload: codeVerifier,
-    type: GrabIDActions.SET_CODE_VERIFIER
   }),
   setCountryCode: (code = "") => ({
     payload: code,
@@ -65,13 +60,11 @@ export const GrabIDActionCreators = {
           grabid: { clientID, countryCode }
         } = getState();
 
-        const { codeVerifier } = await authorize({
+        await authorize({
           clientID,
           countryCode,
           scopes
         });
-
-        dispatch(GrabIDActionCreators.setCodeVerifier(codeVerifier));
       },
       type: GrabIDActions.TRIGGER_MAKE_AUTHORIZATION_REQUEST
     }),
@@ -119,15 +112,13 @@ export const GrabIDActionCreators = {
           grabpay: { currency, request }
         } = getState();
 
-        const { codeVerifier } = await authorize({
+        await authorize({
           clientID,
           countryCode,
           currency,
           request,
           scopes
         });
-
-        dispatch(GrabIDActionCreators.setCodeVerifier(codeVerifier));
       },
       type: GrabIDActions.TRIGGER_MAKE_AUTHORIZATION_REQUEST
     }),
@@ -144,10 +135,10 @@ export const GrabIDActionCreators = {
       ) => {
         try {
           const {
-            grabid: { code, codeVerifier, clientID, clientSecret }
+            grabid: { clientID, clientSecret }
           } = getState();
 
-          await requestToken({ code, codeVerifier, clientID, clientSecret });
+          await requestToken({ clientID, clientSecret });
         } catch (e) {
           dispatch(CommonActionCreators.setError(e));
         }
