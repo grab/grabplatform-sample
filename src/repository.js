@@ -86,9 +86,10 @@ async function makeRequest(
 export function createGrabIDRepository(window) {
   const LOCAL_ID_TOKEN_KEY = "your_id_token_key";
 
-  return {
+  const grabIDRepository = {
     grabid: {
       getGrabIDResult: async () => GrabID.getResult(),
+      getGrabIDCode: async () => window.localStorage.getItem("grabid:code"),
       getLoginReturnURI: async () =>
         getRelativeURLPath(GrabID.getLoginReturnURI()),
       storeIDTokenLocally: async idToken =>
@@ -134,6 +135,28 @@ export function createGrabIDRepository(window) {
           }
         };
       })(),
+      pop: {
+        requestToken: async ({
+          codeVerifier,
+          clientID,
+          clientSecret,
+          redirectURI
+        }) => {
+          const code = await grabIDRepository.grabid.getGrabIDCode();
+
+          makeRequest(window, {
+            body: {
+              code,
+              codeVerifier,
+              clientID,
+              clientSecret,
+              redirectURI: getAbsoluteURLPath(window, redirectURI)
+            },
+            method: "POST",
+            relativePath: "/token"
+          });
+        }
+      },
       payment: (() => {
         const redirectURI = "/grabpay/redirect";
 
@@ -164,27 +187,19 @@ export function createGrabIDRepository(window) {
             const { codeVerifier } = GrabID.getResult();
             return { ...result, codeVerifier };
           },
-          requestToken: async ({
-            code,
-            codeVerifier,
-            clientID,
-            clientSecret
-          }) =>
-            makeRequest(window, {
-              body: {
-                code,
-                codeVerifier,
-                clientID,
-                clientSecret,
-                redirectURI: getAbsoluteURLPath(window, redirectURI)
-              },
-              method: "POST",
-              relativePath: "/token"
+          requestToken: async ({ codeVerifier, clientID, clientSecret }) =>
+            grabIDRepository.grabid.pop.requestToken({
+              codeVerifier,
+              clientID,
+              clientSecret,
+              redirectURI
             })
         };
       })()
     }
   };
+
+  return grabIDRepository;
 }
 
 export function createGrabPayRepository(window) {
