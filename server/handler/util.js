@@ -7,8 +7,14 @@ exports.handleError = function(requestHandler) {
     try {
       await requestHandler(req, res);
     } catch (e) {
-      console.error(e);
-      res.status(500).send("Internal server error");
+      const {
+        response: {
+          data: { message },
+          status
+        }
+      } = e;
+
+      res.status(status).json({ message });
     }
   };
 };

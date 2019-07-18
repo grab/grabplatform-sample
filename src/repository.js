@@ -77,7 +77,10 @@ async function makeRequest(
     config
   );
 
-  return response.status === 204 ? {} : response.json();
+  if (response.status === 204) return {};
+  const json = await response.json();
+  if (!`${response.status}`.startsWith("2")) throw json;
+  return json;
 }
 
 export function createGrabIDRepository(window) {

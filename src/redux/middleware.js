@@ -9,7 +9,8 @@ export const alertMiddleware = () => dispatch => a => {
 
   switch (a.type) {
     case CommonActions.SET_ERROR:
-      alert(a.payload);
+      const { message } = a.payload;
+      alert(`Error: ${message}`);
       break;
 
     default:
