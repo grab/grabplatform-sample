@@ -11,9 +11,7 @@ import { GrabPayActionCreators } from "redux/action/grabpay";
 export function grabIDHandlerHOC() {
   return compose(
     connect(
-      ({ grabid: { accessToken, idToken } }) => ({
-        isGrabIDSatisfied: !!accessToken && !!idToken
-      }),
+      () => ({}),
       dispatch => ({
         clearCredentials: () =>
           dispatch(GrabIDActionCreators.clearCredentials())

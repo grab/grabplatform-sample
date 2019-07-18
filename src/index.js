@@ -26,12 +26,10 @@ let storedState = !!cachedData
   ? JSON.parse(cachedData)
   : {
       grabid: {
-        accessToken: "",
         clientID: "",
         clientSecret: "",
         codeVerifier: "",
-        countryCode: "",
-        idToken: ""
+        countryCode: ""
       },
       grabpay: {
         currency: "",

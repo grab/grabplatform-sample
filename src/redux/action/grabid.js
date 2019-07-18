@@ -6,12 +6,10 @@ import { CommonActionCreators } from "./common";
 
 export const GrabIDActions = {
   CLEAR_CREDENTIALS: "GRABID.CLEAR_CREDENTIALS",
-  SET_ACCESS_TOKEN: "GRABID.SET_ACCESS_TOKEN",
   SET_CLIENT_ID: "GRABID.SET_CLIENT_ID",
   SET_CLIENT_SECRET: "GRABID.SET_CLIENT_SECRET",
   SET_CODE_VERIFIER: "GRABID.SET_CODE_VERIFIER",
   SET_COUNTRY_CODE: "GRABID.SET_COUNTRY_CODE",
-  SET_ID_TOKEN: "GRABID.SET_ID_TOKEN",
 
   TRIGGER_HANDLE_REDIRECT: "GRABID.TRIGGER_HANDLE_REDIRECT",
   TRIGGER_MAKE_AUTHORIZATION_REQUEST:
@@ -21,10 +19,6 @@ export const GrabIDActions = {
 
 export const GrabIDActionCreators = {
   clearCredentials: () => ({ type: GrabIDActions.CLEAR_CREDENTIALS }),
-  setAccessToken: (accessToken = "") => ({
-    payload: accessToken,
-    type: GrabIDActions.SET_ACCESS_TOKEN
-  }),
   setClientID: (clientID = "") => ({
     payload: clientID,
     type: GrabIDActions.SET_CLIENT_ID
@@ -40,10 +34,6 @@ export const GrabIDActionCreators = {
   setCountryCode: (code = "") => ({
     payload: code,
     type: GrabIDActions.SET_COUNTRY_CODE
-  }),
-  setIDToken: (idToken = "") => ({
-    payload: idToken,
-    type: GrabIDActions.SET_ID_TOKEN
   }),
   triggerHandleGrabIDRedirect: () => ({
     payload: async (
@@ -101,14 +91,7 @@ export const GrabIDActionCreators = {
             grabid: { clientID, countryCode }
           } = getState();
 
-          const { accessToken, idToken } = await requestToken({
-            clientID,
-            countryCode,
-            scopes
-          });
-
-          dispatch(GrabIDActionCreators.setAccessToken(accessToken));
-          dispatch(GrabIDActionCreators.setIDToken(idToken));
+          await requestToken({ clientID, countryCode, scopes });
         } catch (e) {
           dispatch(CommonActionCreators.setError(e));
         }
@@ -162,15 +145,7 @@ export const GrabIDActionCreators = {
             grabid: { code, codeVerifier, clientID, clientSecret }
           } = getState();
 
-          const { accessToken, idToken } = await requestToken({
-            code,
-            codeVerifier,
-            clientID,
-            clientSecret
-          });
-
-          dispatch(GrabIDActionCreators.setAccessToken(accessToken));
-          dispatch(GrabIDActionCreators.setIDToken(idToken));
+          await requestToken({ code, codeVerifier, clientID, clientSecret });
         } catch (e) {
           dispatch(CommonActionCreators.setError(e));
         }

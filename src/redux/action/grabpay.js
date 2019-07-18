@@ -65,16 +65,11 @@ export const GrabPayActionCreators = {
   triggerCheckWallet: () => ({
     payload: async (dispatch, getState, { grabpay: { checkWallet } }) => {
       const {
-        grabid: { accessToken, clientSecret },
+        grabid: { clientSecret },
         grabpay: { currency }
       } = getState();
 
-      const wallet = await checkWallet({
-        accessToken,
-        clientSecret,
-        currency
-      });
-
+      const wallet = await checkWallet({ clientSecret, currency });
       dispatch(GrabPayActionCreators.setWallet(wallet));
     },
     type: GrabPayActions.TRIGGER_CHECK_WALLET
@@ -129,17 +124,13 @@ export const GrabPayActionCreators = {
         }
       ) => {
         const {
-          grabid: { accessToken, clientSecret },
+          grabid: { clientSecret },
           grabpay: {
             transaction: { partnerTxID }
           }
         } = getState();
 
-        const { status } = await confirm({
-          accessToken,
-          clientSecret,
-          partnerTxID
-        });
+        const { status } = await confirm({ clientSecret, partnerTxID });
 
         dispatch(
           GrabPayActionCreators.Transaction.setTransactionStatus(status)
@@ -189,7 +180,7 @@ export const GrabPayActionCreators = {
         }
       ) => {
         const {
-          grabid: { accessToken, clientSecret },
+          grabid: { clientSecret },
           grabpay: {
             currency,
             merchantID,
@@ -198,7 +189,6 @@ export const GrabPayActionCreators = {
         } = getState();
 
         const { status } = await charge({
-          accessToken,
           amount,
           clientSecret,
           currency,
@@ -227,13 +217,13 @@ export const GrabPayActionCreators = {
         }
       ) => {
         const {
-          grabid: { accessToken, clientSecret },
+          grabid: { clientSecret },
           grabpay: {
             transaction: { partnerTxID }
           }
         } = getState();
 
-        await unbind({ accessToken, clientSecret, partnerTxID });
+        await unbind({ clientSecret, partnerTxID });
         dispatch(GrabIDActionCreators.clearCredentials());
         dispatch(GrabPayActionCreators.clearCredentials());
       },

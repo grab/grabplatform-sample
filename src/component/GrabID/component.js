@@ -131,15 +131,13 @@ function PrivateGrabIDLogin({
 export const GrabIDLogin = compose(
   connect(
     ({
-      grabid: { accessToken, clientID, clientSecret, idToken },
+      grabid: { clientID, clientSecret },
       repository: {
         grabid: { getGrabIDResult }
       }
     }) => ({
-      accessToken,
       clientID,
       clientSecret,
-      idToken,
       getGrabIDResult
     }),
     (dispatch, { scopes, makeAuthorizationRequest, makeTokenRequest }) => ({
@@ -165,6 +163,8 @@ export const GrabIDLogin = compose(
           : dispatch(GrabIDActionCreators.nonPOP.triggerRequestToken(scopes))
     })
   ),
+  withState("accessToken", "setAccessToken", ""),
+  withState("idToken", "setIDToken", ""),
   withState("state", "setState", ""),
   mapProps(({ state, ...rest }) => ({
     currentStage: Stage.ONE + !!state,
@@ -179,8 +179,16 @@ export const GrabIDLogin = compose(
   })),
   lifecycle({
     async componentDidMount() {
-      const { getGrabIDResult, setState } = this.props;
-      const { state } = await getGrabIDResult();
+      const {
+        getGrabIDResult,
+        setAccessToken,
+        setIDToken,
+        setState
+      } = this.props;
+
+      const { accessToken, idToken, state } = await getGrabIDResult();
+      setAccessToken(accessToken);
+      setIDToken(idToken);
       setState(state);
     }
   })

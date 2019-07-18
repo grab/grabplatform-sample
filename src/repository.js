@@ -176,10 +176,9 @@ export function createGrabIDRepository(window) {
 export function createGrabPayRepository(window) {
   return {
     grabpay: {
-      checkWallet: async ({ accessToken, ...body }) =>
+      checkWallet: async ({ clientSecret, currency }) =>
         makeRequest(window, {
-          additionalHeaders: { Authorization: `Bearer ${accessToken}` },
-          body,
+          body: { clientSecret, currency },
           method: "POST",
           relativePath: "/wallet"
         }),
@@ -206,10 +205,9 @@ export function createGrabPayRepository(window) {
             method: "POST",
             relativePath: "/init"
           }),
-        confirm: async ({ accessToken, ...body }) =>
+        confirm: async ({ clientSecret, partnerTxID }) =>
           makeRequest(window, {
-            additionalHeaders: { Authorization: `Bearer ${accessToken}` },
-            body,
+            body: { clientSecret, partnerTxID },
             method: "POST",
             relativePath: "/confirm"
           })
@@ -222,7 +220,6 @@ export function createGrabPayRepository(window) {
             relativePath: "/bind"
           }),
         charge: async ({
-          accessToken,
           amount,
           clientSecret,
           currency,
@@ -232,7 +229,6 @@ export function createGrabPayRepository(window) {
           partnerTxID
         }) =>
           makeRequest(window, {
-            additionalHeaders: { Authorization: `Bearer ${accessToken}` },
             body: {
               amount,
               clientSecret,
@@ -245,9 +241,8 @@ export function createGrabPayRepository(window) {
             method: "POST",
             relativePath: "/charge"
           }),
-        unbind: async ({ accessToken, clientSecret, partnerTxID }) =>
+        unbind: async ({ clientSecret, partnerTxID }) =>
           makeRequest(window, {
-            additionalHeaders: { Authorization: `Bearer ${accessToken}` },
             body: { clientSecret, partnerTxID },
             method: "POST",
             relativePath: "/unbind"

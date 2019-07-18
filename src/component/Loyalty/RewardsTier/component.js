@@ -45,10 +45,7 @@ function PrivateRewardsTier({ currentStage, rewardsTier, getRewardsTier }) {
 export default compose(
   grabIDHandlerHOC(),
   connect(
-    ({ grabid: { accessToken, idToken }, loyalty: { rewardsTier } }) => ({
-      isGrabIDSatisfied: !!accessToken && !!idToken,
-      rewardsTier
-    }),
+    ({ loyalty: { rewardsTier } }) => ({ rewardsTier }),
     dispatch => ({
       getRewardsTier: () =>
         dispatch(LoyaltyActionCreators.triggerGetRewardsTier())
