@@ -83,7 +83,8 @@ export const GrabIDActionCreators = {
         {
           grabid: {
             nonPOP: { requestToken }
-          }
+          },
+          navigation: { reloadPage }
         }
       ) => {
         try {
@@ -92,6 +93,7 @@ export const GrabIDActionCreators = {
           } = getState();
 
           await requestToken({ clientID, countryCode, scopes });
+          await reloadPage();
         } catch (e) {
           dispatch(CommonActionCreators.setError(e));
         }

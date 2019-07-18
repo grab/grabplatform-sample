@@ -15,9 +15,15 @@ export const CommonActionCreators = {
   setError: error => ({ payload: error, type: CommonActions.SET_ERROR }),
 
   triggerClearEverything: () => ({
-    payload: dispatch => {
+    payload: async (
+      dispatch,
+      getState,
+      { localStorage: { clearEverything }, navigation: { reloadPage } }
+    ) => {
       dispatch(GrabIDActionCreators.clearCredentials());
       dispatch(GrabPayActionCreators.clearCredentials());
+      await clearEverything();
+      await reloadPage();
     },
     type: CommonActions.TRIGGER_CLEAR_EVERYTHING
   })

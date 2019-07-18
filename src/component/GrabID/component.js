@@ -121,9 +121,13 @@ function PrivateGrabIDLogin({
         </>
       )}
 
-      <div className="request-token" onClick={makeTokenRequest}>
-        Request token
-      </div>
+      {currentStage >= Stage.TWO && (
+        <>
+          <div className="request-token" onClick={makeTokenRequest}>
+            Request token
+          </div>
+        </>
+      )}
     </div>
   );
 }

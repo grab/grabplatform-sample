@@ -15,7 +15,8 @@ import reducer from "./redux/reducer";
 import {
   createGrabAPIRepository,
   createGrabIDRepository,
-  createGrabPayRepository
+  createGrabPayRepository,
+  createWindowRepository
 } from "./repository";
 import * as serviceWorker from "./serviceWorker";
 
@@ -50,7 +51,7 @@ let storedState = !!cachedData
 
 if (!!Object.keys(storedState).length) {
   const {
-    grabid: { clientID, clientSecret, codeVerifier, countryCode, scopes },
+    grabid: { clientID, clientSecret, codeVerifier, countryCode },
     grabpay: {
       currency,
       merchantID,
@@ -66,8 +67,7 @@ if (!!Object.keys(storedState).length) {
       clientID: clientID || process.env.REACT_APP_CLIENT_ID || "",
       clientSecret: clientSecret || process.env.REACT_APP_CLIENT_SECRET || "",
       codeVerifier: codeVerifier || "",
-      countryCode: countryCode || process.env.REACT_APP_COUNTRY_CODE || "SG",
-      scopes: scopes || []
+      countryCode: countryCode || process.env.REACT_APP_COUNTRY_CODE || "SG"
     },
     grabpay: {
       currency: currency || "SGD",
@@ -89,6 +89,7 @@ if (!!Object.keys(storedState).length) {
 }
 
 const repository = {
+  ...createWindowRepository(window),
   ...createGrabIDRepository(window),
   ...createGrabPayRepository(window),
   ...createGrabAPIRepository(window)

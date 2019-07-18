@@ -4,6 +4,17 @@
  */
 import GrabID from "@grab-id/grab-id-client";
 
+export function createWindowRepository(window) {
+  return {
+    localStorage: {
+      clearEverything: async () => window.localStorage.clear()
+    },
+    navigation: {
+      reloadPage: async () => window.location.reload()
+    }
+  };
+}
+
 function createGrabIDClient(
   window,
   {
