@@ -10,13 +10,13 @@ const https = require("https");
 dotenv.config();
 
 const app = express();
-const createClient = require("./client");
+const { createHTTPClient } = require("./client");
 const grabid = require("./handler/grabid");
 const identity = require("./handler/identity");
 const loyalty = require("./handler/loyalty");
 const payment = require("./handler/payment");
 const port = 8000;
-const client = createClient();
+const httpClient = createHTTPClient();
 
 app.use(express.json());
 
@@ -24,27 +24,30 @@ app.get("/", (req, res) => {
   res.status(200).json("Never should have come here");
 });
 
-app.get("/identity/basic-profile", identity.basicProfile(client));
-app.get("/loyalty/rewards-tier", loyalty.rewardsTier(client));
-app.post("/payment/one-time-charge/token", grabid.popToken(client));
-app.post("/payment/one-time-charge/init", payment.oneTimeCharge.init(client));
+app.get("/identity/basic-profile", identity.basicProfile(httpClient));
+app.get("/loyalty/rewards-tier", loyalty.rewardsTier(httpClient));
+app.post("/payment/one-time-charge/token", grabid.popToken(httpClient));
+app.post(
+  "/payment/one-time-charge/init",
+  payment.oneTimeCharge.init(httpClient)
+);
 app.post(
   "/payment/one-time-charge/confirm",
-  payment.oneTimeCharge.confirm(client)
+  payment.oneTimeCharge.confirm(httpClient)
 );
 app.post(
   "/payment/recurring-charge/bind",
-  payment.recurringCharge.bind(client)
+  payment.recurringCharge.bind(httpClient)
 );
-app.post("/payment/recurring-charge/token", grabid.popToken(client));
-app.post("/payment/recurring-charge/wallet", payment.checkWallet(client));
+app.post("/payment/recurring-charge/token", grabid.popToken(httpClient));
+app.post("/payment/recurring-charge/wallet", payment.checkWallet(httpClient));
 app.post(
   "/payment/recurring-charge/charge",
-  payment.recurringCharge.charge(client)
+  payment.recurringCharge.charge(httpClient)
 );
 app.post(
   "/payment/recurring-charge/unbind",
-  payment.recurringCharge.unbind(client)
+  payment.recurringCharge.unbind(httpClient)
 );
 
 https

@@ -4,7 +4,7 @@
  */
 const axios = require("axios").default;
 
-module.exports = function createClient() {
+exports.createHTTPClient = function() {
   const baseURL =
     process.env.NODE_ENV === "production"
       ? "https://partner-api.grab.com"

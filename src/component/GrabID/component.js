@@ -106,12 +106,14 @@ function PrivateGrabIDLogin({
         <input disabled spellCheck={false} readOnly value={state} />
       </>
 
-      <>
-        <div className="title">Access token</div>
-        <input disabled spellCheck={false} readOnly value={accessToken} />
-        <div className="title">ID token</div>
-        <input disabled spellCheck={false} readOnly value={idToken} />
-      </>
+      {!popRequired && (
+        <>
+          <div className="title">Access token</div>
+          <input disabled spellCheck={false} readOnly value={accessToken} />
+          <div className="title">ID token</div>
+          <input disabled spellCheck={false} readOnly value={idToken} />
+        </>
+      )}
 
       <>
         <div className="request-token" onClick={makeTokenRequest}>

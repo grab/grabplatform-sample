@@ -5,14 +5,14 @@
 const { handleError } = require("./util");
 
 module.exports = {
-  rewardsTier: function(client) {
+  rewardsTier: function(httpClient) {
     return handleError(async ({ headers }, res) => {
       const {
         data: {
           result: { tier }
         },
         status
-      } = await client.get("/loyalty/rewards/v1/tier", headers);
+      } = await httpClient.get("/loyalty/rewards/v1/tier", headers);
 
       res.status(status).json(tier);
     });

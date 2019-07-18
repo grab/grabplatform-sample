@@ -5,9 +5,9 @@
 const { handleError } = require("./util");
 
 module.exports = {
-  basicProfile: function(client) {
+  basicProfile: function(httpClient) {
     return handleError(async ({ headers }, res) => {
-      const { data, status } = await client.get(
+      const { data, status } = await httpClient.get(
         "/grabid/v1/oauth2/userinfo",
         headers
       );

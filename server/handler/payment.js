@@ -98,7 +98,7 @@ function getUnixTimestamp(date) {
 
 module.exports = {
   oneTimeCharge: {
-    init: function(client) {
+    init: function(httpClient) {
       return handleError(
         async (
           {
@@ -136,7 +136,7 @@ module.exports = {
             timestamp
           });
 
-          const { data, status } = await client.post(
+          const { data, status } = await httpClient.post(
             "/grabpay/partner/v2/charge/init",
             requestBody,
             {
@@ -150,7 +150,7 @@ module.exports = {
         }
       );
     },
-    confirm: function(client) {
+    confirm: function(httpClient) {
       return handleError(
         async (
           { body: { clientSecret, partnerTxID }, headers: { authorization } },
@@ -164,7 +164,7 @@ module.exports = {
             date
           });
 
-          const { data, status } = await client.post(
+          const { data, status } = await httpClient.post(
             "/grabpay/partner/v2/charge/complete",
             { partnerTxID },
             {
@@ -180,7 +180,7 @@ module.exports = {
     }
   },
   recurringCharge: {
-    bind: function(client) {
+    bind: function(httpClient) {
       return handleError(
         async (
           { body: { countryCode, partnerHMACSecret, partnerID } },
@@ -199,7 +199,7 @@ module.exports = {
             timestamp
           });
 
-          const { data, status } = await client.post(
+          const { data, status } = await httpClient.post(
             "/grabpay/partner/v2/bind",
             requestBody,
             {
@@ -213,7 +213,7 @@ module.exports = {
         }
       );
     },
-    charge: function(client) {
+    charge: function(httpClient) {
       return handleError(
         async (
           {
@@ -247,7 +247,7 @@ module.exports = {
             date
           });
 
-          const { data, status } = await client.post(
+          const { data, status } = await httpClient.post(
             "/grabpay/partner/v2/charge",
             requestBody,
             {
@@ -262,7 +262,7 @@ module.exports = {
         }
       );
     },
-    unbind: function(client) {
+    unbind: function(httpClient) {
       return handleError(
         async (
           { body: { clientSecret, partnerTxID }, headers: { authorization } },
@@ -276,7 +276,7 @@ module.exports = {
             date
           });
 
-          const { status } = await client.delete(
+          const { status } = await httpClient.delete(
             "/grabpay/partner/v2/bind",
             { partnerTxID },
             {
@@ -292,7 +292,7 @@ module.exports = {
       );
     }
   },
-  checkWallet: function(client) {
+  checkWallet: function(httpClient) {
     return handleError(
       async (
         { body: { clientSecret, currency }, headers: { authorization } },
@@ -306,7 +306,7 @@ module.exports = {
           date
         });
 
-        const { data, status } = await client.get(
+        const { data, status } = await httpClient.get(
           `/grabpay/partner/v2/wallet/info?currency=${currency}`,
           {
             Authorization: authorization,

@@ -7,7 +7,7 @@ const { handleError } = require("./util");
 
 module.exports = {
   /** These requests must be made from backend since it requires clientSecret. */
-  popToken: function(client) {
+  popToken: function(httpClient) {
     return handleError(
       async (
         { body: { code, codeVerifier, clientID, clientSecret, redirectURI } },
@@ -21,7 +21,7 @@ module.exports = {
         const {
           data: { access_token: accessToken, id_token: idToken },
           status
-        } = await client.post(
+        } = await httpClient.post(
           "/grabid/v1/oauth2/token",
           {
             code,
