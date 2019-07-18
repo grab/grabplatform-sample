@@ -139,81 +139,75 @@ function PrivateOneTimeCharge({
 }) {
   return (
     <div className="one-time-charge-container">
-      {currentStage >= Stage.ONE && <GrabPay currentStage={1} />}
+      <GrabPay currentProductStage={1} />
 
-      {currentStage >= Stage.TWO && (
-        <div className="init-charge-container">
-          <div className="intro-title">Stage 2: Init charge</div>
+      <div className="init-charge-container">
+        <div className="intro-title">Stage 2: Init charge</div>
 
-          <div className="stage-description">
-            <Markdown className="source-code" source={initDescription} />
-          </div>
-
-          <div className="divider" />
-          <div className="title">Endpoint</div>
-
-          <input
-            disabled
-            readOnly
-            value={"POST /grabpay/partner/v2/charge/init"}
-          />
-
-          <Transaction />
-
-          {!!request && (
-            <>
-              <div className="title">Charge request</div>
-              <input disabled readOnly spellCheck={false} value={request} />
-            </>
-          )}
-
-          <div className="init-charge" onClick={initOneTimeCharge}>
-            Init transaction
-          </div>
+        <div className="stage-description">
+          <Markdown className="source-code" source={initDescription} />
         </div>
-      )}
 
-      {currentStage >= Stage.THREE && (
-        <GrabIDLogin
-          currentProductStageFlow={3}
-          makeAuthorizationRequest={makeAuthorizationRequest}
-          makeTokenRequest={makeTokenRequest}
-          popRequired
-          scopes={["payment.one_time_charge", "payment.online_acceptance"]}
-          stageDescription={
-            <Markdown className="source-code" source={grabidDescription} />
-          }
+        <div className="divider" />
+        <div className="title">Endpoint</div>
+
+        <input
+          disabled
+          readOnly
+          value={"POST /grabpay/partner/v2/charge/init"}
         />
-      )}
 
-      {currentStage >= Stage.FOUR && (
-        <div className="confirm-charge-container">
-          <div className="intro-title">Stage 4: Confirm charge</div>
+        <Transaction />
 
-          <div className="stage-description">
-            <Markdown className="source-code" source={confirmDescription} />
-          </div>
+        {!!request && (
+          <>
+            <div className="title">Charge request</div>
+            <input disabled readOnly spellCheck={false} value={request} />
+          </>
+        )}
 
-          <div className="divider" />
-          <div className="title">Endpoint</div>
-
-          <input
-            disabled
-            readOnly
-            value={"POST /grabpay/partner/v2/charge/complete"}
-          />
-
-          <div className="title">Transaction status</div>
-
-          <div className="transaction-status">
-            <b>{status || "unconfirmed"}</b>
-          </div>
-
-          <div className="confirm-charge" onClick={confirmOneTimeCharge}>
-            Confirm transaction
-          </div>
+        <div className="init-charge" onClick={initOneTimeCharge}>
+          Init transaction
         </div>
-      )}
+      </div>
+
+      <GrabIDLogin
+        currentProductStageFlow={3}
+        makeAuthorizationRequest={makeAuthorizationRequest}
+        makeTokenRequest={makeTokenRequest}
+        popRequired
+        scopes={["payment.one_time_charge", "payment.online_acceptance"]}
+        stageDescription={
+          <Markdown className="source-code" source={grabidDescription} />
+        }
+      />
+
+      <div className="confirm-charge-container">
+        <div className="intro-title">Stage 4: Confirm charge</div>
+
+        <div className="stage-description">
+          <Markdown className="source-code" source={confirmDescription} />
+        </div>
+
+        <div className="divider" />
+        <div className="title">Endpoint</div>
+
+        <input
+          disabled
+          readOnly
+          value={"POST /grabpay/partner/v2/charge/complete"}
+        />
+
+        <div className="title">Transaction status</div>
+
+        <div className="transaction-status">
+          <b>{status || "unconfirmed"}</b>
+        </div>
+
+        <div className="confirm-charge" onClick={confirmOneTimeCharge}>
+          Confirm transaction
+        </div>
+      </div>
     </div>
   );
 }

@@ -194,7 +194,6 @@ ${"```"}
 `;
 
 function RecurringCharge({
-  currentStage,
   balance,
   cardImage,
   currency,
@@ -209,116 +208,108 @@ function RecurringCharge({
 }) {
   return (
     <div className="recurring-charge-container">
-      {currentStage >= Stage.ONE && <GrabPay currentStage={1} />}
+      <GrabPay currentProductStage={1} />
 
-      {currentStage >= Stage.TWO && (
-        <div className="bind-container">
-          <div className="intro-title">Stage 2: Bind</div>
+      <div className="bind-container">
+        <div className="intro-title">Stage 2: Bind</div>
 
-          <div className="stage-description">
-            <Markdown className="source-code" source={bindDescription} />
-          </div>
-
-          <div className="divider" />
-          <div className="title">Endpoint</div>
-          <input disabled readOnly value={"POST /grabpay/partner/v2/bind"} />
-
-          {!!request && (
-            <>
-              <div className="title">Charge request</div>
-              <input disabled readOnly spellCheck={false} value={request} />
-            </>
-          )}
-
-          <div className="bind-charge" onClick={bindCharge}>
-            Bind
-          </div>
+        <div className="stage-description">
+          <Markdown className="source-code" source={bindDescription} />
         </div>
-      )}
 
-      {currentStage >= Stage.THREE && (
-        <GrabIDLogin
-          currentProductStageFlow={3}
-          makeAuthorizationRequest={makeAuthorizationRequest}
-          makeTokenRequest={makeTokenRequest}
-          popRequired
-          scopes={["payment.recurring_charge", "payment.online_acceptance"]}
-          stageDescription={
-            <Markdown className="source-code" source={grabidDescription} />
-          }
+        <div className="divider" />
+        <div className="title">Endpoint</div>
+        <input disabled readOnly value={"POST /grabpay/partner/v2/bind"} />
+
+        {!!request && (
+          <>
+            <div className="title">Charge request</div>
+            <input disabled readOnly spellCheck={false} value={request} />
+          </>
+        )}
+
+        <div className="bind-charge" onClick={bindCharge}>
+          Bind
+        </div>
+      </div>
+
+      <GrabIDLogin
+        currentProductStageFlow={3}
+        makeAuthorizationRequest={makeAuthorizationRequest}
+        makeTokenRequest={makeTokenRequest}
+        popRequired
+        scopes={["payment.recurring_charge", "payment.online_acceptance"]}
+        stageDescription={
+          <Markdown className="source-code" source={grabidDescription} />
+        }
+      />
+
+      <div className="charge-container">
+        <div className="intro-title">Stage 4: Charge user</div>
+
+        <div className="stage-description">
+          <Markdown className="source-code" source={chargeDescription} />
+        </div>
+
+        <div className="divider" />
+
+        <div className="title">Endpoint</div>
+
+        <input
+          disabled
+          readOnly
+          value={"GET /grabpay/partner/v2/wallet/info?currency=currency"}
         />
-      )}
 
-      {currentStage >= Stage.FOUR && (
-        <div className="charge-container">
-          <div className="intro-title">Stage 4: Charge user</div>
+        {!!balance && !!cardImage && (
+          <>
+            <div className="title">Balance</div>
+            <input disabled readOnly value={balance} />
+            <div className="title">currency</div>
+            <input disabled readOnly value={currency} />
+          </>
+        )}
 
-          <div className="stage-description">
-            <Markdown className="source-code" source={chargeDescription} />
-          </div>
-
-          <div className="divider" />
-
-          <div className="title">Endpoint</div>
-
-          <input
-            disabled
-            readOnly
-            value={"GET /grabpay/partner/v2/wallet/info?currency=currency"}
-          />
-
-          {!!balance && !!cardImage && (
-            <>
-              <div className="title">Balance</div>
-              <input disabled readOnly value={balance} />
-              <div className="title">currency</div>
-              <input disabled readOnly value={currency} />
-            </>
-          )}
-
-          <div className="check-wallet" onClick={checkWallet}>
-            Check wallet
-          </div>
-
-          <div className="divider" />
-          <div className="title">Endpoint</div>
-
-          <input
-            disabled
-            readOnly
-            value={"POST /grabpay/partner/v2/wallet/info"}
-          />
-
-          <Transaction />
-          <div className="title">Transaction status</div>
-
-          <div className="transaction-status">
-            <b>{status || "unconfirmed"}</b>
-          </div>
-
-          <div className="confirm-charge" onClick={chargeUser}>
-            Charge user
-          </div>
+        <div className="check-wallet" onClick={checkWallet}>
+          Check wallet
         </div>
-      )}
 
-      {currentStage >= Stage.FOUR && (
-        <div className="unbind-container">
-          <div className="intro-title">Stage 5: Unbind charge</div>
+        <div className="divider" />
+        <div className="title">Endpoint</div>
 
-          <div className="stage-description">
-            <Markdown className="source-code" source={unbindDescription} />
-          </div>
+        <input
+          disabled
+          readOnly
+          value={"POST /grabpay/partner/v2/wallet/info"}
+        />
 
-          <div className="divider" />
-          <div className="title">Endpoint</div>
-          <input disabled readOnly value={"DELETE /grabpay/partner/v2/bind"} />
+        <Transaction />
+        <div className="title">Transaction status</div>
 
-          <div className="unbind-charge" onClick={unbindCharge}>
-            Unbind
-          </div>
+        <div className="transaction-status">
+          <b>{status || "unconfirmed"}</b>
         </div>
-      )}
+
+        <div className="confirm-charge" onClick={chargeUser}>
+          Charge user
+        </div>
+      </div>
+
+      <div className="unbind-container">
+        <div className="intro-title">Stage 5: Unbind charge</div>
+
+        <div className="stage-description">
+          <Markdown className="source-code" source={unbindDescription} />
+        </div>
+
+        <div className="divider" />
+        <div className="title">Endpoint</div>
+        <input disabled readOnly value={"DELETE /grabpay/partner/v2/bind"} />
+
+        <div className="unbind-charge" onClick={unbindCharge}>
+          Unbind
+        </div>
+      </div>
     </div>
   );
 }

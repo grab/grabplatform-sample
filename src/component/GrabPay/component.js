@@ -13,7 +13,7 @@ import "./style.scss";
 
 function PrivateGrabPay({
   currency,
-  currentStage,
+  currentProductStage,
   merchantID,
   partnerHMACSecret,
   partnerID,
@@ -24,7 +24,7 @@ function PrivateGrabPay({
 }) {
   return (
     <div className="grabpay-container">
-      <div className="intro-title">{`Stage ${currentStage}: GrabPay`}</div>
+      <div className="intro-title">{`Stage ${currentProductStage}: GrabPay`}</div>
       <div className="title">Partner ID</div>
 
       <input
@@ -102,7 +102,7 @@ export const GrabPayRedirect = compose(
         grabid: { getLoginReturnURI }
       }
     }) => ({ getLoginReturnURI }),
-    (dispatch, { code, state }) => ({
+    dispatch => ({
       handleGrabPayRedirect: () =>
         dispatch(GrabIDActionCreators.triggerHandleGrabIDRedirect())
     })

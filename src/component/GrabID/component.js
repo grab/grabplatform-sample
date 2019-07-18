@@ -2,7 +2,6 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import { Stage } from "component/custom-hoc";
 import { parse } from "querystring";
 import React from "react";
 import Markdown from "react-markdown";
@@ -39,7 +38,6 @@ function PrivateGrabIDLogin({
   accessToken,
   clientID,
   clientSecret,
-  currentStage,
   currentProductStageFlow,
   idToken,
   popRequired,
@@ -60,74 +58,66 @@ function PrivateGrabIDLogin({
         {!!stageDescription && stageDescription}
       </div>
 
-      {currentStage >= Stage.ONE && (
-        <>
-          <div className="divider" />
-          <div className="title">Client ID</div>
+      <>
+        <div className="divider" />
+        <div className="title">Client ID</div>
 
-          <input
-            onChange={({ target: { value } }) => setClientID(value)}
-            placeholder="Enter your client ID"
-            spellCheck={false}
-            value={clientID}
-          />
+        <input
+          onChange={({ target: { value } }) => setClientID(value)}
+          placeholder="Enter your client ID"
+          spellCheck={false}
+          value={clientID}
+        />
 
-          {!!popRequired && (
-            <>
-              <div className="title">Client secret</div>
+        {!!popRequired && (
+          <>
+            <div className="title">Client secret</div>
 
-              <input
-                onChange={({ target: { value } }) => setClientSecret(value)}
-                placeholder="Enter your client secret"
-                spellCheck={false}
-                value={clientSecret}
-              />
-            </>
-          )}
+            <input
+              onChange={({ target: { value } }) => setClientSecret(value)}
+              placeholder="Enter your client secret"
+              spellCheck={false}
+              value={clientSecret}
+            />
+          </>
+        )}
 
-          <div className="title">Requested scopes</div>
+        <div className="title">Requested scopes</div>
 
-          <div className="scope-container">
-            {["openid"]
-              .concat(scopes)
-              .filter(scope => !!scope)
-              .map(scope => (
-                <div className="scope" key={scope}>
-                  <div className="internal">{scope}</div>
-                </div>
-              ))}
-          </div>
+        <div className="scope-container">
+          {["openid"]
+            .concat(scopes)
+            .filter(scope => !!scope)
+            .map(scope => (
+              <div className="scope" key={scope}>
+                <div className="internal">{scope}</div>
+              </div>
+            ))}
+        </div>
 
-          <div className="authorize" onClick={makeAuthorizationRequest}>
-            Authorize
-          </div>
-        </>
-      )}
+        <div className="authorize" onClick={makeAuthorizationRequest}>
+          Authorize
+        </div>
+      </>
 
-      {currentStage >= Stage.TWO && (
-        <>
-          <div className="divider" />
-          <div className="title">State</div>
-          <input disabled spellCheck={false} readOnly value={state} />
-        </>
-      )}
+      <>
+        <div className="divider" />
+        <div className="title">State</div>
+        <input disabled spellCheck={false} readOnly value={state} />
+      </>
 
-      {currentStage >= Stage.THREE && (
-        <>
-          <div className="title">Access token</div>
-          <input disabled spellCheck={false} readOnly value={accessToken} />
-          <div className="title">ID token</div>
-          <input disabled spellCheck={false} readOnly value={idToken} />
-        </>
-      )}
+      <>
+        <div className="title">Access token</div>
+        <input disabled spellCheck={false} readOnly value={accessToken} />
+        <div className="title">ID token</div>
+        <input disabled spellCheck={false} readOnly value={idToken} />
+      </>
 
-      {currentStage >= Stage.TWO && (
-        <>
-          <div className="request-token" onClick={makeTokenRequest}>
-            Request token
-          </div>
-        </>
-      )}
+      <>
+        <div className="request-token" onClick={makeTokenRequest}>
+          Request token
+        </div>
+      </>
     </div>
   );
 }
@@ -170,17 +160,6 @@ export const GrabIDLogin = compose(
   withState("accessToken", "setAccessToken", ""),
   withState("idToken", "setIDToken", ""),
   withState("state", "setState", ""),
-  mapProps(({ state, ...rest }) => ({
-    currentStage: Stage.ONE + !!state,
-    state,
-    ...rest
-  })),
-  mapProps(({ accessToken, currentStage, idToken, ...rest }) => ({
-    accessToken,
-    currentStage: currentStage + (!!accessToken && !!idToken),
-    idToken,
-    ...rest
-  })),
   lifecycle({
     async componentDidMount() {
       const {
@@ -191,9 +170,9 @@ export const GrabIDLogin = compose(
       } = this.props;
 
       const { accessToken, idToken, state } = await getGrabIDResult();
-      setAccessToken(accessToken);
-      setIDToken(idToken);
-      setState(state);
+      setAccessToken(accessToken || "");
+      setIDToken(idToken || "");
+      setState(state || "");
     }
   })
 )(PrivateGrabIDLogin);
