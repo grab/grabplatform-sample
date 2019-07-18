@@ -38,7 +38,7 @@ async function initialize() {
   );
   app.post(
     "/payment/one-time-charge/confirm",
-    payment.oneTimeCharge.confirm(httpClient)
+    payment.oneTimeCharge.confirm(dbClient, httpClient)
   );
   app.post(
     "/payment/recurring-charge/bind",
@@ -48,14 +48,17 @@ async function initialize() {
     "/payment/recurring-charge/token",
     grabid.popToken(dbClient, httpClient)
   );
-  app.post("/payment/recurring-charge/wallet", payment.checkWallet(httpClient));
+  app.post(
+    "/payment/recurring-charge/wallet",
+    payment.checkWallet(dbClient, httpClient)
+  );
   app.post(
     "/payment/recurring-charge/charge",
-    payment.recurringCharge.charge(httpClient)
+    payment.recurringCharge.charge(dbClient, httpClient)
   );
   app.post(
     "/payment/recurring-charge/unbind",
-    payment.recurringCharge.unbind(httpClient)
+    payment.recurringCharge.unbind(dbClient, httpClient)
   );
 
   https

@@ -57,12 +57,7 @@ async function generateHMACSignature({
   return hmacDigest;
 }
 
-async function generateHMACForXGIDAUXPOP({
-  authorization,
-  clientSecret,
-  date
-}) {
-  const accessToken = authorization.match(/bearer (.*)/i)[1];
+async function generateHMACForXGIDAUXPOP({ accessToken, clientSecret, date }) {
   const timestamp = getUnixTimestamp(date);
   const message = timestamp + accessToken;
 
@@ -150,26 +145,24 @@ module.exports = {
         }
       );
     },
-    confirm: function(httpClient) {
+    confirm: function({ grabid: { getAccessToken } }, { post }) {
       return handleError(
-        async (
-          { body: { clientSecret, partnerTxID }, headers: { authorization } },
-          res
-        ) => {
+        async ({ body: { clientSecret, partnerTxID } }, res) => {
+          const accessToken = await getAccessToken();
           const date = new Date();
 
           const hmac = await generateHMACForXGIDAUXPOP({
-            authorization,
+            accessToken,
             clientSecret,
             date
           });
 
-          const { data, status } = await httpClient.post(
+          const { data, status } = await post(
             "/grabpay/partner/v2/charge/complete",
             { partnerTxID },
             {
               "X-GID-AUX-POP": hmac,
-              Authorization: authorization,
+              Authorization: `Bearer ${accessToken}`,
               Date: date.toUTCString()
             }
           );
@@ -213,7 +206,7 @@ module.exports = {
         }
       );
     },
-    charge: function(httpClient) {
+    charge: function({ grabid: { getAccessToken } }, { post }) {
       return handleError(
         async (
           {
@@ -225,11 +218,12 @@ module.exports = {
               merchantID,
               partnerGroupTxID,
               partnerTxID
-            },
-            headers: { authorization }
+            }
           },
           res
         ) => {
+          const accessToken = await getAccessToken();
+
           const requestBody = {
             partnerGroupTxID,
             partnerTxID,
@@ -242,18 +236,18 @@ module.exports = {
           const date = new Date();
 
           const hmac = await generateHMACForXGIDAUXPOP({
-            authorization,
+            accessToken,
             clientSecret,
             date
           });
 
-          const { data, status } = await httpClient.post(
+          const { data, status } = await post(
             "/grabpay/partner/v2/charge",
             requestBody,
             {
               "Content-Type": "application/json",
               "X-GID-AUX-POP": hmac,
-              Authorization: authorization,
+              Authorization: `Bearer ${accessToken}`,
               Date: date.toUTCString()
             }
           );
@@ -262,16 +256,14 @@ module.exports = {
         }
       );
     },
-    unbind: function(httpClient) {
+    unbind: function({ grabid: { getAccessToken } }, httpClient) {
       return handleError(
-        async (
-          { body: { clientSecret, partnerTxID }, headers: { authorization } },
-          res
-        ) => {
+        async ({ body: { clientSecret, partnerTxID } }, res) => {
+          const accessToken = await getAccessToken();
           const date = new Date();
 
           const hmac = await generateHMACForXGIDAUXPOP({
-            authorization,
+            accessToken,
             clientSecret,
             date
           });
@@ -282,7 +274,7 @@ module.exports = {
             {
               "Content-Type": "application/json",
               "X-GID-AUX-POP": hmac,
-              Authorization: authorization,
+              Authorization: `Bearer ${accessToken}`,
               Date: date.toUTCString()
             }
           );
@@ -292,31 +284,27 @@ module.exports = {
       );
     }
   },
-  checkWallet: function(httpClient) {
-    return handleError(
-      async (
-        { body: { clientSecret, currency }, headers: { authorization } },
-        res
-      ) => {
-        const date = new Date();
+  checkWallet: function({ grabid: { getAccessToken } }, httpClient) {
+    return handleError(async ({ body: { clientSecret, currency } }, res) => {
+      const accessToken = await getAccessToken();
+      const date = new Date();
 
-        const hmac = await generateHMACForXGIDAUXPOP({
-          authorization,
-          clientSecret,
-          date
-        });
+      const hmac = await generateHMACForXGIDAUXPOP({
+        accessToken,
+        clientSecret,
+        date
+      });
 
-        const { data, status } = await httpClient.get(
-          `/grabpay/partner/v2/wallet/info?currency=${currency}`,
-          {
-            Authorization: authorization,
-            "X-GID-AUX-POP": hmac,
-            Date: date.toUTCString()
-          }
-        );
+      const { data, status } = await httpClient.get(
+        `/grabpay/partner/v2/wallet/info?currency=${currency}`,
+        {
+          Authorization: `Bearer ${accessToken}`,
+          "X-GID-AUX-POP": hmac,
+          Date: date.toUTCString()
+        }
+      );
 
-        res.status(status).json(data);
-      }
-    );
+      res.status(status).json(data);
+    });
   }
 };
