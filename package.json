@@ -1,6 +1,6 @@
 {
   "name": "grabplatform-sample",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@grab-id/grab-id-client": "1.1.4",

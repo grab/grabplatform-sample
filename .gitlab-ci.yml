@@ -1,0 +1,33 @@
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  image: node:latest
+  cache:
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - build
+    expire_in: 5 minutes
+  script:
+    - npm install
+    - npm run build
+
+deploy-to-s3:
+  stage: deploy
+  dependencies:
+    - build
+  image: python:latest
+  script:
+    - pip install awscli
+    - aws configure set profile.pe.aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set profile.pe.aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set profile.pe.region $AWS_REGION
+    - aws s3 sync ./build s3://$AWS_S3_BUCKET --profile pe
+  only:
+    - /^v[0-9]+\.[0-9]+\.[0-9]$/
+  except:
+    - branches
