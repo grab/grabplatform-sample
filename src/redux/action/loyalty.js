@@ -2,7 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import { CommonActionCreators } from "./common";
+import { CommonActionCreators, CommonMessages } from "./common";
 
 export const LoyaltyActions = {
   SET_REWARDS_TIER: "SET_REWARDS_TIER",
@@ -17,12 +17,12 @@ export const LoyaltyActionCreators = {
   }),
   triggerGetRewardsTier: () => ({
     payload: async (dispatch, getState, { loyalty: { getRewardsTier } }) => {
-      try {
-        const tier = await getRewardsTier();
-        dispatch(LoyaltyActionCreators.setRewardsTier(tier));
-      } catch (e) {
-        dispatch(CommonActionCreators.setError(e));
-      }
+      const tier = await getRewardsTier();
+      dispatch(LoyaltyActionCreators.setRewardsTier(tier));
+
+      dispatch(
+        CommonActionCreators.setMessage(CommonMessages.loyalty.rewardsTier)
+      );
     },
     type: LoyaltyActions.TRIGGER_GET_REWARDS_TIER
   })

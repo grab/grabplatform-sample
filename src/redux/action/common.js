@@ -6,12 +6,17 @@ import { GrabIDActionCreators } from "./grabid";
 import { GrabPayActionCreators } from "./grabpay";
 
 export const CommonActions = {
+  SET_MESSAGE: "COMMON.SET_MESSAGE",
   SET_ERROR: "COMMON.SET_ERROR",
 
   TRIGGER_CLEAR_EVERYTHING: "COMMON.TRIGGER_CLEAR_EVERYTHING"
 };
 
 export const CommonActionCreators = {
+  setMessage: (message = "") => ({
+    payload: message,
+    type: CommonActions.SET_MESSAGE
+  }),
   setError: error => ({ payload: error, type: CommonActions.SET_ERROR }),
 
   triggerClearEverything: () => ({
@@ -27,4 +32,23 @@ export const CommonActionCreators = {
     },
     type: CommonActions.TRIGGER_CLEAR_EVERYTHING
   })
+};
+
+export const CommonMessages = {
+  grabid: {
+    requestToken: "Requested token successfully"
+  },
+  grabpay: {
+    oneTimeCharge: {
+      init: "Initialized charge successfully",
+      confirm: "Confirmed charge successfully"
+    },
+    recurringCharge: {
+      bind: "Bound successfully",
+      charge: "Charged successfully",
+      unbind: "Unbound successfully"
+    }
+  },
+  identity: { basicProfile: "Requested basic profile successfully" },
+  loyalty: { rewardsTier: "Requested rewards tier successfully" }
 };

@@ -2,7 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import { CommonActionCreators } from "./common";
+import { CommonActionCreators, CommonMessages } from "./common";
 
 export const GrabIDActions = {
   CLEAR_CREDENTIALS: "GRABID.CLEAR_CREDENTIALS",
@@ -36,11 +36,7 @@ export const GrabIDActionCreators = {
       getState,
       { grabid: { handleAuthorizationCodeFlowResponse } }
     ) => {
-      try {
-        await handleAuthorizationCodeFlowResponse();
-      } catch (e) {
-        dispatch(CommonActionCreators.setError(e));
-      }
+      await handleAuthorizationCodeFlowResponse();
     },
     type: GrabIDActions.TRIGGER_HANDLE_REDIRECT
   }),
@@ -80,16 +76,16 @@ export const GrabIDActionCreators = {
           navigation: { reloadPage }
         }
       ) => {
-        try {
-          const {
-            grabid: { clientID, countryCode }
-          } = getState();
+        const {
+          grabid: { clientID, countryCode }
+        } = getState();
 
-          await requestToken({ clientID, countryCode, scopes });
-          await reloadPage();
-        } catch (e) {
-          dispatch(CommonActionCreators.setError(e));
-        }
+        await requestToken({ clientID, countryCode, scopes });
+        await reloadPage();
+
+        dispatch(
+          CommonActionCreators.setMessage(CommonMessages.grabid.requestToken)
+        );
       },
       type: GrabIDActions.TRIGGER_MAKE_TOKEN_REQUEST
     })
@@ -133,15 +129,15 @@ export const GrabIDActionCreators = {
           }
         }
       ) => {
-        try {
-          const {
-            grabid: { clientID, clientSecret }
-          } = getState();
+        const {
+          grabid: { clientID, clientSecret }
+        } = getState();
 
-          await requestToken({ clientID, clientSecret });
-        } catch (e) {
-          dispatch(CommonActionCreators.setError(e));
-        }
+        await requestToken({ clientID, clientSecret });
+
+        dispatch(
+          CommonActionCreators.setMessage(CommonMessages.grabid.requestToken)
+        );
       },
       type: GrabIDActions.TRIGGER_MAKE_TOKEN_REQUEST
     })

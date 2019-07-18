@@ -2,7 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import { GrabIDActionCreators } from "./grabid";
+import { CommonActionCreators, CommonMessages } from "./common";
 
 export const GrabPayActions = {
   CLEAR_CREDENTIALS: "GRABPAY.CLEAR_CREDENTIALS",
@@ -71,6 +71,7 @@ export const GrabPayActionCreators = {
 
       const wallet = await checkWallet({ clientSecret, currency });
       dispatch(GrabPayActionCreators.setWallet(wallet));
+      dispatch(CommonActionCreators.setMessage(`Checked wallet successfully`));
     },
     type: GrabPayActions.TRIGGER_CHECK_WALLET
   }),
@@ -110,6 +111,12 @@ export const GrabPayActionCreators = {
         );
 
         dispatch(GrabPayActionCreators.setRequest(request));
+
+        dispatch(
+          CommonActionCreators.setMessage(
+            CommonMessages.grabpay.oneTimeCharge.init
+          )
+        );
       },
       type: GrabPayActions.OneTimeCharge.TRIGGER_INIT
     }),
@@ -134,6 +141,12 @@ export const GrabPayActionCreators = {
 
         dispatch(
           GrabPayActionCreators.Transaction.setTransactionStatus(status)
+        );
+
+        dispatch(
+          CommonActionCreators.setMessage(
+            CommonMessages.grabpay.oneTimeCharge.confirm
+          )
         );
       },
       type: GrabPayActions.OneTimeCharge.TRIGGER_CONFIRM
@@ -165,6 +178,12 @@ export const GrabPayActionCreators = {
 
         dispatch(
           GrabPayActionCreators.Transaction.setPartnerTransactionID(partnerTxID)
+        );
+
+        dispatch(
+          CommonActionCreators.setMessage(
+            CommonMessages.grabpay.recurringCharge.bind
+          )
         );
       },
       type: GrabPayActions.RecurringCharge.TRIGGER_BIND
@@ -203,6 +222,12 @@ export const GrabPayActionCreators = {
         );
 
         dispatch(GrabPayActionCreators.triggerCheckWallet());
+
+        dispatch(
+          CommonActionCreators.setMessage(
+            CommonMessages.grabpay.recurringCharge.charge
+          )
+        );
       },
       type: GrabPayActions.RecurringCharge.TRIGGER_CHARGE
     }),
@@ -224,8 +249,12 @@ export const GrabPayActionCreators = {
         } = getState();
 
         await unbind({ clientSecret, partnerTxID });
-        dispatch(GrabIDActionCreators.clearCredentials());
-        dispatch(GrabPayActionCreators.clearCredentials());
+
+        dispatch(
+          CommonActionCreators.setMessage(
+            CommonMessages.grabpay.recurringCharge.unbind
+          )
+        );
       },
       type: GrabPayActions.RecurringCharge.TRIGGER_CHARGE
     })

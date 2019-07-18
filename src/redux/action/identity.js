@@ -2,7 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import { CommonActionCreators } from "./common";
+import { CommonActionCreators, CommonMessages } from "./common";
 
 export const IdentityActions = {
   SET_BASIC_PROFILE: "SET_BASIC_PROFILE",
@@ -17,12 +17,12 @@ export const IdentityActionCreators = {
   }),
   triggerGetBasicProfile: () => ({
     payload: async (dispatch, getState, { identity: { getBasicProfile } }) => {
-      try {
-        const profile = await getBasicProfile();
-        dispatch(IdentityActionCreators.setBasicProfile(profile));
-      } catch (e) {
-        dispatch(CommonActionCreators.setError(e));
-      }
+      const profile = await getBasicProfile();
+      dispatch(IdentityActionCreators.setBasicProfile(profile));
+
+      dispatch(
+        CommonActionCreators.setMessage(CommonMessages.identity.basicProfile)
+      );
     },
     type: IdentityActions.TRIGGER_GET_BASIC_PROFILE
   })
