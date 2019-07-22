@@ -85,6 +85,10 @@ const AppContent = compose(
   })
 )(PrivateAppContent);
 
+/**
+ * We need a root URL path in case we want to host this app somewhere at a
+ * subpath. Root URL path must start with a "/".
+ */
 function PrivateApp() {
   return (
     <Switch>

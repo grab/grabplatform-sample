@@ -13,10 +13,10 @@ const products = [
   ["Recurring Charge", RecurringCharge]
 ];
 
-function PrivatePayment() {
+function PrivatePayment({ match: { path } }) {
   return (
     <div className={"payment-container"}>
-      <ProductContainer category="payment" products={products} />
+      <ProductContainer products={products} urlPath={path} />
     </div>
   );
 }

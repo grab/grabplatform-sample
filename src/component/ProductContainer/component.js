@@ -4,9 +4,10 @@
  */
 import React from "react";
 import { NavLink, Route, Switch } from "react-router-dom";
+import { join } from "path";
 import "./style.scss";
 
-export default function({ category, products = [] }) {
+export default function({ products = [], urlPath }) {
   return (
     <div className={`product-container`}>
       <div className="product-bar">
@@ -16,10 +17,13 @@ export default function({ category, products = [] }) {
             className="tab"
             exact
             key={product}
-            to={`/${category}/${product
-              .split(" ")
-              .map(components => components.toLowerCase())
-              .join("-")}`}
+            to={join(
+              urlPath,
+              product
+                .split(" ")
+                .map(component => component.toLowerCase())
+                .join("-")
+            )}
           >
             {product}
           </NavLink>
@@ -32,10 +36,13 @@ export default function({ category, products = [] }) {
               component={component}
               exact
               key={product}
-              path={`/${category}/${product
-                .split(" ")
-                .map(components => components.toLowerCase())
-                .join("-")}`}
+              path={join(
+                urlPath,
+                product
+                  .split(" ")
+                  .map(component => component.toLowerCase())
+                  .join("-")
+              )}
             />
           ))}
         </Switch>

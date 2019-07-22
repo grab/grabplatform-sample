@@ -107,9 +107,11 @@ window.addEventListener("beforeunload", () => {
   localStorage.setItem(cacheKey, JSON.stringify(store.getState()));
 });
 
+const rootPath = process.env.REACT_APP_ROOT_URL_PATH;
+
 ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
+    <BrowserRouter basename={rootPath}>
       <App />
     </BrowserRouter>
   </Provider>,

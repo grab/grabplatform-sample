@@ -5,10 +5,10 @@ import "./style.scss";
 
 const products = [["Basic Profile", BasicProfile]];
 
-function PrivateIdentity() {
+function PrivateIdentity({ match: { path } }) {
   return (
     <div className={"identity-container"}>
-      <ProductContainer category="identity" products={products} />
+      <ProductContainer products={products} urlPath={path} />
     </div>
   );
 }

@@ -51,6 +51,7 @@
   },
   "devDependencies": {
     "@types/react-redux": "^7.1.0",
+    "@types/react-router-dom": "^4.3.4",
     "@types/recompose": "^0.30.6",
     "@types/redis": "^2.8.13",
     "concurrently": "^4.1.0",

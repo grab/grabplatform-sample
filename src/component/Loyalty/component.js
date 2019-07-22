@@ -9,10 +9,10 @@ import "./style.scss";
 
 const products = [["Rewards Tier", RewardsTier]];
 
-function PrivateLoyalty() {
+function PrivateLoyalty({ match: { path } }) {
   return (
     <div className={"loyalty-container"}>
-      <ProductContainer category="loyalty" products={products} />
+      <ProductContainer products={products} urlPath={path} />
     </div>
   );
 }
