@@ -57,7 +57,7 @@ function getAbsoluteURLPath(window, relativeURL) {
 
 async function makeRequest(
   window,
-  { additionalHeaders = {}, body, method, relativePath = "", url }
+  { additionalHeaders = {}, body, method, path }
 ) {
   const { accessToken } = GrabID.getResult();
 
@@ -72,11 +72,7 @@ async function makeRequest(
     mode: "cors"
   };
 
-  const response = await window.fetch(
-    url || `${window.location.pathname}${relativePath}`,
-    config
-  );
-
+  const response = await window.fetch(path, config);
   if (response.status === 204) return {};
   const json = await response.json();
   if (!`${response.status}`.startsWith("2")) throw json;
@@ -140,7 +136,7 @@ export function createGrabIDRepository(window) {
               redirectURI: getAbsoluteURLPath(window, redirectURI)
             },
             method: "POST",
-            relativePath: "/token"
+            path: "/grabid/token"
           });
         }
       },
@@ -193,7 +189,7 @@ export function createGrabPayRepository(window) {
         makeRequest(window, {
           body: { clientSecret, currency },
           method: "POST",
-          relativePath: "/wallet"
+          path: "/payment/recurring-charge/wallet"
         }),
       oneTimeCharge: {
         init: async ({
@@ -216,13 +212,13 @@ export function createGrabPayRepository(window) {
               partnerID
             },
             method: "POST",
-            relativePath: "/init"
+            path: "/payment/one-time-charge/init"
           }),
         confirm: async ({ clientSecret, partnerTxID }) =>
           makeRequest(window, {
             body: { clientSecret, partnerTxID },
             method: "POST",
-            relativePath: "/confirm"
+            path: "/payment/one-time-charge/confirm"
           })
       },
       recurringCharge: {
@@ -230,7 +226,7 @@ export function createGrabPayRepository(window) {
           makeRequest(window, {
             body: { countryCode, partnerHMACSecret, partnerID },
             method: "POST",
-            relativePath: "/bind"
+            path: "/payment/recurring-charge/bind"
           }),
         charge: async ({
           amount,
@@ -252,13 +248,13 @@ export function createGrabPayRepository(window) {
               partnerTxID
             },
             method: "POST",
-            relativePath: "/charge"
+            path: "/payment/recurring-charge/charge"
           }),
         unbind: async ({ clientSecret, partnerTxID }) =>
           makeRequest(window, {
             body: { clientSecret, partnerTxID },
             method: "POST",
-            relativePath: "/unbind"
+            path: "/payment/recurring-charge/unbind"
           })
       }
     }
@@ -269,21 +265,24 @@ export function createGrabAPIRepository(window) {
   return {
     configuration: {
       getConfiguration: () =>
-        makeRequest(window, { method: "GET", url: "/configuration" }),
+        makeRequest(window, { method: "GET", path: "/configuration" }),
       setConfiguration: body =>
-        makeRequest(window, { body, method: "POST", url: "/configuration" })
+        makeRequest(window, { body, method: "POST", path: "/configuration" })
     },
     identity: {
-      getBasicProfile: () => makeRequest(window, { method: "GET" })
+      getBasicProfile: () =>
+        makeRequest(window, { method: "GET", path: "/identity/basic-profile" })
     },
     loyalty: {
-      getRewardsTier: () => makeRequest(window, { method: "GET" })
+      getRewardsTier: () =>
+        makeRequest(window, { method: "GET", path: "/loyalty/rewards-tier" })
     },
     messaging: {
       sendInboxMessage: async ({ partnerHMACSecret, partnerID }) =>
         makeRequest(window, {
           body: { partnerHMACSecret, partnerID },
-          method: "POST"
+          method: "POST",
+          path: "/messaging/inbox"
         })
     }
   };

@@ -30,13 +30,10 @@ async function initialize() {
   });
   app.get("/configuration", configuration.getConfiguration(dbClient));
   app.post("/configuration", configuration.setConfiguration(dbClient));
+  app.post("/grabid/token", grabid.popToken(dbClient, httpClient));
   app.get("/identity/basic-profile", identity.basicProfile(httpClient));
   app.get("/loyalty/rewards-tier", loyalty.rewardsTier(httpClient));
   app.post("/messaging/inbox", messaging.inbox(httpClient));
-  app.post(
-    "/payment/one-time-charge/token",
-    grabid.popToken(dbClient, httpClient)
-  );
   app.post(
     "/payment/one-time-charge/init",
     payment.oneTimeCharge.init(httpClient)
@@ -48,10 +45,6 @@ async function initialize() {
   app.post(
     "/payment/recurring-charge/bind",
     payment.recurringCharge.bind(httpClient)
-  );
-  app.post(
-    "/payment/recurring-charge/token",
-    grabid.popToken(dbClient, httpClient)
   );
   app.post(
     "/payment/recurring-charge/wallet",

@@ -9,10 +9,10 @@ import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
 
 function PrivateTransaction({
-  amount,
-  description,
-  partnerGroupTxID,
-  partnerTxID,
+  amount = 0,
+  description = "",
+  partnerGroupTxID = "",
+  partnerTxID = "",
   setAmount,
   setDescription,
   setPartnerGroupTransactionID
@@ -25,7 +25,7 @@ function PrivateTransaction({
         onChange={({ target: { value } }) =>
           setPartnerGroupTransactionID(value)
         }
-        placeholder="Enter partner transaction ID"
+        placeholder="Enter partner group transaction ID"
         spellCheck={false}
         value={partnerGroupTxID}
       />
@@ -80,12 +80,10 @@ export default compose(
     dispatch => ({
       setAmount: amount =>
         dispatch(
-          GrabPayActionCreators.OneTimeCharge.setTransactionAmount(amount)
+          GrabPayActionCreators.Transaction.setTransactionAmount(amount)
         ),
       setDescription: description =>
-        dispatch(
-          GrabPayActionCreators.OneTimeCharge.setDescription(description)
-        ),
+        dispatch(GrabPayActionCreators.Transaction.setDescription(description)),
       setPartnerGroupTransactionID: partnerGroupTxID =>
         dispatch(
           GrabPayActionCreators.Transaction.setPartnerGroupTransactionID(

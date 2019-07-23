@@ -35,6 +35,7 @@ module.exports = {
           res
         ) => {
           const partnerTxID = await generatePartnerTransactionID();
+          amount = parseInt(amount, undefined);
 
           const requestBody = {
             partnerGroupTxID,
@@ -148,6 +149,7 @@ module.exports = {
           res
         ) => {
           const accessToken = await dbClient.grabid.getAccessToken();
+          amount = parseInt(amount, undefined);
 
           const requestBody = {
             partnerGroupTxID,

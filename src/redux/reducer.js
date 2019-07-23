@@ -55,7 +55,12 @@ function grabid(state = {}, { type, payload }) {
 }
 
 function grabpay(
-  state = { oneTimeCharge: {}, recurringCharge: {}, transaction: {} },
+  state = {
+    oneTimeCharge: {},
+    recurringCharge: {},
+    transaction: {},
+    wallet: {}
+  },
   { type, payload }
 ) {
   switch (type) {
