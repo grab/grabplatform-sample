@@ -29,12 +29,7 @@ export function grabIDHandlerHOC() {
 export function grabPayHandlerHOC() {
   return compose(
     connect(
-      ({
-        grabpay: { currency, merchantID, partnerHMACSecret, partnerID }
-      }) => ({
-        isGrabPaySatisfied:
-          !!currency && !!merchantID && !!partnerHMACSecret && !!partnerID
-      }),
+      () => ({}),
       dispatch => ({
         clearCredentials: () =>
           dispatch(GrabPayActionCreators.clearCredentials())

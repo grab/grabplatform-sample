@@ -16,6 +16,8 @@ export const MessagingActionCreators = {
       { messaging: { sendInboxMessage } }
     ) => {
       try {
+        const {} = getState();
+
         await sendInboxMessage();
 
         dispatch(

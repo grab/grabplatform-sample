@@ -9,6 +9,8 @@ export const GrabIDActions = {
   SET_CLIENT_ID: "GRABID.SET_CLIENT_ID",
   SET_CLIENT_SECRET: "GRABID.SET_CLIENT_SECRET",
   SET_COUNTRY_CODE: "GRABID.SET_COUNTRY_CODE",
+  SET_PARTNER_HMAC_SECRET: "GRABPAY.SET_PARTNER_HMAC_SECRET",
+  SET_PARTNER_ID: "GRABPAY.SET_PARTNER_ID",
 
   TRIGGER_HANDLE_REDIRECT: "GRABID.TRIGGER_HANDLE_REDIRECT",
   TRIGGER_MAKE_AUTHORIZATION_REQUEST:
@@ -29,6 +31,14 @@ export const GrabIDActionCreators = {
   setCountryCode: (code = "") => ({
     payload: code,
     type: GrabIDActions.SET_COUNTRY_CODE
+  }),
+  setPartnerHMACSecret: (partnerHMACSecret = "") => ({
+    payload: partnerHMACSecret,
+    type: GrabIDActions.SET_PARTNER_HMAC_SECRET
+  }),
+  setPartnerID: (partnerID = "") => ({
+    payload: partnerID,
+    type: GrabIDActions.SET_PARTNER_ID
   }),
   triggerHandleGrabIDRedirect: () => ({
     payload: async (

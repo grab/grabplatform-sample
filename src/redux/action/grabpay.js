@@ -8,8 +8,6 @@ export const GrabPayActions = {
   CLEAR_CREDENTIALS: "GRABPAY.CLEAR_CREDENTIALS",
   SET_CURRENCY: "GRABPAY.SET_CURRENCY",
   SET_MERCHANT_ID: "GRABPAY.SET_MERCHANT_ID",
-  SET_PARTNER_HMAC_SECRET: "GRABPAY.SET_PARTNER_HMAC_SECRET",
-  SET_PARTNER_ID: "GRABPAY.SET_PARTNER_ID",
   SET_REQUEST: "GRABPAY.SET_REQUEST",
   SET_WALLET: "SET_WALLET",
 
@@ -45,14 +43,6 @@ export const GrabPayActionCreators = {
   setMerchantID: merchantID => ({
     payload: merchantID,
     type: GrabPayActions.SET_MERCHANT_ID
-  }),
-  setPartnerHMACSecret: hmac => ({
-    payload: hmac,
-    type: GrabPayActions.SET_PARTNER_HMAC_SECRET
-  }),
-  setPartnerID: partnerID => ({
-    payload: partnerID,
-    type: GrabPayActions.SET_PARTNER_ID
   }),
   setRequest: request => ({
     payload: request,
@@ -164,8 +154,7 @@ export const GrabPayActionCreators = {
         }
       ) => {
         const {
-          grabid: { countryCode },
-          grabpay: { partnerHMACSecret, partnerID }
+          grabid: { countryCode, partnerHMACSecret, partnerID }
         } = getState();
 
         const { partnerTxID, request } = await bind({

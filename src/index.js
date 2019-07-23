@@ -50,12 +50,16 @@ let storedState = !!cachedData
 
 if (!!Object.keys(storedState).length) {
   const {
-    grabid: { clientID, clientSecret, countryCode },
+    grabid: {
+      clientID,
+      clientSecret,
+      countryCode,
+      partnerHMACSecret,
+      partnerID
+    },
     grabpay: {
       currency,
       merchantID,
-      partnerHMACSecret,
-      partnerID,
       request,
       transaction: { amount, description, partnerGroupTxID, partnerTxID }
     }
@@ -65,14 +69,14 @@ if (!!Object.keys(storedState).length) {
     grabid: {
       clientID: clientID || process.env.REACT_APP_CLIENT_ID || "",
       clientSecret: clientSecret || process.env.REACT_APP_CLIENT_SECRET || "",
-      countryCode: countryCode || process.env.REACT_APP_COUNTRY_CODE || "SG"
+      countryCode: countryCode || process.env.REACT_APP_COUNTRY_CODE || "SG",
+      partnerHMACSecret:
+        partnerHMACSecret || process.env.REACT_APP_PARTNER_HMAC_SECRET || "",
+      partnerID: partnerID || process.env.REACT_APP_PARTNER_ID || ""
     },
     grabpay: {
       currency: currency || "SGD",
       merchantID: merchantID || process.env.REACT_APP_MERCHANT_ID || "",
-      partnerHMACSecret:
-        partnerHMACSecret || process.env.REACT_APP_PARTNER_HMAC_SECRET || "",
-      partnerID: partnerID || process.env.REACT_APP_PARTNER_ID || "",
       request: request || "",
       wallet: {},
       recurringCharge: {},

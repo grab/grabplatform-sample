@@ -22,6 +22,12 @@ function grabid(state = {}, { type, payload }) {
     case GrabIDActions.SET_COUNTRY_CODE:
       return { ...state, countryCode: payload };
 
+    case GrabIDActions.SET_PARTNER_HMAC_SECRET:
+      return { ...state, partnerHMACSecret: payload };
+
+    case GrabIDActions.SET_PARTNER_ID:
+      return { ...state, partnerID: payload };
+
     case GrabIDActions.SET_STATE:
       return { ...state, state: payload };
 
@@ -46,12 +52,6 @@ function grabpay(state = {}, { type, payload }) {
 
     case GrabPayActions.SET_MERCHANT_ID:
       return { ...state, merchantID: payload };
-
-    case GrabPayActions.SET_PARTNER_HMAC_SECRET:
-      return { ...state, partnerHMACSecret: payload };
-
-    case GrabPayActions.SET_PARTNER_ID:
-      return { ...state, partnerID: payload };
 
     case GrabPayActions.SET_REQUEST:
       return { ...state, request: payload };

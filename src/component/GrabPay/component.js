@@ -66,7 +66,10 @@ function PrivateGrabPay({
 
 export const GrabPay = compose(
   connect(
-    ({ grabpay: { currency, merchantID, partnerHMACSecret, partnerID } }) => ({
+    ({
+      grabid: { partnerHMACSecret, partnerID },
+      grabpay: { currency, merchantID }
+    }) => ({
       currency,
       merchantID,
       partnerHMACSecret,
@@ -77,10 +80,10 @@ export const GrabPay = compose(
         dispatch(GrabPayActionCreators.setCurrency(currency)),
       setMerchantID: merchantID =>
         dispatch(GrabPayActionCreators.setMerchantID(merchantID)),
-      setPartnerHMACSecret: hmac =>
-        dispatch(GrabPayActionCreators.setPartnerHMACSecret(hmac)),
+      setPartnerHMACSecret: partnerHMACSecret =>
+        dispatch(GrabIDActionCreators.setPartnerHMACSecret(partnerHMACSecret)),
       setPartnerID: partnerID =>
-        dispatch(GrabPayActionCreators.setPartnerID(partnerID))
+        dispatch(GrabIDActionCreators.setPartnerID(partnerID))
     })
   )
 )(PrivateGrabPay);

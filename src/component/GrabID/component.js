@@ -40,6 +40,8 @@ function PrivateGrabIDLogin({
   clientSecret,
   currentProductStageFlow,
   idToken,
+  partnerHMACSecret,
+  partnerID,
   popRequired,
   scopes,
   stageDescription,
@@ -47,7 +49,9 @@ function PrivateGrabIDLogin({
   makeAuthorizationRequest,
   makeTokenRequest,
   setClientID,
-  setClientSecret
+  setClientSecret,
+  setPartnerHMACSecret,
+  setPartnerID
 }) {
   return (
     <div className="grabid-container">
@@ -60,6 +64,24 @@ function PrivateGrabIDLogin({
 
       <>
         <div className="divider" />
+        <div className="title">Partner ID</div>
+
+        <input
+          onChange={({ target: { value } }) => setPartnerID(value)}
+          placeholder="Enter your partner ID"
+          spellCheck={false}
+          value={partnerID}
+        />
+
+        <div className="title">Partner HMAC secret</div>
+
+        <input
+          onChange={({ target: { value } }) => setPartnerHMACSecret(value)}
+          placeholder="Enter your partner HMAC secret"
+          spellCheck={false}
+          value={partnerHMACSecret}
+        />
+
         <div className="title">Client ID</div>
 
         <input
@@ -69,18 +91,14 @@ function PrivateGrabIDLogin({
           value={clientID}
         />
 
-        {!!popRequired && (
-          <>
-            <div className="title">Client secret</div>
+        <div className="title">Client secret</div>
 
-            <input
-              onChange={({ target: { value } }) => setClientSecret(value)}
-              placeholder="Enter your client secret"
-              spellCheck={false}
-              value={clientSecret}
-            />
-          </>
-        )}
+        <input
+          onChange={({ target: { value } }) => setClientSecret(value)}
+          placeholder="Enter your client secret"
+          spellCheck={false}
+          value={clientSecret}
+        />
 
         <div className="title">Requested scopes</div>
 
@@ -141,6 +159,10 @@ export const GrabIDLogin = compose(
         dispatch(GrabIDActionCreators.setClientID(clientID)),
       setClientSecret: clientSecret =>
         dispatch(GrabIDActionCreators.setClientSecret(clientSecret)),
+      setPartnerHMACSecret: partnerHMACSecret =>
+        dispatch(GrabIDActionCreators.setPartnerHMACSecret(partnerHMACSecret)),
+      setPartnerID: partnerID =>
+        dispatch(GrabIDActionCreators.setPartnerID(partnerID)),
       makeAuthorizationRequest: () =>
         /**
          * If makeAuthorizationRequest is specified in props, do not override
