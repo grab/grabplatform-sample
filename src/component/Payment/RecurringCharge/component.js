@@ -336,9 +336,9 @@ export default compose(
         dispatch(GrabPayActionCreators.RecurringCharge.triggerCharge()),
       checkWallet: () => dispatch(GrabPayActionCreators.triggerCheckWallet()),
       makeAuthorizationRequest: scopes =>
-        dispatch(GrabIDActionCreators.payment.triggerAuthorize(scopes)),
+        dispatch(GrabIDActionCreators.pop.triggerAuthorize(scopes)),
       makeTokenRequest: scopes =>
-        dispatch(GrabIDActionCreators.payment.triggerRequestToken(scopes)),
+        dispatch(GrabIDActionCreators.pop.triggerRequestToken(scopes)),
       unbindCharge: () =>
         dispatch(GrabPayActionCreators.RecurringCharge.triggerUnbind())
     })

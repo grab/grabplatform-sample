@@ -274,8 +274,11 @@ export function createGrabAPIRepository(window) {
       getRewardsTier: () => makeRequest(window, { method: "GET" })
     },
     messaging: {
-      sendInboxMessage: ({ partnerHMACSecret }) =>
-        makeRequest(window, { body: { partnerHMACSecret }, method: "POST" })
+      sendInboxMessage: async ({ partnerHMACSecret, partnerID }) =>
+        makeRequest(window, {
+          body: { partnerHMACSecret, partnerID },
+          method: "POST"
+        })
     }
   };
 }

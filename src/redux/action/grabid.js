@@ -75,7 +75,7 @@ export const GrabIDActionCreators = {
       type: GrabIDActions.TRIGGER_MAKE_TOKEN_REQUEST
     })
   },
-  payment: {
+  pop: {
     /** GrabPay requires an additional request parameter. */
     triggerAuthorize: (scopes = []) => ({
       params: scopes,

@@ -224,9 +224,9 @@ export default compose(
       initOneTimeCharge: () =>
         dispatch(GrabPayActionCreators.OneTimeCharge.triggerInit()),
       makeAuthorizationRequest: scopes =>
-        dispatch(GrabIDActionCreators.payment.triggerAuthorize(scopes)),
+        dispatch(GrabIDActionCreators.pop.triggerAuthorize(scopes)),
       makeTokenRequest: scopes =>
-        dispatch(GrabIDActionCreators.payment.triggerRequestToken(scopes))
+        dispatch(GrabIDActionCreators.pop.triggerRequestToken(scopes))
     })
   ),
   mapProps(({ isGrabPaySatisfied, ...rest }) => ({

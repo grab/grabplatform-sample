@@ -53,7 +53,6 @@ if (!!Object.keys(storedState).length) {
       partnerHMACSecret,
       partnerID
     },
-    grabid: {},
     grabpay: {
       request,
       transaction: { amount, description, partnerGroupTxID, partnerTxID }
