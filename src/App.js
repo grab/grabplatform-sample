@@ -10,9 +10,10 @@ import Messaging from "component/Messaging/component";
 import Payment from "component/Payment/component";
 import querystring from "querystring";
 import React from "react";
+import Configuration from "component/Configuration/component";
 import { connect } from "react-redux";
 import { NavLink, Route, Switch } from "react-router-dom";
-import { compose, lifecycle, mapProps } from "recompose";
+import { compose, lifecycle, mapProps, withState } from "recompose";
 import { CommonActionCreators } from "redux/action/common";
 import "./App.scss";
 
@@ -23,10 +24,30 @@ const categories = [
   ["Messaging", Messaging]
 ];
 
-function PrivateAppContent({ clearEverything }) {
+function PrivateAppContent({
+  clearEverything,
+  showConfiguration,
+  setShowConfiguration
+}) {
   return (
     <div className="App">
+      {!!showConfiguration && (
+        <div
+          className="configuration-overlay overlay"
+          onClick={e => {
+            e.stopPropagation();
+            setShowConfiguration(false);
+          }}
+        >
+          <Configuration />
+        </div>
+      )}
+
       <div className="global-action-container">
+        <div className="configure" onClick={() => setShowConfiguration(true)}>
+          Configure
+        </div>
+
         <div className="clear-everything" onClick={clearEverything}>
           Clear everything
         </div>
@@ -81,6 +102,7 @@ const AppContent = compose(
         dispatch(CommonActionCreators.triggerClearEverything())
     })
   ),
+  withState("showConfiguration", "setShowConfiguration", false),
   lifecycle({
     async componentDidMount() {
       const { idToken, storeIDTokenLocally } = this.props;

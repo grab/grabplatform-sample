@@ -1,0 +1,6 @@
+@import "src/global";
+
+.configuration-container {
+  @include stage-container;
+  background: white;
+}

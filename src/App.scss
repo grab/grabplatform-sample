@@ -20,6 +20,7 @@
       }
 
       & > * {
+        &.configure,
         &.clear-everything {
           @include stage-confirm-button;
         }
@@ -54,6 +55,27 @@
 
       & > * {
         flex: 1 0 0;
+      }
+    }
+
+    &.configuration-overlay {
+      align-items: center;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+
+      & > * {
+        max-height: 90%;
+        overflow: auto;
+        width: calc(100% - 8px * 2);
+
+        @include lg {
+          width: calc(70% - 8px * 2);
+        }
+
+        @include xl {
+          width: calc(60% - 8px * 2);
+        }
       }
     }
 
