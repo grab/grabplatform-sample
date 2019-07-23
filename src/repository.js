@@ -272,6 +272,9 @@ export function createGrabAPIRepository(window) {
     },
     loyalty: {
       getRewardsTier: () => makeRequest(window, { method: "GET" })
+    },
+    messaging: {
+      sendInboxMessage: () => makeRequest(window, { method: "POST" })
     }
   };
 }

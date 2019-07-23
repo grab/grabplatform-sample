@@ -8,6 +8,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { compose } from "recompose";
 import "./style.scss";
+import { MessagingActionCreators } from "redux/action/messaging";
 
 function PrivateInbox({ sendInboxMessage }) {
   return (
@@ -34,6 +35,9 @@ export default compose(
   grabIDHandlerHOC(),
   connect(
     () => ({}),
-    () => ({ sendInboxMessage: () => {} })
+    dispatch => ({
+      sendInboxMessage: () =>
+        dispatch(MessagingActionCreators.triggerSendInboxMessage())
+    })
   )
 )(PrivateInbox);

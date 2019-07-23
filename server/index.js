@@ -15,6 +15,7 @@ const grabid = require("./handler/grabid");
 const identity = require("./handler/identity");
 const loyalty = require("./handler/loyalty");
 const payment = require("./handler/payment");
+const messaging = require("./handler/messaging");
 const port = 8000;
 
 async function initialize() {
@@ -28,6 +29,7 @@ async function initialize() {
   });
   app.get("/identity/basic-profile", identity.basicProfile(httpClient));
   app.get("/loyalty/rewards-tier", loyalty.rewardsTier(httpClient));
+  app.post("/messaging/inbox", messaging.inbox(httpClient));
   app.post(
     "/payment/one-time-charge/token",
     grabid.popToken(dbClient, httpClient)
