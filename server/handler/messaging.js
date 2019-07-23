@@ -2,6 +2,9 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
+const {
+  utils: { requestTokenInfo }
+} = require("./grabid");
 const { generateHMACSignature, handleError } = require("./util");
 
 module.exports = {
@@ -11,19 +14,28 @@ module.exports = {
         {
           body: {
             partnerHMACSecret,
+            partnerID,
             recipientType = "passenger",
             template = {
               id: "1234",
               language: "en"
             }
-          }
+          },
+          headers: { authorization, "content-type": contentType }
         },
         res
       ) => {
-        const requestBody = { recipientType, template };
+        const {
+          data: { partner_user_id: recipientID }
+        } = await requestTokenInfo(httpClient, {
+          authorization,
+          "content-type": contentType
+        });
+
+        const requestBody = { recipientID, recipientType, template };
         const timestamp = new Date().toUTCString();
 
-        const hmacDigest = generateHMACSignature({
+        const hmacDigest = await generateHMACSignature({
           contentType: "application/json",
           httpMethod: "POST",
           partnerHMACSecret,

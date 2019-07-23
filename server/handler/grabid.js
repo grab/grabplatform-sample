@@ -5,9 +5,9 @@
 const { GrabPartnerUrls } = require("@grab-id/grab-id-client");
 const { handleError } = require("./util");
 
-module.exports = {
+const grabid = {
   /** These requests must be made from backend since it requires clientSecret. */
-  popToken: function({ grabid: { setAccessToken, setIDToken } }, { post }) {
+  popToken: function({ grabid: { setAccessToken, setIDToken } }, httpClient) {
     return handleError(
       async (
         { body: { code, codeVerifier, clientID, clientSecret, redirectURI } },
@@ -21,7 +21,7 @@ module.exports = {
         const {
           data: { access_token, id_token },
           status
-        } = await post(
+        } = await httpClient.post(
           "/grabid/v1/oauth2/token",
           {
             code,
@@ -39,5 +39,26 @@ module.exports = {
         res.status(status).json({ message: "Successful" });
       }
     );
+  },
+  utils: {
+    requestTokenInfo: async (
+      httpClient,
+      { authorization, "content-type": contentType }
+    ) => {
+      const baseURL =
+        process.env.NODE_ENV === "production"
+          ? GrabPartnerUrls.PRODUCTION
+          : GrabPartnerUrls.STAGING;
+
+      const { data, status } = await httpClient.get(
+        "/grabid/v1/oauth2/access_tokens/token_info",
+        { authorization, "Content-Type": contentType },
+        { baseURL }
+      );
+
+      return { data, status };
+    }
   }
 };
+
+module.exports = grabid;
