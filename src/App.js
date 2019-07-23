@@ -6,6 +6,7 @@ import { GrabIDRedirect } from "component/GrabID/component";
 import { GrabPayRedirect } from "component/GrabPay/component";
 import Identity from "component/Identity/component";
 import Loyalty from "component/Loyalty/component";
+import Messaging from "component/Messaging/component";
 import Payment from "component/Payment/component";
 import querystring from "querystring";
 import React from "react";
@@ -18,7 +19,8 @@ import "./App.scss";
 const categories = [
   ["Identity", Identity],
   ["Payment", Payment],
-  ["Loyalty", Loyalty]
+  ["Loyalty", Loyalty],
+  ["Messaging", Messaging]
 ];
 
 function PrivateAppContent({ clearEverything }) {
@@ -31,6 +33,7 @@ function PrivateAppContent({ clearEverything }) {
       </div>
 
       <div className="divider" />
+
       <div className="app-bar">
         <div className="category-container">
           {categories.map(([category]) => (
@@ -45,6 +48,7 @@ function PrivateAppContent({ clearEverything }) {
           ))}
         </div>
       </div>
+
       <div className="app-content">
         <Switch>
           {categories.map(([category, component]) => (
