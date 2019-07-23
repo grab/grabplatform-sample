@@ -7,10 +7,9 @@ import { CommonActionCreators, CommonMessages } from "./common";
 export const GrabIDActions = {
   CLEAR_CREDENTIALS: "GRABID.CLEAR_CREDENTIALS",
 
-  TRIGGER_HANDLE_REDIRECT: "GRABID.TRIGGER_HANDLE_REDIRECT",
-  TRIGGER_MAKE_AUTHORIZATION_REQUEST:
-    "GRABID.TRIGGER_MAKE_AUTHORIZATION_REQUEST",
-  TRIGGER_MAKE_TOKEN_REQUEST: "GRABID.TRIGGER_MAKE_TOKEN_REQUEST"
+  TRIGGER_HANDLE_REDIRECT: "TRIGGER_HANDLE_REDIRECT",
+  TRIGGER_MAKE_AUTHORIZATION_REQUEST: "TRIGGER_MAKE_AUTHORIZATION_REQUEST",
+  TRIGGER_MAKE_TOKEN_REQUEST: "TRIGGER_MAKE_TOKEN_REQUEST"
 };
 
 export const GrabIDActionCreators = {
@@ -41,11 +40,7 @@ export const GrabIDActionCreators = {
           configuration: { clientID, countryCode }
         } = getState();
 
-        await authorize({
-          clientID,
-          countryCode,
-          scopes
-        });
+        await authorize({ clientID, countryCode, scopes });
       },
       type: GrabIDActions.TRIGGER_MAKE_AUTHORIZATION_REQUEST
     }),

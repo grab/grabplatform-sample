@@ -35,9 +35,7 @@ export const CommonActionCreators = {
 };
 
 export const CommonMessages = {
-  grabid: {
-    requestToken: "Requested token successfully"
-  },
+  grabid: { requestToken: "Requested token successfully" },
   grabpay: {
     oneTimeCharge: {
       init: "Initialized charge successfully",

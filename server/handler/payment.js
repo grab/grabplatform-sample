@@ -70,10 +70,10 @@ module.exports = {
         }
       );
     },
-    confirm: function({ grabid: { getAccessToken } }, { post }) {
+    confirm: function(dbClient, httpClient) {
       return handleError(
         async ({ body: { clientSecret, partnerTxID } }, res) => {
-          const accessToken = await getAccessToken();
+          const accessToken = await dbClient.grabid.getAccessToken();
           const date = new Date();
 
           const hmac = await generateHMACForXGIDAUXPOP({
@@ -82,7 +82,7 @@ module.exports = {
             date
           });
 
-          const { data, status } = await post(
+          const { data, status } = await httpClient.post(
             "/grabpay/partner/v2/charge/complete",
             { partnerTxID },
             {
@@ -131,7 +131,7 @@ module.exports = {
         }
       );
     },
-    charge: function({ grabid: { getAccessToken } }, { post }) {
+    charge: function(dbClient, httpClient) {
       return handleError(
         async (
           {
@@ -147,7 +147,7 @@ module.exports = {
           },
           res
         ) => {
-          const accessToken = await getAccessToken();
+          const accessToken = await dbClient.grabid.getAccessToken();
 
           const requestBody = {
             partnerGroupTxID,
@@ -166,7 +166,7 @@ module.exports = {
             date
           });
 
-          const { data, status } = await post(
+          const { data, status } = await httpClient.post(
             "/grabpay/partner/v2/charge",
             requestBody,
             {
@@ -181,10 +181,10 @@ module.exports = {
         }
       );
     },
-    unbind: function({ grabid: { getAccessToken } }, httpClient) {
+    unbind: function(dbClient, httpClient) {
       return handleError(
         async ({ body: { clientSecret, partnerTxID } }, res) => {
-          const accessToken = await getAccessToken();
+          const accessToken = await dbClient.grabid.getAccessToken();
           const date = new Date();
 
           const hmac = await generateHMACForXGIDAUXPOP({
@@ -209,9 +209,9 @@ module.exports = {
       );
     }
   },
-  checkWallet: function({ grabid: { getAccessToken } }, httpClient) {
+  checkWallet: function(dbClient, httpClient) {
     return handleError(async ({ body: { clientSecret, currency } }, res) => {
-      const accessToken = await getAccessToken();
+      const accessToken = await dbClient.grabid.getAccessToken();
       const date = new Date();
 
       const hmac = await generateHMACForXGIDAUXPOP({

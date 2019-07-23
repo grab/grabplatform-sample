@@ -7,7 +7,7 @@ const { handleError } = require("./util");
 
 const grabid = {
   /** These requests must be made from backend since it requires clientSecret. */
-  popToken: function({ grabid: { setAccessToken, setIDToken } }, httpClient) {
+  popToken: function(dbClient, httpClient) {
     return handleError(
       async (
         { body: { code, codeVerifier, clientID, clientSecret, redirectURI } },
@@ -34,8 +34,8 @@ const grabid = {
           { baseURL }
         );
 
-        await setAccessToken(access_token);
-        await setIDToken(id_token);
+        await dbClient.grabid.setAccessToken(access_token);
+        await dbClient.grabid.setIDToken(id_token);
         res.status(status).json({ message: "Successful" });
       }
     );
