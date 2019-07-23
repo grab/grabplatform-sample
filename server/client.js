@@ -4,7 +4,7 @@
  */
 const axios = require("axios").default;
 const { createClient: createRedisClient } = require("redis");
-const utils = require("util");
+const { promisify } = require("util");
 
 exports.createHTTPClient = function() {
   const baseURL =
@@ -38,11 +38,12 @@ exports.createDBClient = async function() {
     url: process.env.REDIS_URL
   });
 
-  const get = utils.promisify(redis.get).bind(redis);
-  const set = utils.promisify(redis.set).bind(redis);
-  const del = utils.promisify(redis.del).bind(redis);
+  const get = promisify(redis.get).bind(redis);
+  const set = promisify(redis.set).bind(redis);
+  const del = promisify(redis.del).bind(redis);
 
   const keys = {
+    configuration: "CONFIGURATION",
     grabid: {
       ACCESS_TOKEN: "grabid.access_token",
       ID_TOKEN: "grabid.id_token"
@@ -54,6 +55,14 @@ exports.createDBClient = async function() {
       setAccessToken: accessToken => set(keys.grabid.ACCESS_TOKEN, accessToken),
       setIDToken: idToken => set(keys.grabid.ID_TOKEN, idToken),
       getAccessToken: () => get(keys.grabid.ACCESS_TOKEN)
+    },
+    configuration: {
+      setConfiguration: config =>
+        set(keys.configuration, JSON.stringify(config)),
+      getConfiguration: () =>
+        get(keys.configuration)
+          .then(JSON.parse)
+          .catch(() => ({}))
     }
   };
 };

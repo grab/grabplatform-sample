@@ -5,13 +5,14 @@ import { ConfigurationActionCreators } from "redux/action/configuration";
 import "./style.scss";
 
 function PrivateConfiguration({
-  clientID,
-  clientSecret,
-  currency,
-  merchantID,
-  partnerHMACSecret,
-  partnerID,
+  clientID = "",
+  clientSecret = "",
+  currency = "",
+  merchantID = "",
+  partnerHMACSecret = "",
+  partnerID = "",
   confirmConfiguration,
+  saveConfiguration,
   setClientID,
   setClientSecret,
   setCurrency,
@@ -75,8 +76,14 @@ function PrivateConfiguration({
         value={currency}
       />
 
-      <div className="confirm-configuration" onClick={confirmConfiguration}>
-        Done
+      <div
+        className="confirm-configuration"
+        onClick={() => {
+          saveConfiguration();
+          confirmConfiguration();
+        }}
+      >
+        Confirm
       </div>
     </div>
   );
@@ -97,7 +104,9 @@ export default compose(
       setPartnerHMACSecret: hmacSecret =>
         dispatch(ConfigurationActionCreators.setPartnerHMACSecret(hmacSecret)),
       setPartnerID: partnerID =>
-        dispatch(ConfigurationActionCreators.setPartnerID(partnerID))
+        dispatch(ConfigurationActionCreators.setPartnerID(partnerID)),
+      saveConfiguration: () =>
+        dispatch(ConfigurationActionCreators.triggerSaveConfiguration())
     })
   )
 )(PrivateConfiguration);

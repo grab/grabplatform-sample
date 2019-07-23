@@ -12,6 +12,9 @@ import { MessagingActions } from "./action/messaging";
 
 function configuration(state = {}, { type, payload }) {
   switch (type) {
+    case ConfigurationActions.SET_CONFIGURATION:
+      return { ...state, ...payload };
+
     case ConfigurationActions.SET_CLIENT_ID:
       return { ...state, clientID: payload };
 
@@ -51,7 +54,10 @@ function grabid(state = {}, { type, payload }) {
   }
 }
 
-function grabpay(state = {}, { type, payload }) {
+function grabpay(
+  state = { oneTimeCharge: {}, recurringCharge: {}, transaction: {} },
+  { type, payload }
+) {
   switch (type) {
     case GrabPayActions.CLEAR_CREDENTIALS:
       return {

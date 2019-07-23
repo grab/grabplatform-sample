@@ -2,6 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
+import Configuration from "component/Configuration/component";
 import { GrabIDRedirect } from "component/GrabID/component";
 import { GrabPayRedirect } from "component/GrabPay/component";
 import Identity from "component/Identity/component";
@@ -10,11 +11,11 @@ import Messaging from "component/Messaging/component";
 import Payment from "component/Payment/component";
 import querystring from "querystring";
 import React from "react";
-import Configuration from "component/Configuration/component";
 import { connect } from "react-redux";
 import { NavLink, Route, Switch } from "react-router-dom";
 import { compose, lifecycle, mapProps, withState } from "recompose";
 import { CommonActionCreators } from "redux/action/common";
+import { ConfigurationActionCreators } from "redux/action/configuration";
 import "./App.scss";
 
 const categories = [
@@ -95,14 +96,17 @@ const AppContent = compose(
     }) => ({ storeIDTokenLocally }),
     dispatch => ({
       clearEverything: () =>
-        dispatch(CommonActionCreators.triggerClearEverything())
+        dispatch(CommonActionCreators.triggerClearEverything()),
+      getConfiguration: () =>
+        dispatch(ConfigurationActionCreators.triggerGetConfiguration())
     })
   ),
   withState("showConfiguration", "setShowConfiguration", false),
   lifecycle({
     async componentDidMount() {
-      const { idToken, storeIDTokenLocally } = this.props;
+      const { getConfiguration, idToken, storeIDTokenLocally } = this.props;
       await storeIDTokenLocally(idToken);
+      await getConfiguration();
     }
   })
 )(PrivateAppContent);

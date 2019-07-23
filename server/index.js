@@ -11,6 +11,7 @@ dotenv.config();
 
 const app = express();
 const { createDBClient, createHTTPClient } = require("./client");
+const configuration = require("./handler/configuration");
 const grabid = require("./handler/grabid");
 const identity = require("./handler/identity");
 const loyalty = require("./handler/loyalty");
@@ -27,6 +28,8 @@ async function initialize() {
   app.get("/", (req, res) => {
     res.status(200).json("Never should have come here");
   });
+  app.get("/configuration", configuration.getConfiguration(dbClient));
+  app.post("/configuration", configuration.setConfiguration(dbClient));
   app.get("/identity/basic-profile", identity.basicProfile(httpClient));
   app.get("/loyalty/rewards-tier", loyalty.rewardsTier(httpClient));
   app.post("/messaging/inbox", messaging.inbox(httpClient));

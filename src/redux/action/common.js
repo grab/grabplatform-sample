@@ -35,6 +35,7 @@ export const CommonActionCreators = {
 };
 
 export const CommonMessages = {
+  configuration: { setConfiguration: "Successfully set configurations" },
   grabid: { requestToken: "Requested token successfully" },
   grabpay: {
     oneTimeCharge: {

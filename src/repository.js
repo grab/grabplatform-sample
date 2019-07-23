@@ -57,7 +57,7 @@ function getAbsoluteURLPath(window, relativeURL) {
 
 async function makeRequest(
   window,
-  { additionalHeaders = {}, body, method, relativePath = "" }
+  { additionalHeaders = {}, body, method, relativePath = "", url }
 ) {
   const { accessToken } = GrabID.getResult();
 
@@ -73,7 +73,7 @@ async function makeRequest(
   };
 
   const response = await window.fetch(
-    `${window.location.pathname}${relativePath}`,
+    url || `${window.location.pathname}${relativePath}`,
     config
   );
 
@@ -267,6 +267,12 @@ export function createGrabPayRepository(window) {
 
 export function createGrabAPIRepository(window) {
   return {
+    configuration: {
+      getConfiguration: () =>
+        makeRequest(window, { method: "GET", url: "/configuration" }),
+      setConfiguration: body =>
+        makeRequest(window, { body, method: "POST", url: "/configuration" })
+    },
     identity: {
       getBasicProfile: () => makeRequest(window, { method: "GET" })
     },
