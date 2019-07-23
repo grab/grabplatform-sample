@@ -26,17 +26,11 @@ const cachedData = localStorage.getItem(cacheKey);
 let storedState = !!cachedData
   ? JSON.parse(cachedData)
   : {
-      grabid: {
-        clientID: "",
-        clientSecret: "",
-        countryCode: ""
-      },
+      configuration: {},
+      grabid: {},
       grabpay: {
-        currency: "",
-        merchantID: "",
         partnerGroupTxID: "",
         partnerHMACSecret: "",
-        partnerID: "",
         partnerTxID: "",
         request: "",
         wallet: {},
@@ -50,33 +44,35 @@ let storedState = !!cachedData
 
 if (!!Object.keys(storedState).length) {
   const {
-    grabid: {
+    configuration: {
       clientID,
       clientSecret,
       countryCode,
+      currency,
+      merchantID,
       partnerHMACSecret,
       partnerID
     },
+    grabid: {},
     grabpay: {
-      currency,
-      merchantID,
       request,
       transaction: { amount, description, partnerGroupTxID, partnerTxID }
     }
   } = storedState;
 
   storedState = {
-    grabid: {
+    configuration: {
       clientID: clientID || process.env.REACT_APP_CLIENT_ID || "",
       clientSecret: clientSecret || process.env.REACT_APP_CLIENT_SECRET || "",
       countryCode: countryCode || process.env.REACT_APP_COUNTRY_CODE || "SG",
+      currency: currency || "SGD",
+      merchantID: merchantID || process.env.REACT_APP_MERCHANT_ID || "",
       partnerHMACSecret:
         partnerHMACSecret || process.env.REACT_APP_PARTNER_HMAC_SECRET || "",
       partnerID: partnerID || process.env.REACT_APP_PARTNER_ID || ""
     },
+    grabid: {},
     grabpay: {
-      currency: currency || "SGD",
-      merchantID: merchantID || process.env.REACT_APP_MERCHANT_ID || "",
       request: request || "",
       wallet: {},
       recurringCharge: {},

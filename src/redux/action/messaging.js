@@ -17,7 +17,7 @@ export const MessagingActionCreators = {
     ) => {
       try {
         const {
-          grabid: { partnerHMACSecret }
+          configuration: { partnerHMACSecret }
         } = getState();
 
         await sendInboxMessage({ partnerHMACSecret });

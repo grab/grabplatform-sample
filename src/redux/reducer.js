@@ -7,26 +7,40 @@ import { GrabIDActions } from "./action/grabid";
 import { GrabPayActions } from "./action/grabpay";
 import { IdentityActions } from "./action/identity";
 import { LoyaltyActions } from "./action/loyalty";
+import { ConfigurationActions } from "./action/configuration";
+
+function configuration(state = {}, { type, payload }) {
+  switch (type) {
+    case ConfigurationActions.SET_CLIENT_ID:
+      return { ...state, clientID: payload };
+
+    case ConfigurationActions.SET_CLIENT_SECRET:
+      return { ...state, clientSecret: payload };
+
+    case ConfigurationActions.SET_COUNTRY_CODE:
+      return { ...state, countryCode: payload };
+
+    case ConfigurationActions.SET_CURRENCY:
+      return { ...state, currency: payload };
+
+    case ConfigurationActions.SET_MERCHANT_ID:
+      return { ...state, merchantID: payload };
+
+    case ConfigurationActions.SET_PARTNER_HMAC_SECRET:
+      return { ...state, partnerHMACSecret: payload };
+
+    case ConfigurationActions.SET_PARTNER_ID:
+      return { ...state, partnerID: payload };
+
+    default:
+      return { ...state };
+  }
+}
 
 function grabid(state = {}, { type, payload }) {
   switch (type) {
     case GrabIDActions.CLEAR_CREDENTIALS:
       return { ...state };
-
-    case GrabIDActions.SET_CLIENT_ID:
-      return { ...state, clientID: payload };
-
-    case GrabIDActions.SET_CLIENT_SECRET:
-      return { ...state, clientSecret: payload };
-
-    case GrabIDActions.SET_COUNTRY_CODE:
-      return { ...state, countryCode: payload };
-
-    case GrabIDActions.SET_PARTNER_HMAC_SECRET:
-      return { ...state, partnerHMACSecret: payload };
-
-    case GrabIDActions.SET_PARTNER_ID:
-      return { ...state, partnerID: payload };
 
     case GrabIDActions.SET_STATE:
       return { ...state, state: payload };
@@ -46,12 +60,6 @@ function grabpay(state = {}, { type, payload }) {
         partnerTxID: "",
         transaction: { ...state.transaction, status: "" }
       };
-
-    case GrabPayActions.SET_CURRENCY:
-      return { ...state, currency: payload };
-
-    case GrabPayActions.SET_MERCHANT_ID:
-      return { ...state, merchantID: payload };
 
     case GrabPayActions.SET_REQUEST:
       return { ...state, request: payload };
@@ -115,6 +123,7 @@ function loyalty(state = {}, { type, payload }) {
 }
 
 export default combineReducers({
+  configuration,
   identity,
   grabid,
   grabpay,

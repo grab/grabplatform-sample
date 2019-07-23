@@ -1,8 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose } from "recompose";
-import { GrabIDActionCreators } from "redux/action/grabid";
-import { GrabPayActionCreators } from "redux/action/grabpay";
+import { ConfigurationActionCreators } from "redux/action/configuration";
 import "./style.scss";
 
 function PrivateConfiguration({
@@ -85,30 +84,20 @@ function PrivateConfiguration({
 
 export default compose(
   connect(
-    ({
-      grabid: { clientID, clientSecret, partnerHMACSecret, partnerID },
-      grabpay: { currency, merchantID }
-    }) => ({
-      clientID,
-      clientSecret,
-      currency,
-      partnerHMACSecret,
-      partnerID,
-      merchantID
-    }),
+    ({ configuration }) => configuration,
     dispatch => ({
       setClientID: clientID =>
-        dispatch(GrabIDActionCreators.setClientID(clientID)),
+        dispatch(ConfigurationActionCreators.setClientID(clientID)),
       setClientSecret: clientSecret =>
-        dispatch(GrabIDActionCreators.setClientSecret(clientSecret)),
+        dispatch(ConfigurationActionCreators.setClientSecret(clientSecret)),
       setCurrency: currency =>
-        dispatch(GrabPayActionCreators.setCurrency(currency)),
+        dispatch(ConfigurationActionCreators.setCurrency(currency)),
       setMerchantID: merchantID =>
-        dispatch(GrabPayActionCreators.setMerchantID(merchantID)),
-      setPartnerHMACSecret: partnerHMACSecret =>
-        dispatch(GrabIDActionCreators.setPartnerHMACSecret(partnerHMACSecret)),
+        dispatch(ConfigurationActionCreators.setMerchantID(merchantID)),
+      setPartnerHMACSecret: hmacSecret =>
+        dispatch(ConfigurationActionCreators.setPartnerHMACSecret(hmacSecret)),
       setPartnerID: partnerID =>
-        dispatch(GrabIDActionCreators.setPartnerID(partnerID))
+        dispatch(ConfigurationActionCreators.setPartnerID(partnerID))
     })
   )
 )(PrivateConfiguration);

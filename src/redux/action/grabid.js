@@ -6,11 +6,6 @@ import { CommonActionCreators, CommonMessages } from "./common";
 
 export const GrabIDActions = {
   CLEAR_CREDENTIALS: "GRABID.CLEAR_CREDENTIALS",
-  SET_CLIENT_ID: "GRABID.SET_CLIENT_ID",
-  SET_CLIENT_SECRET: "GRABID.SET_CLIENT_SECRET",
-  SET_COUNTRY_CODE: "GRABID.SET_COUNTRY_CODE",
-  SET_PARTNER_HMAC_SECRET: "GRABPAY.SET_PARTNER_HMAC_SECRET",
-  SET_PARTNER_ID: "GRABPAY.SET_PARTNER_ID",
 
   TRIGGER_HANDLE_REDIRECT: "GRABID.TRIGGER_HANDLE_REDIRECT",
   TRIGGER_MAKE_AUTHORIZATION_REQUEST:
@@ -20,26 +15,6 @@ export const GrabIDActions = {
 
 export const GrabIDActionCreators = {
   clearCredentials: () => ({ type: GrabIDActions.CLEAR_CREDENTIALS }),
-  setClientID: (clientID = "") => ({
-    payload: clientID,
-    type: GrabIDActions.SET_CLIENT_ID
-  }),
-  setClientSecret: (clientSecret = "") => ({
-    payload: clientSecret,
-    type: GrabIDActions.SET_CLIENT_SECRET
-  }),
-  setCountryCode: (code = "") => ({
-    payload: code,
-    type: GrabIDActions.SET_COUNTRY_CODE
-  }),
-  setPartnerHMACSecret: (partnerHMACSecret = "") => ({
-    payload: partnerHMACSecret,
-    type: GrabIDActions.SET_PARTNER_HMAC_SECRET
-  }),
-  setPartnerID: (partnerID = "") => ({
-    payload: partnerID,
-    type: GrabIDActions.SET_PARTNER_ID
-  }),
   triggerHandleGrabIDRedirect: () => ({
     payload: async (
       dispatch,
@@ -63,7 +38,7 @@ export const GrabIDActionCreators = {
         }
       ) => {
         const {
-          grabid: { clientID, countryCode }
+          configuration: { clientID, countryCode }
         } = getState();
 
         await authorize({
@@ -87,7 +62,7 @@ export const GrabIDActionCreators = {
         }
       ) => {
         const {
-          grabid: { clientID, countryCode }
+          configuration: { clientID, countryCode }
         } = getState();
 
         await requestToken({ clientID, countryCode, scopes });
@@ -114,8 +89,8 @@ export const GrabIDActionCreators = {
         }
       ) => {
         const {
-          grabid: { clientID, countryCode },
-          grabpay: { currency, request }
+          configuration: { clientID, currency, countryCode },
+          grabpay: { request }
         } = getState();
 
         await authorize({
@@ -140,7 +115,7 @@ export const GrabIDActionCreators = {
         }
       ) => {
         const {
-          grabid: { clientID, clientSecret }
+          configuration: { clientID, clientSecret }
         } = getState();
 
         await requestToken({ clientID, clientSecret });

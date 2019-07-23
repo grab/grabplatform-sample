@@ -6,11 +6,8 @@ import { CommonActionCreators, CommonMessages } from "./common";
 
 export const GrabPayActions = {
   CLEAR_CREDENTIALS: "GRABPAY.CLEAR_CREDENTIALS",
-  SET_CURRENCY: "GRABPAY.SET_CURRENCY",
-  SET_MERCHANT_ID: "GRABPAY.SET_MERCHANT_ID",
-  SET_REQUEST: "GRABPAY.SET_REQUEST",
+  SET_REQUEST: "SET_REQUEST",
   SET_WALLET: "SET_WALLET",
-
   TRIGGER_CHECK_WALLET: "TRIGGET_CHECK_WALLET",
 
   OneTimeCharge: {
@@ -36,14 +33,6 @@ export const GrabPayActions = {
 
 export const GrabPayActionCreators = {
   clearCredentials: () => ({ type: GrabPayActions.CLEAR_CREDENTIALS }),
-  setCurrency: currency => ({
-    payload: currency,
-    type: GrabPayActions.SET_CURRENCY
-  }),
-  setMerchantID: merchantID => ({
-    payload: merchantID,
-    type: GrabPayActions.SET_MERCHANT_ID
-  }),
   setRequest: request => ({
     payload: request,
     type: GrabPayActions.SET_REQUEST
@@ -55,8 +44,7 @@ export const GrabPayActionCreators = {
   triggerCheckWallet: () => ({
     payload: async (dispatch, getState, { grabpay: { checkWallet } }) => {
       const {
-        grabid: { clientSecret },
-        grabpay: { currency }
+        configuration: { clientSecret, currency }
       } = getState();
 
       const wallet = await checkWallet({ clientSecret, currency });
@@ -77,10 +65,8 @@ export const GrabPayActionCreators = {
         }
       ) => {
         const {
-          grabid: { partnerHMACSecret, partnerID },
+          configuration: { currency, partnerHMACSecret, partnerID, merchantID },
           grabpay: {
-            currency,
-            merchantID,
             transaction: { amount, description, partnerGroupTxID }
           }
         } = getState();
@@ -120,7 +106,7 @@ export const GrabPayActionCreators = {
         }
       ) => {
         const {
-          grabid: { clientSecret },
+          configuration: { clientSecret },
           grabpay: {
             transaction: { partnerTxID }
           }
@@ -153,7 +139,7 @@ export const GrabPayActionCreators = {
         }
       ) => {
         const {
-          grabid: { countryCode, partnerHMACSecret, partnerID }
+          configuration: { countryCode, partnerHMACSecret, partnerID }
         } = getState();
 
         const { partnerTxID, request } = await bind({
@@ -187,10 +173,8 @@ export const GrabPayActionCreators = {
         }
       ) => {
         const {
-          grabid: { clientSecret },
+          configuration: { clientSecret, currency, merchantID },
           grabpay: {
-            currency,
-            merchantID,
             transaction: { amount, description, partnerGroupTxID, partnerTxID }
           }
         } = getState();
@@ -230,7 +214,7 @@ export const GrabPayActionCreators = {
         }
       ) => {
         const {
-          grabid: { clientSecret },
+          configuration: { clientSecret },
           grabpay: {
             transaction: { partnerTxID }
           }
