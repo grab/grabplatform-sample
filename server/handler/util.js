@@ -5,6 +5,31 @@
 const btoa = require("btoa");
 const CryptoJS = require("crypto-js");
 
+function base64URLEncode(str) {
+  return str
+    .toString(CryptoJS.enc.Base64)
+    .replace(/=/g, "")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_");
+}
+
+function getRelativeURLPath(url) {
+  let pathRegex = /.+?:\/\/.+?(\/.+?)(?:#|\?|$)/;
+  let result = url.match(pathRegex);
+
+  if (!result) {
+    pathRegex = /\/.*/;
+    result = url.match(pathRegex);
+    return result && result.length === 1 ? result[0] : "";
+  }
+
+  return result && result.length > 1 ? result[1] : "";
+}
+
+function getUnixTimestamp(date) {
+  return Math.round(date.getTime() / 1000);
+}
+
 exports.handleError = function(requestHandler) {
   return async (req, res) => {
     try {
@@ -22,14 +47,6 @@ exports.handleError = function(requestHandler) {
       res.status(status).json({ message });
     }
   };
-};
-
-exports.base64URLEncode = function(str) {
-  return str
-    .toString(CryptoJS.enc.Base64)
-    .replace(/=/g, "")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_");
 };
 
 exports.generateHMACSignature = async function({
@@ -86,21 +103,4 @@ exports.generateHMACForXGIDAUXPOP = async function({
 
   const payloadBytes = JSON.stringify(payload);
   return base64URLEncode(btoa(payloadBytes));
-};
-
-exports.getRelativeURLPath = function(url) {
-  let pathRegex = /.+?:\/\/.+?(\/.+?)(?:#|\?|$)/;
-  let result = url.match(pathRegex);
-
-  if (!result) {
-    pathRegex = /\/.*/;
-    result = url.match(pathRegex);
-    return result && result.length === 1 ? result[0] : "";
-  }
-
-  return result && result.length > 1 ? result[1] : "";
-};
-
-exports.getUnixTimestamp = function(date) {
-  return Math.round(date.getTime() / 1000);
 };

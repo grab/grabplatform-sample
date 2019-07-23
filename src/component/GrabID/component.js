@@ -36,22 +36,14 @@ ${"```"}
 
 function PrivateGrabIDLogin({
   accessToken,
-  clientID,
-  clientSecret,
   currentProductStageFlow,
   idToken,
-  partnerHMACSecret,
-  partnerID,
   popRequired,
   scopes,
   stageDescription,
   state,
   makeAuthorizationRequest,
-  makeTokenRequest,
-  setClientID,
-  setClientSecret,
-  setPartnerHMACSecret,
-  setPartnerID
+  makeTokenRequest
 }) {
   return (
     <div className="grabid-container">
@@ -64,42 +56,6 @@ function PrivateGrabIDLogin({
 
       <>
         <div className="divider" />
-        <div className="title">Partner ID</div>
-
-        <input
-          onChange={({ target: { value } }) => setPartnerID(value)}
-          placeholder="Enter your partner ID"
-          spellCheck={false}
-          value={partnerID}
-        />
-
-        <div className="title">Partner HMAC secret</div>
-
-        <input
-          onChange={({ target: { value } }) => setPartnerHMACSecret(value)}
-          placeholder="Enter your partner HMAC secret"
-          spellCheck={false}
-          value={partnerHMACSecret}
-        />
-
-        <div className="title">Client ID</div>
-
-        <input
-          onChange={({ target: { value } }) => setClientID(value)}
-          placeholder="Enter your client ID"
-          spellCheck={false}
-          value={clientID}
-        />
-
-        <div className="title">Client secret</div>
-
-        <input
-          onChange={({ target: { value } }) => setClientSecret(value)}
-          placeholder="Enter your client secret"
-          spellCheck={false}
-          value={clientSecret}
-        />
-
         <div className="title">Requested scopes</div>
 
         <div className="scope-container">
@@ -145,24 +101,11 @@ function PrivateGrabIDLogin({
 export const GrabIDLogin = compose(
   connect(
     ({
-      grabid: { clientID, clientSecret },
       repository: {
         grabid: { getGrabIDResult }
       }
-    }) => ({
-      clientID,
-      clientSecret,
-      getGrabIDResult
-    }),
+    }) => ({ getGrabIDResult }),
     (dispatch, { scopes, makeAuthorizationRequest, makeTokenRequest }) => ({
-      setClientID: clientID =>
-        dispatch(GrabIDActionCreators.setClientID(clientID)),
-      setClientSecret: clientSecret =>
-        dispatch(GrabIDActionCreators.setClientSecret(clientSecret)),
-      setPartnerHMACSecret: partnerHMACSecret =>
-        dispatch(GrabIDActionCreators.setPartnerHMACSecret(partnerHMACSecret)),
-      setPartnerID: partnerID =>
-        dispatch(GrabIDActionCreators.setPartnerID(partnerID)),
       makeAuthorizationRequest: () =>
         /**
          * If makeAuthorizationRequest is specified in props, do not override

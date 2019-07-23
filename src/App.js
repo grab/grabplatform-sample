@@ -32,14 +32,10 @@ function PrivateAppContent({
   return (
     <div className="App">
       {!!showConfiguration && (
-        <div
-          className="configuration-overlay overlay"
-          onClick={e => {
-            e.stopPropagation();
-            setShowConfiguration(false);
-          }}
-        >
-          <Configuration />
+        <div className="configuration-overlay overlay">
+          <Configuration
+            confirmConfiguration={() => setShowConfiguration(false)}
+          />
         </div>
       )}
 

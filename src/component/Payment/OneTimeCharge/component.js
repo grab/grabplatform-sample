@@ -8,7 +8,6 @@ import {
   Stage
 } from "component/custom-hoc";
 import { GrabIDLogin } from "component/GrabID/component";
-import { GrabPay } from "component/GrabPay/component";
 import {
   grabidDescription,
   hmacDescription,
@@ -129,7 +128,6 @@ ${"```"}
 `;
 
 function PrivateOneTimeCharge({
-  currentStage,
   request,
   status,
   confirmOneTimeCharge,
@@ -139,10 +137,8 @@ function PrivateOneTimeCharge({
 }) {
   return (
     <div className="one-time-charge-container">
-      <GrabPay currentProductStage={1} />
-
       <div className="init-charge-container">
-        <div className="intro-title">Stage 2: Init charge</div>
+        <div className="intro-title">Stage 1: Init charge</div>
 
         <div className="stage-description">
           <Markdown className="source-code" source={initDescription} />
@@ -172,7 +168,7 @@ function PrivateOneTimeCharge({
       </div>
 
       <GrabIDLogin
-        currentProductStageFlow={3}
+        currentProductStageFlow={2}
         makeAuthorizationRequest={makeAuthorizationRequest}
         makeTokenRequest={makeTokenRequest}
         popRequired
@@ -183,7 +179,7 @@ function PrivateOneTimeCharge({
       />
 
       <div className="confirm-charge-container">
-        <div className="intro-title">Stage 4: Confirm charge</div>
+        <div className="intro-title">Stage 3: Confirm charge</div>
 
         <div className="stage-description">
           <Markdown className="source-code" source={confirmDescription} />

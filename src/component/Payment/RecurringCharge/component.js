@@ -8,7 +8,6 @@ import {
   Stage
 } from "component/custom-hoc";
 import { GrabIDLogin } from "component/GrabID/component";
-import { GrabPay } from "component/GrabPay/component";
 import {
   grabidDescription,
   hmacDescription,
@@ -208,10 +207,8 @@ function RecurringCharge({
 }) {
   return (
     <div className="recurring-charge-container">
-      <GrabPay currentProductStage={1} />
-
       <div className="bind-container">
-        <div className="intro-title">Stage 2: Bind</div>
+        <div className="intro-title">Stage 1: Bind</div>
 
         <div className="stage-description">
           <Markdown className="source-code" source={bindDescription} />
@@ -234,7 +231,7 @@ function RecurringCharge({
       </div>
 
       <GrabIDLogin
-        currentProductStageFlow={3}
+        currentProductStageFlow={2}
         makeAuthorizationRequest={makeAuthorizationRequest}
         makeTokenRequest={makeTokenRequest}
         popRequired
@@ -245,7 +242,7 @@ function RecurringCharge({
       />
 
       <div className="charge-container">
-        <div className="intro-title">Stage 4: Charge user</div>
+        <div className="intro-title">Stage 3: Charge user</div>
 
         <div className="stage-description">
           <Markdown className="source-code" source={chargeDescription} />

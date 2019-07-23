@@ -77,11 +77,10 @@ export const GrabPayActionCreators = {
         }
       ) => {
         const {
+          grabid: { partnerHMACSecret, partnerID },
           grabpay: {
             currency,
             merchantID,
-            partnerHMACSecret,
-            partnerID,
             transaction: { amount, description, partnerGroupTxID }
           }
         } = getState();
