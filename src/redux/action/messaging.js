@@ -16,9 +16,11 @@ export const MessagingActionCreators = {
       { messaging: { sendInboxMessage } }
     ) => {
       try {
-        const {} = getState();
+        const {
+          grabid: { partnerHMACSecret }
+        } = getState();
 
-        await sendInboxMessage();
+        await sendInboxMessage({ partnerHMACSecret });
 
         dispatch(
           CommonActionCreators.setMessage(CommonMessages.messaging.inbox)

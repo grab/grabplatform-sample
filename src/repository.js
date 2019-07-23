@@ -274,7 +274,8 @@ export function createGrabAPIRepository(window) {
       getRewardsTier: () => makeRequest(window, { method: "GET" })
     },
     messaging: {
-      sendInboxMessage: () => makeRequest(window, { method: "POST" })
+      sendInboxMessage: ({ partnerHMACSecret }) =>
+        makeRequest(window, { body: { partnerHMACSecret }, method: "POST" })
     }
   };
 }

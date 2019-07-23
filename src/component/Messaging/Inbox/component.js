@@ -15,6 +15,7 @@ function PrivateInbox({ sendInboxMessage }) {
     <div className="basic-inbox-container">
       <GrabIDLogin
         currentProductStageFlow={1}
+        popRequired
         scopes={["message.notifications"]}
       />
 
