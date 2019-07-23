@@ -8,6 +8,7 @@ import { GrabPayActions } from "./action/grabpay";
 import { IdentityActions } from "./action/identity";
 import { LoyaltyActions } from "./action/loyalty";
 import { ConfigurationActions } from "./action/configuration";
+import { MessagingActions } from "./action/messaging";
 
 function configuration(state = {}, { type, payload }) {
   switch (type) {
@@ -102,6 +103,16 @@ function grabpay(state = {}, { type, payload }) {
   }
 }
 
+function messaging(state = {}, { type, payload }) {
+  switch (type) {
+    case MessagingActions.SET_MESSAGE_ID:
+      return { ...state, messageID: payload };
+
+    default:
+      return { ...state };
+  }
+}
+
 function identity(state = {}, { type, payload }) {
   switch (type) {
     case IdentityActions.SET_BASIC_PROFILE:
@@ -128,5 +139,6 @@ export default combineReducers({
   grabid,
   grabpay,
   loyalty,
+  messaging,
   repository: (state = {}) => state
 });

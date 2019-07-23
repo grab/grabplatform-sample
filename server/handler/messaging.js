@@ -17,8 +17,23 @@ module.exports = {
             partnerID,
             recipientType = "passenger",
             template = {
-              id: "1234",
-              language: "en"
+              id: "28427675-74b3-427f-96bd-a0f489ffdb25",
+              language: "en",
+              params: {
+                title: "1.56 Inbox title",
+                subtitle: "Inbox subtitle",
+                button_link: "button link valur",
+                button_text: " button text value",
+                category_icon: " category icon value",
+                category: " category value",
+                code: "code value",
+                cover_image: "cover image value",
+                icon_image: " icon_image value",
+                message_content: "message content value",
+                message_date: " message_date value ",
+                message_title: " message_title value",
+                min_app_version: "min app version value"
+              }
             }
           },
           headers: { authorization, "content-type": contentType }

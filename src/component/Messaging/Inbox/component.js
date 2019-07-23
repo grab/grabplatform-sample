@@ -7,10 +7,10 @@ import { GrabIDLogin } from "component/GrabID/component";
 import React from "react";
 import { connect } from "react-redux";
 import { compose } from "recompose";
-import "./style.scss";
 import { MessagingActionCreators } from "redux/action/messaging";
+import "./style.scss";
 
-function PrivateInbox({ sendInboxMessage }) {
+function PrivateInbox({ messageID, sendInboxMessage }) {
   return (
     <div className="basic-inbox-container">
       <GrabIDLogin
@@ -23,6 +23,13 @@ function PrivateInbox({ sendInboxMessage }) {
         <div className="title">Endpoint</div>
         <input disabled readOnly value={"GET /message/v1/inbox"} />
 
+        {!!messageID && (
+          <>
+            <div className="title">Message ID</div>
+            <input disabled readOnly value={messageID} />
+          </>
+        )}
+
         <div className="send-inbox" onClick={sendInboxMessage}>
           Send inbox message
         </div>
@@ -34,7 +41,7 @@ function PrivateInbox({ sendInboxMessage }) {
 export default compose(
   grabIDHandlerHOC(),
   connect(
-    () => ({}),
+    ({ messaging: { messageID } }) => ({ messageID }),
     dispatch => ({
       sendInboxMessage: () =>
         dispatch(MessagingActionCreators.triggerSendInboxMessage())

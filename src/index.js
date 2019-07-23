@@ -38,8 +38,9 @@ let storedState = !!cachedData
         recurringCharge: {},
         transaction: { amount: 0, description: "", status: "" }
       },
-      identity: { basicProfile: {} },
-      loyalty: { rewardsTier: "" }
+      identity: {},
+      loyalty: {},
+      messaging: {}
     };
 
 if (!!Object.keys(storedState).length) {

@@ -5,10 +5,16 @@
 import { CommonActionCreators, CommonMessages } from "./common";
 
 export const MessagingActions = {
+  SET_MESSAGE_ID: "SET_MESSAGE_ID",
+
   TRIGGET_SEND_INBOX_MESSAGE: "TRIGGER_SEND_INBOX_MESSAGE"
 };
 
 export const MessagingActionCreators = {
+  setMessageID: (messageID = "") => ({
+    payload: messageID,
+    type: MessagingActions.SET_MESSAGE_ID
+  }),
   triggerSendInboxMessage: () => ({
     payload: async (
       dispatch,
@@ -20,7 +26,12 @@ export const MessagingActionCreators = {
           configuration: { partnerHMACSecret, partnerID }
         } = getState();
 
-        await sendInboxMessage({ partnerHMACSecret, partnerID });
+        const { messageID } = await sendInboxMessage({
+          partnerHMACSecret,
+          partnerID
+        });
+
+        dispatch(MessagingActionCreators.setMessageID(messageID));
 
         dispatch(
           CommonActionCreators.setMessage(CommonMessages.messaging.inbox)
