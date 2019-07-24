@@ -35,7 +35,7 @@ function PrivateAppContent({
       {!!showConfiguration && (
         <div className="configuration-overlay overlay">
           <Configuration
-            confirmConfiguration={() => setShowConfiguration(false)}
+            closeConfiguration={() => setShowConfiguration(false)}
           />
         </div>
       )}

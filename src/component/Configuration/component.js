@@ -1,27 +1,24 @@
 import React from "react";
 import { connect } from "react-redux";
-import { compose } from "recompose";
+import { compose, withState, lifecycle } from "recompose";
 import { ConfigurationActionCreators } from "redux/action/configuration";
 import "./style.scss";
 
-function PrivateConfiguration({
+// ########################### General configuration ###########################
+
+function PrivateGeneralConfiguration({
   clientID = "",
   clientSecret = "",
-  currency = "",
-  merchantID = "",
   partnerHMACSecret = "",
   partnerID = "",
-  confirmConfiguration,
   saveConfiguration,
   setClientID,
   setClientSecret,
-  setCurrency,
-  setMerchantID,
   setPartnerHMACSecret,
   setPartnerID
 }) {
   return (
-    <div className="configuration-container">
+    <div className="general-configuration-container">
       <div className="title">Partner ID</div>
 
       <input
@@ -58,6 +55,45 @@ function PrivateConfiguration({
         value={clientSecret}
       />
 
+      <div className="confirm-configuration" onClick={saveConfiguration}>
+        Confirm
+      </div>
+    </div>
+  );
+}
+
+const GeneralConfiguration = compose(
+  connect(
+    ({ configuration }) => configuration,
+    dispatch => ({
+      setClientID: clientID =>
+        dispatch(ConfigurationActionCreators.setClientID(clientID)),
+      setClientSecret: clientSecret =>
+        dispatch(ConfigurationActionCreators.setClientSecret(clientSecret)),
+      setCurrency: currency =>
+        dispatch(ConfigurationActionCreators.setCurrency(currency)),
+      setMerchantID: merchantID =>
+        dispatch(ConfigurationActionCreators.setMerchantID(merchantID)),
+      setPartnerHMACSecret: hmacSecret =>
+        dispatch(ConfigurationActionCreators.setPartnerHMACSecret(hmacSecret)),
+      setPartnerID: partnerID =>
+        dispatch(ConfigurationActionCreators.setPartnerID(partnerID))
+    })
+  )
+)(PrivateGeneralConfiguration);
+
+// ########################### GrabPay configuration ###########################
+
+function PrivateGrabPayConfiguration({
+  currency = "",
+  merchantID = "",
+  closeConfiguration,
+  saveConfiguration,
+  setCurrency,
+  setMerchantID
+}) {
+  return (
+    <div className="grabpay-configuration-container">
       <div className="title">Merchant ID</div>
 
       <input
@@ -76,37 +112,109 @@ function PrivateConfiguration({
         value={currency}
       />
 
-      <div
-        className="confirm-configuration"
-        onClick={() => {
-          saveConfiguration();
-          confirmConfiguration();
-        }}
-      >
+      <div className="confirm-configuration" onClick={saveConfiguration}>
         Confirm
       </div>
     </div>
   );
 }
 
-export default compose(
+const GrabPayConfiguration = compose(
   connect(
     ({ configuration }) => configuration,
     dispatch => ({
-      setClientID: clientID =>
-        dispatch(ConfigurationActionCreators.setClientID(clientID)),
-      setClientSecret: clientSecret =>
-        dispatch(ConfigurationActionCreators.setClientSecret(clientSecret)),
       setCurrency: currency =>
         dispatch(ConfigurationActionCreators.setCurrency(currency)),
       setMerchantID: merchantID =>
-        dispatch(ConfigurationActionCreators.setMerchantID(merchantID)),
-      setPartnerHMACSecret: hmacSecret =>
-        dispatch(ConfigurationActionCreators.setPartnerHMACSecret(hmacSecret)),
-      setPartnerID: partnerID =>
-        dispatch(ConfigurationActionCreators.setPartnerID(partnerID)),
-      saveConfiguration: () =>
-        dispatch(ConfigurationActionCreators.triggerSaveConfiguration())
+        dispatch(ConfigurationActionCreators.setMerchantID(merchantID))
     })
+  )
+)(PrivateGrabPayConfiguration);
+
+// ############################ All configuration ############################
+
+function PrivateConfiguration({
+  configurationType = "general",
+  saveConfiguration,
+  setConfigurationType
+}) {
+  return (
+    <div className="configuration-container">
+      <div className="type-switcher">
+        <div
+          className="general-switch"
+          onClick={() => setConfigurationType("general")}
+        >
+          General
+        </div>
+
+        <div className="divider" />
+
+        <div
+          className="grabpay-switch"
+          onClick={() => setConfigurationType("grabpay")}
+        >
+          GrabPay
+        </div>
+      </div>
+
+      {configurationType === "general" && (
+        <GeneralConfiguration saveConfiguration={saveConfiguration} />
+      )}
+
+      {configurationType === "grabpay" && (
+        <GrabPayConfiguration saveConfiguration={saveConfiguration} />
+      )}
+    </div>
+  );
+}
+
+export default compose(
+  connect(
+    () => ({}),
+    (dispatch, { closeConfiguration }) => ({
+      saveConfiguration: () => {
+        dispatch(ConfigurationActionCreators.triggerSaveConfiguration());
+        closeConfiguration();
+      }
+    })
+  ),
+  withState("configurationType", "setConfigurationType", "general"),
+  lifecycle(
+    (() => {
+      let keyHandler = null;
+
+      return {
+        componentDidMount() {
+          keyHandler = ({ key }) => {
+            switch (key) {
+              case "ArrowLeft":
+                this.props.setConfigurationType("general");
+                break;
+
+              case "ArrowRight":
+                this.props.setConfigurationType("grabpay");
+                break;
+
+              case "Enter":
+                this.props.saveConfiguration();
+                break;
+
+              case "Escape":
+                this.props.closeConfiguration();
+                break;
+
+              default:
+                break;
+            }
+          };
+
+          document.addEventListener("keydown", keyHandler, false);
+        },
+        componentWillUnmount() {
+          document.removeEventListener("keydown", keyHandler, false);
+        }
+      };
+    })()
   )
 )(PrivateConfiguration);

@@ -1,12 +1,37 @@
 @import "src/global";
 
 .configuration-container {
-  @include stage-container;
-  background: white;
+  display: flex;
+  flex-direction: column;
 
   & > * {
-    &.confirm-configuration {
-      @include stage-confirm-button;
+    &.type-switcher {
+      display: flex;
+
+      & > * {
+        &.general-switch,
+        &.grabpay-switch {
+          @include confirm-button;
+          flex: 1 0 0;
+        }
+
+        &.divider {
+          background: white;
+          width: 1px;
+        }
+      }
+    }
+
+    &.general-configuration-container,
+    &.grabpay-configuration-container {
+      @include stage-container;
+      background: white;
+
+      & > * {
+        &.confirm-configuration {
+          @include stage-confirm-button;
+        }
+      }
     }
   }
 }
