@@ -7,7 +7,8 @@ import { CommonActionCreators, CommonMessages } from "./common";
 export const MessagingActions = {
   SET_MESSAGE_ID: "SET_MESSAGE_ID",
 
-  TRIGGET_SEND_INBOX_MESSAGE: "TRIGGER_SEND_INBOX_MESSAGE"
+  TRIGGET_SEND_INBOX_MESSAGE: "TRIGGER_SEND_INBOX_MESSAGE",
+  TRIGGET_SEND_PUSH_MESSAGE: "TRIGGET_SEND_PUSH_MESSAGE"
 };
 
 export const MessagingActionCreators = {
@@ -41,5 +42,23 @@ export const MessagingActionCreators = {
       }
     },
     type: MessagingActions.TRIGGET_SEND_INBOX_MESSAGE
+  }),
+  triggerSendPushMessage: () => ({
+    payload: async (dispatch, getState, { messaging: { sendPushMessage } }) => {
+      try {
+        const {
+          configuration: { partnerHMACSecret, partnerID }
+        } = getState();
+
+        await sendPushMessage({ partnerHMACSecret, partnerID });
+
+        dispatch(
+          CommonActionCreators.setMessage(CommonMessages.messaging.push)
+        );
+      } catch (e) {
+        dispatch(CommonActionCreators.setError(e));
+      }
+    },
+    type: MessagingActions.TRIGGET_SEND_PUSH_MESSAGE
   })
 };

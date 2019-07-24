@@ -283,6 +283,12 @@ export function createGrabAPIRepository(window) {
           body: { partnerHMACSecret, partnerID },
           method: "POST",
           path: "/messaging/inbox"
+        }),
+      sendPushMessage: async ({ partnerHMACSecret, partnerID }) =>
+        makeRequest(window, {
+          body: { partnerHMACSecret, partnerID },
+          method: "POST",
+          path: "/messaging/push"
         })
     }
   };

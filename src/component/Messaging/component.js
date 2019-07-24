@@ -5,9 +5,10 @@
 import ProductContainer from "component/ProductContainer/component";
 import React from "react";
 import Inbox from "./Inbox/component";
+import Push from "./Push/component";
 import "./style.scss";
 
-const products = [["Inbox", Inbox]];
+const products = [["Push", Push], ["Inbox", Inbox]];
 
 function PrivateMessaging({ match: { path } }) {
   return (

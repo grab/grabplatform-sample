@@ -50,5 +50,8 @@ export const CommonMessages = {
   },
   identity: { basicProfile: "Requested basic profile successfully" },
   loyalty: { rewardsTier: "Requested rewards tier successfully" },
-  messaging: { inbox: "Sent inbox message successfully" }
+  messaging: {
+    inbox: "Sent inbox message successfully",
+    push: "Sent push message successfully"
+  }
 };

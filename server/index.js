@@ -34,6 +34,7 @@ async function initialize() {
   app.get("/identity/basic-profile", identity.basicProfile(httpClient));
   app.get("/loyalty/rewards-tier", loyalty.rewardsTier(httpClient));
   app.post("/messaging/inbox", messaging.inbox(httpClient));
+  app.post("/messaging/push", messaging.push(httpClient));
   app.post(
     "/payment/one-time-charge/init",
     payment.oneTimeCharge.init(httpClient)
