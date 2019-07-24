@@ -9,16 +9,27 @@ import "./style.scss";
 function PrivateGeneralConfiguration({
   clientID = "",
   clientSecret = "",
+  countryCode = "",
   partnerHMACSecret = "",
   partnerID = "",
   saveConfiguration,
   setClientID,
   setClientSecret,
+  setCountryCode,
   setPartnerHMACSecret,
   setPartnerID
 }) {
   return (
     <div className="general-configuration-container">
+      <div className="title">Country Code</div>
+
+      <input
+        onChange={({ target: { value } }) => setCountryCode(value)}
+        placeholder="Enter country code"
+        spellCheck={false}
+        value={countryCode}
+      />
+
       <div className="title">Partner ID</div>
 
       <input
@@ -70,6 +81,8 @@ const GeneralConfiguration = compose(
         dispatch(ConfigurationActionCreators.setClientID(clientID)),
       setClientSecret: clientSecret =>
         dispatch(ConfigurationActionCreators.setClientSecret(clientSecret)),
+      setCountryCode: countryCode =>
+        dispatch(ConfigurationActionCreators.setCountryCode(countryCode)),
       setCurrency: currency =>
         dispatch(ConfigurationActionCreators.setCurrency(currency)),
       setMerchantID: merchantID =>
@@ -188,14 +201,6 @@ export default compose(
         componentDidMount() {
           keyHandler = ({ key }) => {
             switch (key) {
-              case "ArrowLeft":
-                this.props.setConfigurationType("general");
-                break;
-
-              case "ArrowRight":
-                this.props.setConfigurationType("grabpay");
-                break;
-
               case "Enter":
                 this.props.saveConfiguration();
                 break;

@@ -10,7 +10,7 @@ import { LoyaltyActions } from "./action/loyalty";
 import { ConfigurationActions } from "./action/configuration";
 import { MessagingActions } from "./action/messaging";
 
-function configuration(state = {}, { type, payload }) {
+function configuration(state = { countryCode: "SG" }, { type, payload }) {
   switch (type) {
     case ConfigurationActions.SET_CONFIGURATION:
       return { ...state, ...payload };

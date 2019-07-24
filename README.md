@@ -24,19 +24,20 @@ openssl req -nodes -new -x509 -keyout server.key -out server.cert
 
 5. Navigate to specific products by clicking the categories, and then clicking the underlying products.
 6. Authorize with GrabID first, then follow instructions on screen to access the related endpoint.
-7. (Optional) Create an `env` file in root directory and add:
+7. When you are in the app, you can configure the necessary details. These configs will be saved in the backend and prefilled the next time you start the app:
 
-- `REACT_APP_CLIENT_ID` to automatically fill out `clientID`.
-- `REACT_APP_CLIENT_SECRET` to automatically fill out `clientSecret`.
-- `REACT_APP_COUNTRY_CODE` to automatically fill out `countryCode`.
-- `REACT_APP_MERCHANT_ID` to automatically fill out `merchantID`.
-- `REACT_APP_PARTNER_HMAC_SECRET` to automatically fill out `partnerHMACSecret`.
-- `REACT_APP_PARTNER_ID` to automatically fill out `partnerID`.
+- Country Code.
+- Partner ID.
+- Partner HMAC secret.
+- Client ID.
+- Client secret.
+- Merchant ID.
+- Currency.
 
 ## Testing in production
 
 - Open `package.json` and change `host` to `grabplatform.grab.com` and `proxy` to `https://grabplatform.grab.com:8000`. Please change back to `stg-myteksi.com` for staging tests.
-- Update `env` with production credentials.
+- Update configurations to use production credentials.
 - Configure the redirect URLs for your OAuth client in `https://developer.stg-myteksi.com` to be the same as above.
 - Run `yarn start:prd` instead of `yarn start:stg`.
 - After you are done, revert the above changes to clean up.
