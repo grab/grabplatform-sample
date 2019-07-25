@@ -97,7 +97,7 @@ export function createGrabIDRepository(window) {
       getGrabIDResult: async () => GrabID.getResult(),
       getLoginReturnURI: async () =>
         getRelativeURLPath(GrabID.getLoginReturnURI()),
-      storeIDTokenLocally: async idToken =>
+      saveInitialIDToken: async idToken =>
         window.localStorage.setItem(LOCAL_ID_TOKEN_KEY, idToken),
       handleAuthorizationCodeFlowResponse: async () => {
         GrabID.handleAuthorizationCodeFlowResponse();
@@ -272,12 +272,14 @@ export function createGrabPayRepository(window) {
 }
 
 export function createGrabAPIRepository(window) {
+  const configCacheKey = "configuration";
+
   return {
     configuration: {
       getConfiguration: () =>
-        makeRequest(window, { method: "GET", path: "/configuration" }),
-      saveConfiguration: body =>
-        makeRequest(window, { body, method: "POST", path: "/configuration" })
+        JSON.parse(window.localStorage.getItem(configCacheKey) || "{}"),
+      saveConfiguration: config =>
+        window.localStorage.setItem(configCacheKey, JSON.stringify(config))
     },
     identity: {
       getBasicProfile: () =>

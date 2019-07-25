@@ -90,9 +90,9 @@ const AppContent = compose(
   connect(
     ({
       repository: {
-        grabid: { storeIDTokenLocally }
+        grabid: { saveInitialIDToken }
       }
-    }) => ({ storeIDTokenLocally }),
+    }) => ({ saveInitialIDToken }),
     dispatch => ({
       clearEverything: () =>
         dispatch(CommonActionCreators.triggerClearEverything()),
@@ -103,8 +103,8 @@ const AppContent = compose(
   withState("showConfiguration", "setShowConfiguration", false),
   lifecycle({
     async componentDidMount() {
-      const { getConfiguration, idToken, storeIDTokenLocally } = this.props;
-      await storeIDTokenLocally(idToken);
+      const { getConfiguration, idToken, saveInitialIDToken } = this.props;
+      await saveInitialIDToken(idToken);
       await getConfiguration();
     }
   })
