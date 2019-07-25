@@ -5,15 +5,12 @@
 import { CommonActionCreators, CommonMessages } from "./common";
 
 export const GrabIDActions = {
-  CLEAR_CREDENTIALS: "GRABID.CLEAR_CREDENTIALS",
-
   TRIGGER_HANDLE_REDIRECT: "TRIGGER_HANDLE_REDIRECT",
   TRIGGER_MAKE_AUTHORIZATION_REQUEST: "TRIGGER_MAKE_AUTHORIZATION_REQUEST",
   TRIGGER_MAKE_TOKEN_REQUEST: "TRIGGER_MAKE_TOKEN_REQUEST"
 };
 
 export const GrabIDActionCreators = {
-  clearCredentials: () => ({ type: GrabIDActions.CLEAR_CREDENTIALS }),
   triggerHandleGrabIDRedirect: () => ({
     payload: async (
       dispatch,

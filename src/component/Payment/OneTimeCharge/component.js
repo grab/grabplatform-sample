@@ -2,11 +2,6 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import {
-  grabIDHandlerHOC,
-  grabPayHandlerHOC,
-  Stage
-} from "component/custom-hoc";
 import { GrabIDLogin } from "component/GrabID/component";
 import {
   grabidDescription,
@@ -18,7 +13,7 @@ import Transaction from "component/Payment/Transaction/component";
 import React from "react";
 import Markdown from "react-markdown";
 import { connect } from "react-redux";
-import { compose, mapProps } from "recompose";
+import { compose } from "recompose";
 import { GrabIDActionCreators } from "redux/action/grabid";
 import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
@@ -209,8 +204,6 @@ function PrivateOneTimeCharge({
 }
 
 export default compose(
-  grabIDHandlerHOC(),
-  grabPayHandlerHOC(),
   connect(
     ({
       grabpay: {
@@ -228,17 +221,5 @@ export default compose(
       makeTokenRequest: scopes =>
         dispatch(GrabIDActionCreators.pop.triggerRequestToken(scopes))
     })
-  ),
-  mapProps(({ isGrabPaySatisfied, ...rest }) => ({
-    ...rest,
-    currentStage: Stage.ONE + !!isGrabPaySatisfied
-  })),
-  mapProps(({ isInitSatisfied, currentStage, ...rest }) => ({
-    ...rest,
-    currentStage: currentStage + !!isInitSatisfied
-  })),
-  mapProps(({ isGrabIDSatisfied, currentStage, ...rest }) => ({
-    ...rest,
-    currentStage: currentStage + !!isGrabIDSatisfied
-  }))
+  )
 )(PrivateOneTimeCharge);

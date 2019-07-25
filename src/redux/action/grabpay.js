@@ -5,7 +5,6 @@
 import { CommonActionCreators, CommonMessages } from "./common";
 
 export const GrabPayActions = {
-  CLEAR_CREDENTIALS: "CLEAR_CREDENTIALS",
   SET_REQUEST: "SET_REQUEST",
   SET_WALLET: "SET_WALLET",
   TRIGGER_CHECK_WALLET: "TRIGGET_CHECK_WALLET",
@@ -31,7 +30,6 @@ export const GrabPayActions = {
 };
 
 export const GrabPayActionCreators = {
-  clearCredentials: () => ({ type: GrabPayActions.CLEAR_CREDENTIALS }),
   setRequest: request => ({
     payload: request,
     type: GrabPayActions.SET_REQUEST

@@ -2,9 +2,6 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import { GrabIDActionCreators } from "./grabid";
-import { GrabPayActionCreators } from "./grabpay";
-
 export const CommonActions = {
   SET_MESSAGE: "COMMON.SET_MESSAGE",
   SET_ERROR: "COMMON.SET_ERROR",
@@ -29,8 +26,6 @@ export const CommonActionCreators = {
       getState,
       { localStorage: { clearEverything }, navigation: { reloadPage } }
     ) => {
-      dispatch(GrabIDActionCreators.clearCredentials());
-      dispatch(GrabPayActionCreators.clearCredentials());
       await clearEverything();
       await reloadPage();
     },

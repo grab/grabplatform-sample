@@ -3,11 +3,11 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 import { combineReducers } from "redux";
+import { ConfigurationActions } from "./action/configuration";
 import { GrabIDActions } from "./action/grabid";
 import { GrabPayActions } from "./action/grabpay";
 import { IdentityActions } from "./action/identity";
 import { LoyaltyActions } from "./action/loyalty";
-import { ConfigurationActions } from "./action/configuration";
 import { MessagingActions } from "./action/messaging";
 
 function configuration(state = { countryCode: "SG" }, { type, payload }) {
@@ -43,9 +43,6 @@ function configuration(state = { countryCode: "SG" }, { type, payload }) {
 
 function grabid(state = {}, { type, payload }) {
   switch (type) {
-    case GrabIDActions.CLEAR_CREDENTIALS:
-      return { ...state };
-
     case GrabIDActions.SET_STATE:
       return { ...state, state: payload };
 
@@ -64,15 +61,6 @@ function grabpay(
   { type, payload }
 ) {
   switch (type) {
-    case GrabPayActions.CLEAR_CREDENTIALS:
-      return {
-        ...state,
-        request: "",
-        wallet: {},
-        partnerTxID: "",
-        transaction: { ...state.transaction, status: "" }
-      };
-
     case GrabPayActions.SET_REQUEST:
       return { ...state, request: payload };
 

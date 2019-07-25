@@ -2,7 +2,6 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import { grabIDHandlerHOC } from "component/custom-hoc";
 import { GrabIDLogin } from "component/GrabID/component";
 import React from "react";
 import { connect } from "react-redux";
@@ -36,7 +35,6 @@ function PrivateRewardsTier({ rewardsTier, getRewardsTier }) {
 }
 
 export default compose(
-  grabIDHandlerHOC(),
   connect(
     ({ loyalty: { rewardsTier } }) => ({ rewardsTier }),
     dispatch => ({

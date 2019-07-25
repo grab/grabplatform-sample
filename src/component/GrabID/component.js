@@ -2,7 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import { copyToClipboardHOC } from "component/custom-hoc";
+import { copyToClipboardHOC } from "component/customHOC";
 import { parse } from "querystring";
 import React from "react";
 import Markdown from "react-markdown";
