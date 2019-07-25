@@ -4,8 +4,21 @@
  */
 import { connect } from "react-redux";
 import { compose, lifecycle } from "recompose";
+import { CommonActionCreators } from "redux/action/common";
 import { GrabIDActionCreators } from "redux/action/grabid";
 import { GrabPayActionCreators } from "redux/action/grabpay";
+
+export function copyToClipboardHOC() {
+  return compose(
+    connect(
+      () => ({}),
+      dispatch => ({
+        copyToClipboard: text =>
+          dispatch(CommonActionCreators.triggerCopyToClipboard(text))
+      })
+    )
+  );
+}
 
 /** Take care of GrabID-specific tasks. */
 export function grabIDHandlerHOC() {

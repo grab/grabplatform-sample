@@ -2,6 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
+import { copyToClipboardHOC } from "component/custom-hoc";
 import { parse } from "querystring";
 import React from "react";
 import Markdown from "react-markdown";
@@ -36,6 +37,7 @@ ${"```"}
 
 function PrivateGrabIDLogin({
   accessToken,
+  copyToClipboard,
   currentProductStageFlow,
   idToken,
   popRequired,
@@ -83,9 +85,22 @@ function PrivateGrabIDLogin({
       {!popRequired && (
         <>
           <div className="title">Access token</div>
-          <input disabled spellCheck={false} readOnly value={accessToken} />
+
+          <div
+            className="long-content"
+            onClick={() => copyToClipboard(accessToken)}
+          >
+            {accessToken}
+          </div>
+
           <div className="title">ID token</div>
-          <input disabled spellCheck={false} readOnly value={idToken} />
+
+          <div
+            className="long-content"
+            onClick={() => copyToClipboard(idToken)}
+          >
+            {idToken}
+          </div>
         </>
       )}
 
@@ -99,6 +114,7 @@ function PrivateGrabIDLogin({
 }
 
 export const GrabIDLogin = compose(
+  copyToClipboardHOC(),
   connect(
     ({
       repository: {
