@@ -54,9 +54,9 @@ export default compose(
     ({
       configuration: { partnerHMACSecret, partnerID },
       handleError,
+      handleMessage,
       sendInboxMessage,
-      setMessageID,
-      showMessage
+      setMessageID
     }) => ({
       sendInboxMessage: handleError(async () => {
         const { messageID } = await sendInboxMessage({
@@ -65,7 +65,7 @@ export default compose(
         });
 
         setMessageID(messageID);
-        showMessage(CommonMessages.messaging.inbox);
+        handleMessage(CommonMessages.messaging.inbox);
       })
     })
   )

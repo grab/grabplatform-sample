@@ -54,11 +54,11 @@ export default compose(
   })),
   withState("basicProfile", "setBasicProfile", {}),
   withProps(
-    ({ getBasicProfile, handleError, setBasicProfile, showMessage }) => ({
+    ({ getBasicProfile, handleError, handleMessage, setBasicProfile }) => ({
       getBasicProfile: handleError(async () => {
         const profile = await getBasicProfile();
         setBasicProfile(profile);
-        showMessage(CommonMessages.identity.basicProfile);
+        handleMessage(CommonMessages.identity.basicProfile);
       })
     })
   )

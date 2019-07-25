@@ -3,8 +3,8 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 import { connect } from "react-redux";
-import { compose } from "recompose";
-import { CommonActionCreators } from "redux/action/common";
+import { compose, withProps } from "recompose";
+import { CommonActionCreators, CommonMessages } from "redux/action/common";
 
 export function copyToClipboardHOC() {
   return compose(
@@ -23,7 +23,7 @@ export function handleMessageHOC() {
     connect(
       () => ({}),
       dispatch => ({
-        showMessage: message =>
+        handleMessage: message =>
           dispatch(CommonActionCreators.setMessage(message))
       })
     )
@@ -42,6 +42,50 @@ export function handleErrorHOC() {
             dispatch(CommonActionCreators.setError(e));
           }
         }
+      })
+    )
+  );
+}
+
+export function grabIDPOPTokenHOC() {
+  return compose(
+    handleMessageHOC(),
+    handleErrorHOC(),
+    connect(
+      ({
+        configuration,
+        repository: {
+          grabid: {
+            pop: { authorize, requestToken }
+          }
+        }
+      }) => ({ configuration, authorize, requestToken })
+    ),
+    withProps(
+      ({
+        configuration: { clientID, clientSecret, currency, countryCode },
+        grabpay: { request },
+        scopes,
+        authorize,
+        handleError,
+        handleMessage,
+        requestToken
+      }) => ({
+        /** GrabPay requires an additional request parameter. */
+        makeAuthorizationRequest: handleError(async () => {
+          await authorize({
+            clientID,
+            countryCode,
+            currency,
+            request,
+            scopes
+          });
+        }),
+        /** GrabPay requires an additional request parameter. */
+        makeTokenRequest: handleError(async () => {
+          await requestToken({ clientID, clientSecret });
+          handleMessage(CommonMessages.grabid.requestToken);
+        })
       })
     )
   );

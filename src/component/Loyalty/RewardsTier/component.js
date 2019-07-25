@@ -42,11 +42,13 @@ export default compose(
     getRewardsTier
   })),
   withState("rewardsTier", "setRewardsTier", ""),
-  withProps(({ getRewardsTier, handleError, setRewardsTier, showMessage }) => ({
-    getRewardsTier: handleError(async () => {
-      const rewardsTier = await getRewardsTier();
-      setRewardsTier(rewardsTier);
-      showMessage(CommonMessages.loyalty.rewardsTier);
+  withProps(
+    ({ getRewardsTier, handleError, handleMessage, setRewardsTier }) => ({
+      getRewardsTier: handleError(async () => {
+        const rewardsTier = await getRewardsTier();
+        setRewardsTier(rewardsTier);
+        handleMessage(CommonMessages.loyalty.rewardsTier);
+      })
     })
-  }))
+  )
 )(PrivateRewardsTier);

@@ -48,8 +48,8 @@ export default compose(
       configuration: { partnerHMACSecret, partnerID },
       handleError,
       sendPushMessage,
-      setMessageID,
-      showMessage
+      handleMessage,
+      setMessageID
     }) => ({
       sendPushMessage: handleError(async () => {
         const { messageID } = await sendPushMessage({
@@ -58,7 +58,7 @@ export default compose(
         });
 
         setMessageID(messageID);
-        showMessage(CommonMessages.messaging.push);
+        handleMessage(CommonMessages.messaging.push);
       })
     })
   )

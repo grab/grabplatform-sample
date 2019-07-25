@@ -145,7 +145,7 @@ export const GrabIDLogin = compose(
       scopes,
       authorize,
       handleError,
-      showMessage,
+      handleMessage,
       reloadPage,
       requestToken,
       makeAuthorizationRequest = handleError(async () => {
@@ -154,7 +154,7 @@ export const GrabIDLogin = compose(
       makeTokenRequest = handleError(async () => {
         await requestToken({ clientID, countryCode, scopes });
         await reloadPage();
-        showMessage(CommonMessages.grabid.requestToken);
+        handleMessage(CommonMessages.grabid.requestToken);
       })
     }) => ({ makeAuthorizationRequest, makeTokenRequest })
   ),
