@@ -36,20 +36,8 @@ export default compose(
   connect(
     ({
       configuration: {
-        transaction: {
-          amount,
-          description,
-          partnerGroupTxID,
-          partnerTxID,
-          status
-        }
+        transaction: { amount, description, partnerGroupTxID }
       }
-    }) => ({
-      amount,
-      description,
-      partnerGroupTxID,
-      partnerTxID,
-      status
-    })
+    }) => ({ amount, description, partnerGroupTxID })
   )
 )(PrivateTransaction);

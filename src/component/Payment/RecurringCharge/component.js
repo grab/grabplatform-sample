@@ -3,7 +3,7 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 import {
-  grabidPOPTokenHOC,
+  grabidPaymentHOC,
   handleErrorHOC,
   handleMessageHOC
 } from "component/customHOC";
@@ -313,7 +313,7 @@ function RecurringCharge({
 export default compose(
   handleMessageHOC(),
   handleErrorHOC(),
-  grabidPOPTokenHOC(),
+  grabidPaymentHOC(),
   connect(
     ({
       grabpay: {

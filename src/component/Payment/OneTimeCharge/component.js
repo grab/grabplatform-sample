@@ -3,7 +3,7 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 import {
-  grabidPOPTokenHOC,
+  grabidPaymentHOC,
   handleErrorHOC,
   handleMessageHOC
 } from "component/customHOC";
@@ -128,6 +128,7 @@ ${"```"}
 `;
 
 function PrivateOneTimeCharge({
+  partnerTxID,
   request,
   status,
   confirmOneTimeCharge,
@@ -153,7 +154,7 @@ function PrivateOneTimeCharge({
           value={"POST /grabpay/partner/v2/charge/init"}
         />
 
-        <Transaction />
+        <Transaction partnerTxID={partnerTxID} />
 
         {!!request && (
           <>
@@ -273,6 +274,7 @@ export default compose(
 
         setPartnerTxID(partnerTxID);
         setRequest(request);
+        handleMessage(CommonMessages.grabpay.oneTimeCharge.init);
       }),
       confirmOneTimeCharge: handleError(async () => {
         const { status } = await confirmOneTimeCharge({
@@ -285,5 +287,5 @@ export default compose(
       })
     })
   ),
-  grabidPOPTokenHOC()
+  grabidPaymentHOC()
 )(PrivateOneTimeCharge);

@@ -142,22 +142,25 @@ export const GrabIDLogin = compose(
   withProps(
     ({
       configuration: { clientID, countryCode },
-      scopes,
       authorize,
       handleError,
       handleMessage,
       reloadPage,
       requestToken,
-      makeAuthorizationRequest = handleError(async () => {
+      makeAuthorizationRequest = handleError(async scopes => {
         await authorize({ clientID, countryCode, scopes });
       }),
-      makeTokenRequest = handleError(async () => {
+      makeTokenRequest = handleError(async scopes => {
         await requestToken({ clientID, countryCode, scopes });
         await reloadPage();
         handleMessage(CommonMessages.grabid.requestToken);
       })
     }) => ({ makeAuthorizationRequest, makeTokenRequest })
   ),
+  withProps(({ scopes, makeAuthorizationRequest, makeTokenRequest }) => ({
+    makeAuthorizationRequest: () => makeAuthorizationRequest(scopes),
+    makeTokenRequest: () => makeTokenRequest(scopes)
+  })),
   withState("accessToken", "setAccessToken", ""),
   withState("idToken", "setIDToken", ""),
   withState("state", "setState", ""),

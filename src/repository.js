@@ -151,7 +151,7 @@ export function createGrabIDRepository(window) {
         }
       },
       payment: (() => {
-        const redirectURI = "/grabpay/redirect";
+        const redirectURI = "/grabid/redirect";
 
         function extraGrabIDConfig(currency) {
           return {

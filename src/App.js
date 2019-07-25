@@ -4,7 +4,6 @@
  */
 import Configuration from "component/Configuration/component";
 import { GrabIDRedirect } from "component/GrabID/component";
-import { GrabPayRedirect } from "component/GrabPay/component";
 import Identity from "component/Identity/component";
 import Loyalty from "component/Loyalty/component";
 import Messaging from "component/Messaging/component";
@@ -119,7 +118,6 @@ function PrivateApp() {
   return (
     <Switch>
       <Route component={GrabIDRedirect} exact path={"/grabid/redirect"} />
-      <Route component={GrabPayRedirect} exact path={"/grabpay/redirect"} />
       <Route component={AppContent} />
     </Switch>
   );
