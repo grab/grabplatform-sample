@@ -7,7 +7,6 @@ import React from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { compose, lifecycle, mapProps, withState } from "recompose";
-import { GrabIDActionCreators } from "redux/action/grabid";
 import "./style.scss";
 
 function PrivateGrabPayRedirect({ returnURI }) {
@@ -26,11 +25,7 @@ export const GrabPayRedirect = compose(
       repository: {
         grabid: { getLoginReturnURI, handleAuthorizationCodeFlowResponse }
       }
-    }) => ({ getLoginReturnURI, handleAuthorizationCodeFlowResponse }),
-    dispatch => ({
-      handleGrabPayRedirect: () =>
-        dispatch(GrabIDActionCreators.triggerHandleGrabIDRedirect())
-    })
+    }) => ({ getLoginReturnURI, handleAuthorizationCodeFlowResponse })
   ),
   withState("returnURI", "setReturnURI", ""),
   lifecycle({

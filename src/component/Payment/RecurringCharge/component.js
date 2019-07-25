@@ -2,6 +2,11 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
+import {
+  grabidPOPTokenHOC,
+  handleErrorHOC,
+  handleMessageHOC
+} from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
 import {
   grabidDescription,
@@ -14,7 +19,6 @@ import React from "react";
 import Markdown from "react-markdown";
 import { connect } from "react-redux";
 import { compose } from "recompose";
-import { GrabIDActionCreators } from "redux/action/grabid";
 import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
 
@@ -307,6 +311,9 @@ function RecurringCharge({
 }
 
 export default compose(
+  handleMessageHOC(),
+  handleErrorHOC(),
+  grabidPOPTokenHOC(),
   connect(
     ({
       grabpay: {
@@ -328,10 +335,6 @@ export default compose(
       chargeUser: () =>
         dispatch(GrabPayActionCreators.RecurringCharge.triggerCharge()),
       checkWallet: () => dispatch(GrabPayActionCreators.triggerCheckWallet()),
-      makeAuthorizationRequest: scopes =>
-        dispatch(GrabIDActionCreators.pop.triggerAuthorize(scopes)),
-      makeTokenRequest: scopes =>
-        dispatch(GrabIDActionCreators.pop.triggerRequestToken(scopes)),
       unbindCharge: () =>
         dispatch(GrabPayActionCreators.RecurringCharge.triggerUnbind())
     })

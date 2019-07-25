@@ -47,7 +47,7 @@ export function handleErrorHOC() {
   );
 }
 
-export function grabIDPOPTokenHOC() {
+export function grabidPOPTokenHOC() {
   return compose(
     handleMessageHOC(),
     handleErrorHOC(),
@@ -64,7 +64,7 @@ export function grabIDPOPTokenHOC() {
     withProps(
       ({
         configuration: { clientID, clientSecret, currency, countryCode },
-        grabpay: { request },
+        request,
         scopes,
         authorize,
         handleError,

@@ -2,6 +2,11 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
+import {
+  grabidPOPTokenHOC,
+  handleErrorHOC,
+  handleMessageHOC
+} from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
 import {
   grabidDescription,
@@ -13,8 +18,8 @@ import Transaction from "component/Payment/Transaction/component";
 import React from "react";
 import Markdown from "react-markdown";
 import { connect } from "react-redux";
-import { compose } from "recompose";
-import { GrabIDActionCreators } from "redux/action/grabid";
+import { compose, withProps, withState } from "recompose";
+import { CommonMessages } from "redux/action/common";
 import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
 
@@ -204,22 +209,82 @@ function PrivateOneTimeCharge({
 }
 
 export default compose(
+  handleMessageHOC(),
+  handleErrorHOC(),
   connect(
     ({
+      configuration,
       grabpay: {
         request,
-        transaction: { partnerTxID, status }
+        transaction: { status, ...transaction }
+      },
+      repository: {
+        grabpay: {
+          oneTimeCharge: {
+            init: initOneTimeCharge,
+            confirm: confirmOneTimeCharge
+          }
+        }
       }
-    }) => ({ request, status, isInitSatisfied: !!partnerTxID && !!request }),
+    }) => ({
+      configuration,
+      request,
+      status,
+      transaction,
+      confirmOneTimeCharge,
+      initOneTimeCharge
+    }),
     dispatch => ({
       confirmOneTimeCharge: () =>
-        dispatch(GrabPayActionCreators.OneTimeCharge.triggerConfirm()),
-      initOneTimeCharge: () =>
-        dispatch(GrabPayActionCreators.OneTimeCharge.triggerInit()),
-      makeAuthorizationRequest: scopes =>
-        dispatch(GrabIDActionCreators.pop.triggerAuthorize(scopes)),
-      makeTokenRequest: scopes =>
-        dispatch(GrabIDActionCreators.pop.triggerRequestToken(scopes))
+        dispatch(GrabPayActionCreators.OneTimeCharge.triggerConfirm())
     })
-  )
+  ),
+  withState("partnerTxID", "setPartnerTxID", ""),
+  withState("request", "setRequest", ""),
+  withState("status", "setStatus", ""),
+  withProps(
+    ({
+      configuration: {
+        clientSecret,
+        currency,
+        partnerHMACSecret,
+        partnerID,
+        merchantID
+      },
+      partnerTxID,
+      transaction: { amount, description, partnerGroupTxID },
+      handleError,
+      handleMessage,
+      confirmOneTimeCharge,
+      initOneTimeCharge,
+      setPartnerTxID,
+      setRequest,
+      setStatus
+    }) => ({
+      initOneTimeCharge: handleError(async () => {
+        const { partnerTxID, request } = await initOneTimeCharge({
+          amount,
+          currency,
+          description,
+          merchantID,
+          partnerGroupTxID,
+          partnerHMACSecret,
+          partnerID
+        });
+
+        setPartnerTxID(partnerTxID);
+        setRequest(request);
+      }),
+      confirmOneTimeCharge: handleError(async () => {
+        const { status } = await confirmOneTimeCharge({
+          clientSecret,
+          partnerTxID
+        });
+
+        setStatus(status);
+        handleMessage(CommonMessages.grabpay.oneTimeCharge.confirm);
+      })
+    })
+  ),
+  grabidPOPTokenHOC()
 )(PrivateOneTimeCharge);
