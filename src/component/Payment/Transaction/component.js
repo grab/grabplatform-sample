@@ -5,48 +5,22 @@
 import React from "react";
 import { connect } from "react-redux";
 import { compose } from "recompose";
-import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
 
 function PrivateTransaction({
   amount = 0,
   description = "",
   partnerGroupTxID = "",
-  partnerTxID = "",
-  setAmount,
-  setDescription,
-  setPartnerGroupTransactionID
+  partnerTxID = ""
 }) {
   return (
     <div className="transaction-container">
       <div className="title">Partner group transaction ID</div>
-
-      <input
-        onChange={({ target: { value } }) =>
-          setPartnerGroupTransactionID(value)
-        }
-        placeholder="Enter partner group transaction ID"
-        spellCheck={false}
-        value={partnerGroupTxID}
-      />
-
+      <input disabled readOnly spellCheck={false} value={partnerGroupTxID} />
       <div className="title">Transaction description</div>
-
-      <input
-        onChange={({ target: { value } }) => setDescription(value)}
-        placeholder="Enter transaction description"
-        spellCheck={false}
-        value={description}
-      />
-
+      <input disabled readOnly spellCheck={false} value={description} />
       <div className="title">Transaction amount</div>
-
-      <input
-        onChange={({ target: { value } }) => setAmount(value)}
-        placeholder="Enter transaction amount"
-        spellCheck={false}
-        value={amount}
-      />
+      <input disabled readOnly spellCheck={false} value={amount} />
 
       {!!partnerTxID && (
         <>
@@ -61,7 +35,7 @@ function PrivateTransaction({
 export default compose(
   connect(
     ({
-      grabpay: {
+      configuration: {
         transaction: {
           amount,
           description,
@@ -76,20 +50,6 @@ export default compose(
       partnerGroupTxID,
       partnerTxID,
       status
-    }),
-    dispatch => ({
-      setAmount: amount =>
-        dispatch(
-          GrabPayActionCreators.Transaction.setTransactionAmount(amount)
-        ),
-      setDescription: description =>
-        dispatch(GrabPayActionCreators.Transaction.setDescription(description)),
-      setPartnerGroupTransactionID: partnerGroupTxID =>
-        dispatch(
-          GrabPayActionCreators.Transaction.setPartnerGroupTransactionID(
-            partnerGroupTxID
-          )
-        )
     })
   )
 )(PrivateTransaction);

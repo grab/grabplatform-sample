@@ -15,6 +15,12 @@ export const ConfigurationActions = {
   SET_PARTNER_HMAC_SECRET: "SET_PARTNER_HMAC_SECRET",
   SET_PARTNER_ID: "SET_PARTNER_ID",
 
+  Transaction: {
+    SET_AMOUNT: "TX.SET_AMOUNT",
+    SET_DESCRIPTION: "TX.SET_DESCRIPTION",
+    SET_PARTNER_GROUP_TRANSACTION_ID: "TX.SET_PARTNER_GROUP_TRANSACTION_ID"
+  },
+
   TRIGGER_SAVE_CONFIGURATION: "TRIGGER_SAVE_CONFIGURATION",
   TRIGGER_GET_CONFIGURATION: "TRIGGER_SET_CONFIGURATION"
 };
@@ -87,5 +93,19 @@ export const ConfigurationActionCreators = {
       }
     },
     type: ConfigurationActions.TRIGGER_SAVE_CONFIGURATION
-  })
+  }),
+  Transaction: {
+    setAmount: amount => ({
+      payload: amount,
+      type: ConfigurationActions.Transaction.SET_AMOUNT
+    }),
+    setDescription: description => ({
+      payload: description,
+      type: ConfigurationActions.Transaction.SET_DESCRIPTION
+    }),
+    setPartnerGroupTransactionID: partnerGroupTxID => ({
+      payload: partnerGroupTxID,
+      type: ConfigurationActions.Transaction.SET_PARTNER_GROUP_TRANSACTION_ID
+    })
+  }
 };

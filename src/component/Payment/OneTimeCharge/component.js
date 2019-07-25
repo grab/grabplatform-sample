@@ -216,7 +216,7 @@ export default compose(
       configuration,
       grabpay: {
         request,
-        transaction: { status, ...transaction }
+        transaction: { status }
       },
       repository: {
         grabpay: {
@@ -230,7 +230,6 @@ export default compose(
       configuration,
       request,
       status,
-      transaction,
       confirmOneTimeCharge,
       initOneTimeCharge
     }),
@@ -249,10 +248,10 @@ export default compose(
         currency,
         partnerHMACSecret,
         partnerID,
-        merchantID
+        merchantID,
+        transaction: { amount, description, partnerGroupTxID }
       },
       partnerTxID,
-      transaction: { amount, description, partnerGroupTxID },
       handleError,
       handleMessage,
       confirmOneTimeCharge,

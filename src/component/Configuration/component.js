@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { compose, withState, lifecycle } from "recompose";
+import { compose, lifecycle, withState } from "recompose";
 import { ConfigurationActionCreators } from "redux/action/configuration";
 import "./style.scss";
 
@@ -98,12 +98,17 @@ const GeneralConfiguration = compose(
 // ########################### GrabPay configuration ###########################
 
 function PrivateGrabPayConfiguration({
+  amount = 0,
+  description = "",
   currency = "",
   merchantID = "",
-  closeConfiguration,
+  partnerGroupTxID = "",
   saveConfiguration,
+  setAmount,
   setCurrency,
-  setMerchantID
+  setDescription,
+  setMerchantID,
+  setPartnerGroupTransactionID
 }) {
   return (
     <div className="grabpay-configuration-container">
@@ -125,6 +130,35 @@ function PrivateGrabPayConfiguration({
         value={currency}
       />
 
+      <div className="title">Partner group transaction ID</div>
+
+      <input
+        onChange={({ target: { value } }) =>
+          setPartnerGroupTransactionID(value)
+        }
+        placeholder="Enter partner group transaction ID"
+        spellCheck={false}
+        value={partnerGroupTxID}
+      />
+
+      <div className="title">Transaction description</div>
+
+      <input
+        onChange={({ target: { value } }) => setDescription(value)}
+        placeholder="Enter transaction description"
+        spellCheck={false}
+        value={description}
+      />
+
+      <div className="title">Transaction amount</div>
+
+      <input
+        onChange={({ target: { value } }) => setAmount(value)}
+        placeholder="Enter transaction amount"
+        spellCheck={false}
+        value={amount}
+      />
+
       <div className="confirm-configuration" onClick={saveConfiguration}>
         Confirm
       </div>
@@ -134,12 +168,27 @@ function PrivateGrabPayConfiguration({
 
 const GrabPayConfiguration = compose(
   connect(
-    ({ configuration }) => configuration,
+    ({ configuration: { transaction, ...configuration } }) => ({
+      ...configuration,
+      ...transaction
+    }),
     dispatch => ({
+      setAmount: amount =>
+        dispatch(ConfigurationActionCreators.Transaction.setAmount(amount)),
       setCurrency: currency =>
         dispatch(ConfigurationActionCreators.setCurrency(currency)),
+      setDescription: description =>
+        dispatch(
+          ConfigurationActionCreators.Transaction.setDescription(description)
+        ),
       setMerchantID: merchantID =>
-        dispatch(ConfigurationActionCreators.setMerchantID(merchantID))
+        dispatch(ConfigurationActionCreators.setMerchantID(merchantID)),
+      setPartnerGroupTransactionID: partnerGroupTxID =>
+        dispatch(
+          ConfigurationActionCreators.Transaction.setPartnerGroupTransactionID(
+            partnerGroupTxID
+          )
+        )
     })
   )
 )(PrivateGrabPayConfiguration);

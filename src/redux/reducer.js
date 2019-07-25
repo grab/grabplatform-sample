@@ -6,7 +6,10 @@ import { combineReducers } from "redux";
 import { ConfigurationActions } from "./action/configuration";
 import { GrabPayActions } from "./action/grabpay";
 
-function configuration(state = { countryCode: "SG" }, { type, payload }) {
+function configuration(
+  state = { countryCode: "SG", transaction: {} },
+  { type, payload }
+) {
   switch (type) {
     case ConfigurationActions.SET_CONFIGURATION:
       return { ...state, ...payload };
@@ -32,6 +35,24 @@ function configuration(state = { countryCode: "SG" }, { type, payload }) {
     case ConfigurationActions.SET_PARTNER_ID:
       return { ...state, partnerID: payload };
 
+    case ConfigurationActions.Transaction.SET_AMOUNT:
+      return {
+        ...state,
+        transaction: { ...state.transaction, amount: payload }
+      };
+
+    case ConfigurationActions.Transaction.SET_DESCRIPTION:
+      return {
+        ...state,
+        transaction: { ...state.transaction, description: payload }
+      };
+
+    case ConfigurationActions.Transaction.SET_PARTNER_GROUP_TRANSACTION_ID:
+      return {
+        ...state,
+        transaction: { ...state.transaction, partnerGroupTxID: payload }
+      };
+
     default:
       return { ...state };
   }
@@ -52,24 +73,6 @@ function grabpay(
 
     case GrabPayActions.SET_WALLET:
       return { ...state, wallet: payload };
-
-    case GrabPayActions.Transaction.SET_AMOUNT:
-      return {
-        ...state,
-        transaction: { ...state.transaction, amount: payload }
-      };
-
-    case GrabPayActions.Transaction.SET_DESCRIPTION:
-      return {
-        ...state,
-        transaction: { ...state.transaction, description: payload }
-      };
-
-    case GrabPayActions.Transaction.SET_PARTNER_GROUP_TRANSACTION_ID:
-      return {
-        ...state,
-        transaction: { ...state.transaction, partnerGroupTxID: payload }
-      };
 
     case GrabPayActions.Transaction.SET_PARTNER_TRANSACTION_ID:
       return {
