@@ -210,9 +210,6 @@ export default compose(
   connect(
     ({
       configuration,
-      grabpay: {
-        transaction: { status }
-      },
       repository: {
         grabpay: {
           oneTimeCharge: {
@@ -223,7 +220,6 @@ export default compose(
       }
     }) => ({
       configuration,
-      status,
       confirmOneTimeCharge,
       initOneTimeCharge
     })

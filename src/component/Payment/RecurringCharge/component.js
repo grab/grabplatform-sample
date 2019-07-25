@@ -189,11 +189,9 @@ ${"```"}
 `;
 
 function RecurringCharge({
-  balance,
-  cardImage,
-  currency,
   request,
   status,
+  wallet: { balance, cardImage, currency },
   bindCharge,
   chargeUser,
   checkWallet,
@@ -313,38 +311,41 @@ export default compose(
   connect(
     ({
       configuration,
-      grabpay: {
-        transaction: { status },
-        wallet: { balance, cardImage, currency }
-      },
       repository: {
         grabpay: {
+          checkWallet,
           recurringCharge: {
             bind: bindCharge,
             charge: chargeUser,
-            checkWallet,
             unbind: unbindCharge
           }
         }
       }
     }) => ({
-      balance,
-      cardImage,
       configuration,
-      currency,
-      status,
       bindCharge,
       chargeUser,
       checkWallet,
       unbindCharge
-    }),
-    dispatch => ({
-      checkWallet: () => dispatch(GrabPayActionCreators.triggerCheckWallet()),
-      unbindCharge: () =>
-        dispatch(GrabPayActionCreators.RecurringCharge.triggerUnbind())
     })
   ),
   withState("status", "setStatus", ""),
+  withState("wallet", "setWallet", {}),
+  withProps(
+    ({
+      configuration: { clientSecret, currency },
+      checkWallet,
+      handleError,
+      handleMessage,
+      setWallet
+    }) => ({
+      checkWallet: handleError(async () => {
+        const wallet = await checkWallet({ clientSecret, currency });
+        setWallet(wallet);
+        handleMessage(`Checked wallet successfully`);
+      })
+    })
+  ),
   withProps(
     ({
       configuration: {
@@ -359,13 +360,15 @@ export default compose(
       partnerTxID,
       bindCharge,
       chargeUser,
+      checkWallet,
       handleError,
       handleMessage,
       persistChargeRequest,
       persistPartnerTxID,
       setPartnerTxID,
       setRequest,
-      setStatus
+      setStatus,
+      unbindCharge
     }) => ({
       bindCharge: handleError(async () => {
         const { partnerTxID, request } = await bindCharge({
@@ -393,6 +396,11 @@ export default compose(
 
         setStatus(status);
         handleMessage(CommonMessages.grabpay.recurringCharge.charge);
+        await checkWallet();
+      }),
+      unbindCharge: handleError(async () => {
+        await unbindCharge({ clientSecret, partnerTxID });
+        handleMessage(CommonMessages.grabpay.recurringCharge.unbind);
       })
     })
   )
