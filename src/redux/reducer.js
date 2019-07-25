@@ -6,7 +6,6 @@ import { combineReducers } from "redux";
 import { ConfigurationActions } from "./action/configuration";
 import { GrabIDActions } from "./action/grabid";
 import { GrabPayActions } from "./action/grabpay";
-import { LoyaltyActions } from "./action/loyalty";
 import { MessagingActions } from "./action/messaging";
 
 function configuration(state = { countryCode: "SG" }, { type, payload }) {
@@ -111,21 +110,10 @@ function messaging(state = {}, { type, payload }) {
   }
 }
 
-function loyalty(state = {}, { type, payload }) {
-  switch (type) {
-    case LoyaltyActions.SET_REWARDS_TIER:
-      return { ...state, rewardsTier: payload };
-
-    default:
-      return { ...state };
-  }
-}
-
 export default combineReducers({
   configuration,
   grabid,
   grabpay,
-  loyalty,
   messaging,
   repository: (state = {}) => state
 });

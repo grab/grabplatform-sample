@@ -2,11 +2,12 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
+import { handleErrorHOC, handleMessageHOC } from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
 import React from "react";
 import { connect } from "react-redux";
-import { compose } from "recompose";
-import { LoyaltyActionCreators } from "redux/action/loyalty";
+import { compose, withProps, withState } from "recompose";
+import { CommonMessages } from "redux/action/common";
 import "./style.scss";
 
 function PrivateRewardsTier({ rewardsTier, getRewardsTier }) {
@@ -35,11 +36,17 @@ function PrivateRewardsTier({ rewardsTier, getRewardsTier }) {
 }
 
 export default compose(
-  connect(
-    ({ loyalty: { rewardsTier } }) => ({ rewardsTier }),
-    dispatch => ({
-      getRewardsTier: () =>
-        dispatch(LoyaltyActionCreators.triggerGetRewardsTier())
+  handleMessageHOC(),
+  handleErrorHOC(),
+  connect(({ repository: { loyalty: { getRewardsTier } } }) => ({
+    getRewardsTier
+  })),
+  withState("rewardsTier", "setRewardsTier", ""),
+  withProps(({ getRewardsTier, handleError, setRewardsTier, showMessage }) => ({
+    getRewardsTier: handleError(async () => {
+      const rewardsTier = await getRewardsTier();
+      setRewardsTier(rewardsTier);
+      showMessage(CommonMessages.loyalty.rewardsTier);
     })
-  )
+  }))
 )(PrivateRewardsTier);
