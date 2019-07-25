@@ -4,7 +4,6 @@
  */
 import { combineReducers } from "redux";
 import { ConfigurationActions } from "./action/configuration";
-import { GrabIDActions } from "./action/grabid";
 import { GrabPayActions } from "./action/grabpay";
 
 function configuration(state = { countryCode: "SG" }, { type, payload }) {
@@ -32,16 +31,6 @@ function configuration(state = { countryCode: "SG" }, { type, payload }) {
 
     case ConfigurationActions.SET_PARTNER_ID:
       return { ...state, partnerID: payload };
-
-    default:
-      return { ...state };
-  }
-}
-
-function grabid(state = {}, { type, payload }) {
-  switch (type) {
-    case GrabIDActions.SET_STATE:
-      return { ...state, state: payload };
 
     default:
       return { ...state };
@@ -101,7 +90,6 @@ function grabpay(
 
 export default combineReducers({
   configuration,
-  grabid,
   grabpay,
   repository: (state = {}) => state
 });

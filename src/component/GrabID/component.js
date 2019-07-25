@@ -2,14 +2,18 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import { copyToClipboardHOC } from "component/customHOC";
+import {
+  copyToClipboardHOC,
+  handleErrorHOC,
+  handleMessageHOC
+} from "component/customHOC";
 import { parse } from "querystring";
 import React from "react";
 import Markdown from "react-markdown";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
-import { compose, lifecycle, mapProps, withState } from "recompose";
-import { GrabIDActionCreators } from "redux/action/grabid";
+import { compose, lifecycle, mapProps, withProps, withState } from "recompose";
+import { CommonMessages } from "redux/action/common";
 import "./style.scss";
 
 // ############################## GRABID AUTH ##############################
@@ -114,31 +118,45 @@ function PrivateGrabIDLogin({
 }
 
 export const GrabIDLogin = compose(
+  handleMessageHOC(),
+  handleErrorHOC(),
   copyToClipboardHOC(),
   connect(
     ({
+      configuration,
       repository: {
-        grabid: { getGrabIDResult }
+        grabid: {
+          nonPOP: { authorize, requestToken },
+          getGrabIDResult
+        },
+        navigation: { reloadPage }
       }
-    }) => ({ getGrabIDResult }),
-    (dispatch, { scopes, makeAuthorizationRequest, makeTokenRequest }) => ({
-      makeAuthorizationRequest: () =>
-        /**
-         * If makeAuthorizationRequest is specified in props, do not override
-         * it, e.g. GrabPay requires additional query parameters.
-         */
-        !!makeAuthorizationRequest
-          ? makeAuthorizationRequest(scopes)
-          : dispatch(GrabIDActionCreators.nonPOP.triggerAuthorize(scopes)),
-      makeTokenRequest: () =>
-        /**
-         * If makeTokenRequest is specified in props, do not override it, e.g.
-         * GrabPay requires additional query parameters.
-         */
-        !!makeTokenRequest
-          ? makeTokenRequest(scopes)
-          : dispatch(GrabIDActionCreators.nonPOP.triggerRequestToken(scopes))
+    }) => ({
+      configuration,
+      authorize,
+      getGrabIDResult,
+      reloadPage,
+      requestToken
     })
+  ),
+  withProps(
+    ({
+      configuration: { clientID, countryCode },
+      scopes,
+      authorize,
+      handleError,
+      showMessage,
+      reloadPage,
+      requestToken,
+      makeAuthorizationRequest = handleError(async () => {
+        await authorize({ clientID, countryCode, scopes });
+      }),
+      makeTokenRequest = handleError(async () => {
+        await requestToken({ clientID, countryCode, scopes });
+        await reloadPage();
+        showMessage(CommonMessages.grabid.requestToken);
+      })
+    }) => ({ makeAuthorizationRequest, makeTokenRequest })
   ),
   withState("accessToken", "setAccessToken", ""),
   withState("idToken", "setIDToken", ""),

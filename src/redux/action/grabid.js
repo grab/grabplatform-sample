@@ -10,52 +10,6 @@ export const GrabIDActions = {
 };
 
 export const GrabIDActionCreators = {
-  nonPOP: {
-    triggerAuthorize: (scopes = []) => ({
-      params: scopes,
-      payload: async (
-        dispatch,
-        getState,
-        {
-          grabid: {
-            nonPOP: { authorize }
-          }
-        }
-      ) => {
-        const {
-          configuration: { clientID, countryCode }
-        } = getState();
-
-        await authorize({ clientID, countryCode, scopes });
-      },
-      type: GrabIDActions.TRIGGER_MAKE_AUTHORIZATION_REQUEST
-    }),
-    triggerRequestToken: (scopes = []) => ({
-      params: scopes,
-      payload: async (
-        dispatch,
-        getState,
-        {
-          grabid: {
-            nonPOP: { requestToken }
-          },
-          navigation: { reloadPage }
-        }
-      ) => {
-        const {
-          configuration: { clientID, countryCode }
-        } = getState();
-
-        await requestToken({ clientID, countryCode, scopes });
-        await reloadPage();
-
-        dispatch(
-          CommonActionCreators.setMessage(CommonMessages.grabid.requestToken)
-        );
-      },
-      type: GrabIDActions.TRIGGER_MAKE_TOKEN_REQUEST
-    })
-  },
   pop: {
     /** GrabPay requires an additional request parameter. */
     triggerAuthorize: (scopes = []) => ({
