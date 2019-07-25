@@ -57,14 +57,14 @@ export const ConfigurationActionCreators = {
     payload: partnerID,
     type: ConfigurationActions.SET_PARTNER_ID
   }),
-  triggerGetConfiguration: () => ({
+  triggergetConfigurationFromPersistence: () => ({
     payload: async (
       dispatch,
       getState,
-      { configuration: { getConfiguration } }
+      { configuration: { getConfigurationFromPersistence } }
     ) => {
       try {
-        const configuration = await getConfiguration();
+        const configuration = await getConfigurationFromPersistence();
         dispatch(ConfigurationActionCreators.setConfiguration(configuration));
       } catch (e) {
         dispatch(CommonActionCreators.setError(e));

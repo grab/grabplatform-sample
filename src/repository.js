@@ -99,7 +99,7 @@ export function createGrabIDRepository(window) {
       getGrabIDResult: async () => GrabID.getResult(),
       getLoginReturnURI: async () =>
         getRelativeURLPath(GrabID.getLoginReturnURI()),
-      saveInitialIDToken: async idToken =>
+      persistInitialIDToken: async idToken =>
         window.localStorage.setItem(LOCAL_ID_TOKEN_KEY, idToken),
       handleAuthorizationCodeFlowResponse: async () => {
         GrabID.handleAuthorizationCodeFlowResponse();
@@ -206,13 +206,13 @@ export function createGrabPayRepository(window) {
           method: "POST",
           path: "/payment/recurring-charge/wallet"
         }),
-      saveChargeRequest: async request =>
+      persistChargeRequest: async request =>
         window.localStorage.setItem(chargeRequestCacheKey, request),
-      getChargeRequest: async () =>
+      getChargeRequestFromPersistence: async () =>
         window.localStorage.getItem(chargeRequestCacheKey) || "",
-      savePartnerTransactionID: async partnerTxID =>
+      persistPartnerTxID: async partnerTxID =>
         window.localStorage.setItem(partnerTxIDCacheKey, partnerTxID),
-      getPartnerTransactionID: async () =>
+      getPartnerTxIDFromPersistence: async () =>
         window.localStorage.getItem(partnerTxIDCacheKey) || "",
       oneTimeCharge: {
         init: async ({
@@ -289,9 +289,9 @@ export function createGrabAPIRepository(window) {
 
   return {
     configuration: {
-      getConfiguration: () =>
+      getConfigurationFromPersistence: () =>
         JSON.parse(window.localStorage.getItem(configCacheKey) || "{}"),
-      saveConfiguration: config =>
+      persistConfiguration: config =>
         window.localStorage.setItem(configCacheKey, JSON.stringify(config))
     },
     identity: {

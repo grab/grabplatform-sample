@@ -90,22 +90,28 @@ const AppContent = compose(
   connect(
     ({
       repository: {
-        grabid: { saveInitialIDToken }
+        grabid: { persistInitialIDToken }
       }
-    }) => ({ saveInitialIDToken }),
+    }) => ({ persistInitialIDToken }),
     dispatch => ({
       clearEverything: () =>
         dispatch(CommonActionCreators.triggerClearEverything()),
-      getConfiguration: () =>
-        dispatch(ConfigurationActionCreators.triggerGetConfiguration())
+      getConfigurationFromPersistence: () =>
+        dispatch(
+          ConfigurationActionCreators.triggergetConfigurationFromPersistence()
+        )
     })
   ),
   withState("showConfiguration", "setShowConfiguration", false),
   lifecycle({
     async componentDidMount() {
-      const { getConfiguration, idToken, saveInitialIDToken } = this.props;
-      await saveInitialIDToken(idToken);
-      await getConfiguration();
+      const {
+        getConfigurationFromPersistence,
+        idToken,
+        persistInitialIDToken
+      } = this.props;
+      await persistInitialIDToken(idToken);
+      await getConfigurationFromPersistence();
     }
   })
 )(PrivateAppContent);

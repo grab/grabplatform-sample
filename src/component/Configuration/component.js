@@ -14,7 +14,7 @@ function PrivateGeneralConfiguration({
   countryCode = "",
   partnerHMACSecret = "",
   partnerID = "",
-  saveConfiguration,
+  persistConfiguration,
   setClientID,
   setClientSecret,
   setCountryCode,
@@ -68,7 +68,7 @@ function PrivateGeneralConfiguration({
         value={clientSecret}
       />
 
-      <div className="confirm-configuration" onClick={saveConfiguration}>
+      <div className="confirm-configuration" onClick={persistConfiguration}>
         Confirm
       </div>
     </div>
@@ -105,7 +105,7 @@ function PrivateGrabPayConfiguration({
   currency = "",
   merchantID = "",
   partnerGroupTxID = "",
-  saveConfiguration,
+  persistConfiguration,
   setAmount,
   setCurrency,
   setDescription,
@@ -161,7 +161,7 @@ function PrivateGrabPayConfiguration({
         value={amount}
       />
 
-      <div className="confirm-configuration" onClick={saveConfiguration}>
+      <div className="confirm-configuration" onClick={persistConfiguration}>
         Confirm
       </div>
     </div>
@@ -197,7 +197,7 @@ const GrabPayConfiguration = compose(
 function PrivateConfiguration({
   configuration,
   configurationType = "general",
-  saveConfiguration,
+  persistConfiguration,
   setConfigurationType
 }) {
   return (
@@ -223,14 +223,14 @@ function PrivateConfiguration({
       {configurationType === "general" && (
         <GeneralConfiguration
           {...configuration}
-          saveConfiguration={saveConfiguration}
+          persistConfiguration={persistConfiguration}
         />
       )}
 
       {configurationType === "grabpay" && (
         <GrabPayConfiguration
           {...{ ...configuration, ...configuration.transaction }}
-          saveConfiguration={saveConfiguration}
+          persistConfiguration={persistConfiguration}
         />
       )}
     </div>
@@ -244,9 +244,9 @@ export default compose(
     ({
       configuration,
       repository: {
-        configuration: { saveConfiguration }
+        configuration: { persistConfiguration }
       }
-    }) => ({ configuration, saveConfiguration })
+    }) => ({ configuration, persistConfiguration })
   ),
   withState("configurationType", "setConfigurationType", "general"),
   withProps(
@@ -255,10 +255,10 @@ export default compose(
       closeConfiguration,
       handleError,
       handleMessage,
-      saveConfiguration
+      persistConfiguration
     }) => ({
-      saveConfiguration: handleError(async () => {
-        await saveConfiguration(configuration);
+      persistConfiguration: handleError(async () => {
+        await persistConfiguration(configuration);
         closeConfiguration();
         handleMessage(CommonMessages.configuration.setConfiguration);
       })
@@ -273,7 +273,7 @@ export default compose(
           keyHandler = ({ key }) => {
             switch (key) {
               case "Enter":
-                this.props.saveConfiguration();
+                this.props.persistConfiguration();
                 break;
 
               case "Escape":

@@ -58,22 +58,27 @@ export function grabidPaymentHOC() {
           grabid: {
             payment: { authorize, requestToken }
           },
-          grabpay: { getChargeRequest }
+          grabpay: { getChargeRequestFromPersistence }
         }
-      }) => ({ configuration, authorize, getChargeRequest, requestToken })
+      }) => ({
+        configuration,
+        authorize,
+        getChargeRequestFromPersistence,
+        requestToken
+      })
     ),
     withProps(
       ({
         configuration: { clientID, clientSecret, currency, countryCode },
         authorize,
-        getChargeRequest,
+        getChargeRequestFromPersistence,
         handleError,
         handleMessage,
         requestToken
       }) => ({
         /** GrabPay requires an additional request parameter. */
         makeAuthorizationRequest: handleError(async scopes => {
-          const request = await getChargeRequest();
+          const request = await getChargeRequestFromPersistence();
 
           await authorize({
             clientID,
@@ -99,17 +104,17 @@ export function grabpayTransactionHOC() {
       ({
         repository: {
           grabpay: {
-            getChargeRequest,
-            saveChargeRequest,
-            getPartnerTransactionID,
-            savePartnerTransactionID
+            getChargeRequestFromPersistence,
+            persistChargeRequest,
+            getPartnerTxIDFromPersistence,
+            persistPartnerTxID
           }
         }
       }) => ({
-        getChargeRequest,
-        getPartnerTransactionID,
-        saveChargeRequest,
-        savePartnerTransactionID
+        getChargeRequestFromPersistence,
+        getPartnerTxIDFromPersistence,
+        persistChargeRequest,
+        persistPartnerTxID
       })
     ),
     withState("partnerTxID", "setPartnerTxID", ""),
@@ -117,14 +122,14 @@ export function grabpayTransactionHOC() {
     lifecycle({
       async componentDidMount() {
         const {
-          getChargeRequest,
-          getPartnerTransactionID,
+          getChargeRequestFromPersistence,
+          getPartnerTxIDFromPersistence,
           setPartnerTxID,
           setRequest
         } = this.props;
 
-        const request = await getChargeRequest();
-        const partnerTxID = await getPartnerTransactionID();
+        const request = await getChargeRequestFromPersistence();
+        const partnerTxID = await getPartnerTxIDFromPersistence();
         setPartnerTxID(partnerTxID);
         setRequest(request);
       }

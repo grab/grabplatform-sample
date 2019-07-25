@@ -246,8 +246,8 @@ export default compose(
       handleMessage,
       confirmOneTimeCharge,
       initOneTimeCharge,
-      saveChargeRequest,
-      savePartnerTransactionID,
+      persistChargeRequest,
+      persistPartnerTxID,
       setPartnerTxID,
       setRequest,
       setStatus
@@ -263,8 +263,8 @@ export default compose(
           partnerID
         });
 
-        await saveChargeRequest(request);
-        await savePartnerTransactionID(partnerTxID);
+        await persistChargeRequest(request);
+        await persistPartnerTxID(partnerTxID);
         setPartnerTxID(partnerTxID);
         setRequest(request);
         handleMessage(CommonMessages.grabpay.oneTimeCharge.init);
