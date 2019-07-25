@@ -6,7 +6,6 @@ import { combineReducers } from "redux";
 import { ConfigurationActions } from "./action/configuration";
 import { GrabIDActions } from "./action/grabid";
 import { GrabPayActions } from "./action/grabpay";
-import { MessagingActions } from "./action/messaging";
 
 function configuration(state = { countryCode: "SG" }, { type, payload }) {
   switch (type) {
@@ -100,20 +99,9 @@ function grabpay(
   }
 }
 
-function messaging(state = {}, { type, payload }) {
-  switch (type) {
-    case MessagingActions.SET_MESSAGE_ID:
-      return { ...state, messageID: payload };
-
-    default:
-      return { ...state };
-  }
-}
-
 export default combineReducers({
   configuration,
   grabid,
   grabpay,
-  messaging,
   repository: (state = {}) => state
 });

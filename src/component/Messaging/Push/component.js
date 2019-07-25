@@ -2,11 +2,12 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
+import { handleErrorHOC, handleMessageHOC } from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
 import React from "react";
 import { connect } from "react-redux";
-import { compose } from "recompose";
-import { MessagingActionCreators } from "redux/action/messaging";
+import { compose, withProps, withState } from "recompose";
+import { CommonMessages } from "redux/action/common";
 import "./style.scss";
 
 function PrivateInbox({ sendPushMessage }) {
@@ -31,11 +32,34 @@ function PrivateInbox({ sendPushMessage }) {
 }
 
 export default compose(
+  handleMessageHOC(),
+  handleErrorHOC(),
   connect(
-    () => ({}),
-    dispatch => ({
-      sendPushMessage: () =>
-        dispatch(MessagingActionCreators.triggerSendPushMessage())
+    ({
+      configuration,
+      repository: {
+        messaging: { sendPushMessage }
+      }
+    }) => ({ configuration, sendPushMessage })
+  ),
+  withState("messageID", "setMessageID", ""),
+  withProps(
+    ({
+      configuration: { partnerHMACSecret, partnerID },
+      handleError,
+      sendPushMessage,
+      setMessageID,
+      showMessage
+    }) => ({
+      sendPushMessage: handleError(async () => {
+        const { messageID } = await sendPushMessage({
+          partnerHMACSecret,
+          partnerID
+        });
+
+        setMessageID(messageID);
+        showMessage(CommonMessages.messaging.push);
+      })
     })
   )
 )(PrivateInbox);
