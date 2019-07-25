@@ -16,7 +16,6 @@ import Markdown from "react-markdown";
 import { connect } from "react-redux";
 import { compose, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
-import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
 
 const bindDescription = `

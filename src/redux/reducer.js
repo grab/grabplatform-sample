@@ -4,7 +4,6 @@
  */
 import { combineReducers } from "redux";
 import { ConfigurationActions } from "./action/configuration";
-import { GrabPayActions } from "./action/grabpay";
 
 function configuration(
   state = { countryCode: "SG", transaction: {} },
@@ -58,41 +57,7 @@ function configuration(
   }
 }
 
-function grabpay(
-  state = {
-    oneTimeCharge: {},
-    recurringCharge: {},
-    transaction: {},
-    wallet: {}
-  },
-  { type, payload }
-) {
-  switch (type) {
-    case GrabPayActions.SET_REQUEST:
-      return { ...state, request: payload };
-
-    case GrabPayActions.SET_WALLET:
-      return { ...state, wallet: payload };
-
-    case GrabPayActions.Transaction.SET_PARTNER_TRANSACTION_ID:
-      return {
-        ...state,
-        transaction: { ...state.transaction, partnerTxID: payload }
-      };
-
-    case GrabPayActions.Transaction.SET_TRANSACTION_STATUS:
-      return {
-        ...state,
-        transaction: { ...state.transaction, status: payload }
-      };
-
-    default:
-      return { ...state };
-  }
-}
-
 export default combineReducers({
   configuration,
-  grabpay,
   repository: (state = {}) => state
 });
