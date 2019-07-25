@@ -6,7 +6,6 @@ import { combineReducers } from "redux";
 import { ConfigurationActions } from "./action/configuration";
 import { GrabIDActions } from "./action/grabid";
 import { GrabPayActions } from "./action/grabpay";
-import { IdentityActions } from "./action/identity";
 import { LoyaltyActions } from "./action/loyalty";
 import { MessagingActions } from "./action/messaging";
 
@@ -112,16 +111,6 @@ function messaging(state = {}, { type, payload }) {
   }
 }
 
-function identity(state = {}, { type, payload }) {
-  switch (type) {
-    case IdentityActions.SET_BASIC_PROFILE:
-      return { ...state, basicProfile: payload };
-
-    default:
-      return { ...state };
-  }
-}
-
 function loyalty(state = {}, { type, payload }) {
   switch (type) {
     case LoyaltyActions.SET_REWARDS_TIER:
@@ -134,7 +123,6 @@ function loyalty(state = {}, { type, payload }) {
 
 export default combineReducers({
   configuration,
-  identity,
   grabid,
   grabpay,
   loyalty,

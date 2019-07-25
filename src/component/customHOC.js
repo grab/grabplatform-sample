@@ -18,6 +18,18 @@ export function copyToClipboardHOC() {
   );
 }
 
+export function handleMessageHOC() {
+  return compose(
+    connect(
+      () => ({}),
+      dispatch => ({
+        showMessage: message =>
+          dispatch(CommonActionCreators.setMessage(message))
+      })
+    )
+  );
+}
+
 export function handleErrorHOC() {
   return compose(
     connect(

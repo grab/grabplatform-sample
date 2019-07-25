@@ -2,14 +2,15 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
+import { handleErrorHOC, handleMessageHOC } from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
 import React from "react";
 import { connect } from "react-redux";
-import { compose } from "recompose";
-import { IdentityActionCreators } from "redux/action/identity";
+import { compose, withProps, withState } from "recompose";
+import { CommonMessages } from "redux/action/common";
 import "./style.scss";
 
-function PrivateBasicProfile({ profile, getBasicProfile }) {
+function PrivateBasicProfile({ basicProfile, getBasicProfile }) {
   return (
     <div className="basic-profile-container">
       <GrabIDLogin currentProductStageFlow={1} scopes={["profile.read"]} />
@@ -21,8 +22,8 @@ function PrivateBasicProfile({ profile, getBasicProfile }) {
         <div className="title">Profile information</div>
 
         <div className="info-container">
-          {!!profile && !!Object.keys(profile).length
-            ? Object.entries(profile)
+          {!!basicProfile && !!Object.keys(basicProfile).length
+            ? Object.entries(basicProfile)
                 .map(([key, value]) => [
                   key,
                   <>
@@ -46,11 +47,19 @@ function PrivateBasicProfile({ profile, getBasicProfile }) {
 }
 
 export default compose(
-  connect(
-    ({ identity: { basicProfile: profile } }) => ({ profile }),
-    dispatch => ({
-      getBasicProfile: () =>
-        dispatch(IdentityActionCreators.triggerGetBasicProfile())
+  handleMessageHOC(),
+  handleErrorHOC(),
+  connect(({ repository: { identity: { getBasicProfile } } }) => ({
+    getBasicProfile
+  })),
+  withState("basicProfile", "setBasicProfile", {}),
+  withProps(
+    ({ getBasicProfile, handleError, setBasicProfile, showMessage }) => ({
+      getBasicProfile: handleError(async () => {
+        const profile = await getBasicProfile();
+        setBasicProfile(profile);
+        showMessage(CommonMessages.identity.basicProfile);
+      })
     })
   )
 )(PrivateBasicProfile);
