@@ -176,24 +176,20 @@ export const GrabIDRedirect = compose(
   connect(
     ({
       repository: {
-        grabid: { getLoginReturnURI }
+        grabid: { getLoginReturnURI, handleAuthorizationCodeFlowResponse }
       }
-    }) => ({ getLoginReturnURI }),
-    dispatch => ({
-      handleGrabIDRedirect: () =>
-        dispatch(GrabIDActionCreators.triggerHandleGrabIDRedirect())
-    })
+    }) => ({ getLoginReturnURI, handleAuthorizationCodeFlowResponse })
   ),
   withState("returnURI", "setReturnURI", ""),
   lifecycle({
     async componentDidMount() {
       const {
         getLoginReturnURI,
-        handleGrabIDRedirect,
+        handleAuthorizationCodeFlowResponse,
         setReturnURI
       } = this.props;
 
-      handleGrabIDRedirect();
+      await handleAuthorizationCodeFlowResponse();
       const returnURI = await getLoginReturnURI();
       setReturnURI(returnURI);
     }

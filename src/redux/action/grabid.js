@@ -5,22 +5,11 @@
 import { CommonActionCreators, CommonMessages } from "./common";
 
 export const GrabIDActions = {
-  TRIGGER_HANDLE_REDIRECT: "TRIGGER_HANDLE_REDIRECT",
   TRIGGER_MAKE_AUTHORIZATION_REQUEST: "TRIGGER_MAKE_AUTHORIZATION_REQUEST",
   TRIGGER_MAKE_TOKEN_REQUEST: "TRIGGER_MAKE_TOKEN_REQUEST"
 };
 
 export const GrabIDActionCreators = {
-  triggerHandleGrabIDRedirect: () => ({
-    payload: async (
-      dispatch,
-      getState,
-      { grabid: { handleAuthorizationCodeFlowResponse } }
-    ) => {
-      await handleAuthorizationCodeFlowResponse();
-    },
-    type: GrabIDActions.TRIGGER_HANDLE_REDIRECT
-  }),
   nonPOP: {
     triggerAuthorize: (scopes = []) => ({
       params: scopes,

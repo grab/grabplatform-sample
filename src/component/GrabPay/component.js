@@ -24,9 +24,9 @@ export const GrabPayRedirect = compose(
   connect(
     ({
       repository: {
-        grabid: { getLoginReturnURI }
+        grabid: { getLoginReturnURI, handleAuthorizationCodeFlowResponse }
       }
-    }) => ({ getLoginReturnURI }),
+    }) => ({ getLoginReturnURI, handleAuthorizationCodeFlowResponse }),
     dispatch => ({
       handleGrabPayRedirect: () =>
         dispatch(GrabIDActionCreators.triggerHandleGrabIDRedirect())
@@ -37,11 +37,11 @@ export const GrabPayRedirect = compose(
     async componentDidMount() {
       const {
         getLoginReturnURI,
-        handleGrabPayRedirect,
+        handleAuthorizationCodeFlowResponse,
         setReturnURI
       } = this.props;
 
-      handleGrabPayRedirect();
+      await handleAuthorizationCodeFlowResponse();
       const returnURI = await getLoginReturnURI();
       setReturnURI(returnURI);
     }
