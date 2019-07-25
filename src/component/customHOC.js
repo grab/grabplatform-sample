@@ -39,6 +39,7 @@ export function handleErrorHOC() {
           try {
             await fn(...args);
           } catch (e) {
+            console.log(e);
             dispatch(CommonActionCreators.setError(e));
           }
         }

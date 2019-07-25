@@ -2,11 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import {
-  grabidPaymentHOC,
-  handleErrorHOC,
-  handleMessageHOC
-} from "component/customHOC";
+import { grabidPaymentHOC, grabpayTransactionHOC } from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
 import {
   grabidDescription,
@@ -18,7 +14,8 @@ import Transaction from "component/Payment/Transaction/component";
 import React from "react";
 import Markdown from "react-markdown";
 import { connect } from "react-redux";
-import { compose } from "recompose";
+import { compose, withProps } from "recompose";
+import { CommonMessages } from "redux/action/common";
 import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
 
@@ -311,32 +308,68 @@ function RecurringCharge({
 }
 
 export default compose(
-  handleMessageHOC(),
-  handleErrorHOC(),
   grabidPaymentHOC(),
+  grabpayTransactionHOC(),
   connect(
     ({
+      configuration,
       grabpay: {
-        request,
         transaction: { status },
         wallet: { balance, cardImage, currency }
+      },
+      repository: {
+        grabpay: {
+          recurringCharge: {
+            bind: bindCharge,
+            charge: chargeUser,
+            checkWallet,
+            unbind: unbindCharge
+          }
+        }
       }
     }) => ({
       balance,
       cardImage,
+      configuration,
       currency,
-      request,
       status,
-      isBindSatisfied: !!request
+      bindCharge,
+      chargeUser,
+      checkWallet,
+      unbindCharge
     }),
     dispatch => ({
-      bindCharge: () =>
-        dispatch(GrabPayActionCreators.RecurringCharge.triggerBind()),
       chargeUser: () =>
         dispatch(GrabPayActionCreators.RecurringCharge.triggerCharge()),
       checkWallet: () => dispatch(GrabPayActionCreators.triggerCheckWallet()),
       unbindCharge: () =>
         dispatch(GrabPayActionCreators.RecurringCharge.triggerUnbind())
+    })
+  ),
+  withProps(
+    ({
+      configuration: { countryCode, partnerHMACSecret, partnerID },
+      bindCharge,
+      handleError,
+      handleMessage,
+      persistChargeRequest,
+      persistPartnerTxID,
+      setPartnerTxID,
+      setRequest
+    }) => ({
+      bindCharge: handleError(async () => {
+        const { partnerTxID, request } = await bindCharge({
+          countryCode,
+          partnerHMACSecret,
+          partnerID
+        });
+
+        await persistChargeRequest(request);
+        await persistPartnerTxID(partnerTxID);
+        setPartnerTxID(partnerTxID);
+        setRequest(request);
+        handleMessage(CommonMessages.grabpay.recurringCharge.bind);
+      })
     })
   )
 )(RecurringCharge);
