@@ -1,6 +1,8 @@
+import { handleErrorHOC, handleMessageHOC } from "component/customHOC";
 import React from "react";
 import { connect } from "react-redux";
-import { compose, lifecycle, withState } from "recompose";
+import { compose, lifecycle, withProps, withState } from "recompose";
+import { CommonMessages } from "redux/action/common";
 import { ConfigurationActionCreators } from "redux/action/configuration";
 import "./style.scss";
 
@@ -75,7 +77,7 @@ function PrivateGeneralConfiguration({
 
 const GeneralConfiguration = compose(
   connect(
-    ({ configuration }) => configuration,
+    () => ({}),
     dispatch => ({
       setClientID: clientID =>
         dispatch(ConfigurationActionCreators.setClientID(clientID)),
@@ -168,10 +170,7 @@ function PrivateGrabPayConfiguration({
 
 const GrabPayConfiguration = compose(
   connect(
-    ({ configuration: { transaction, ...configuration } }) => ({
-      ...configuration,
-      ...transaction
-    }),
+    () => ({}),
     dispatch => ({
       setAmount: amount =>
         dispatch(ConfigurationActionCreators.Transaction.setAmount(amount)),
@@ -196,6 +195,7 @@ const GrabPayConfiguration = compose(
 // ############################ All configuration ############################
 
 function PrivateConfiguration({
+  configuration,
   configurationType = "general",
   saveConfiguration,
   setConfigurationType
@@ -221,27 +221,49 @@ function PrivateConfiguration({
       </div>
 
       {configurationType === "general" && (
-        <GeneralConfiguration saveConfiguration={saveConfiguration} />
+        <GeneralConfiguration
+          {...configuration}
+          saveConfiguration={saveConfiguration}
+        />
       )}
 
       {configurationType === "grabpay" && (
-        <GrabPayConfiguration saveConfiguration={saveConfiguration} />
+        <GrabPayConfiguration
+          {...{ ...configuration, ...configuration.transaction }}
+          saveConfiguration={saveConfiguration}
+        />
       )}
     </div>
   );
 }
 
 export default compose(
+  handleMessageHOC(),
+  handleErrorHOC(),
   connect(
-    () => ({}),
-    (dispatch, { closeConfiguration }) => ({
-      saveConfiguration: () => {
-        dispatch(ConfigurationActionCreators.triggerSaveConfiguration());
-        closeConfiguration();
+    ({
+      configuration,
+      repository: {
+        configuration: { saveConfiguration }
       }
-    })
+    }) => ({ configuration, saveConfiguration })
   ),
   withState("configurationType", "setConfigurationType", "general"),
+  withProps(
+    ({
+      configuration,
+      closeConfiguration,
+      handleError,
+      handleMessage,
+      saveConfiguration
+    }) => ({
+      saveConfiguration: handleError(async () => {
+        await saveConfiguration(configuration);
+        closeConfiguration();
+        handleMessage(CommonMessages.configuration.setConfiguration);
+      })
+    })
+  ),
   lifecycle(
     (() => {
       let keyHandler = null;

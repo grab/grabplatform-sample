@@ -1,4 +1,4 @@
-import { CommonActionCreators, CommonMessages } from "./common";
+import { CommonActionCreators } from "./common";
 
 /**
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
@@ -21,7 +21,6 @@ export const ConfigurationActions = {
     SET_PARTNER_GROUP_TRANSACTION_ID: "TX.SET_PARTNER_GROUP_TRANSACTION_ID"
   },
 
-  TRIGGER_SAVE_CONFIGURATION: "TRIGGER_SAVE_CONFIGURATION",
   TRIGGER_GET_CONFIGURATION: "TRIGGER_SET_CONFIGURATION"
 };
 
@@ -72,27 +71,6 @@ export const ConfigurationActionCreators = {
       }
     },
     type: ConfigurationActions.TRIGGER_GET_CONFIGURATION
-  }),
-  triggerSaveConfiguration: () => ({
-    payload: async (
-      dispatch,
-      getState,
-      { configuration: { setConfiguration } }
-    ) => {
-      try {
-        const { configuration } = getState();
-        await setConfiguration(configuration);
-
-        dispatch(
-          CommonActionCreators.setMessage(
-            CommonMessages.configuration.setConfiguration
-          )
-        );
-      } catch (e) {
-        dispatch(CommonActionCreators.setError(e));
-      }
-    },
-    type: ConfigurationActions.TRIGGER_SAVE_CONFIGURATION
   }),
   Transaction: {
     setAmount: amount => ({

@@ -276,7 +276,7 @@ export function createGrabAPIRepository(window) {
     configuration: {
       getConfiguration: () =>
         makeRequest(window, { method: "GET", path: "/configuration" }),
-      setConfiguration: body =>
+      saveConfiguration: body =>
         makeRequest(window, { body, method: "POST", path: "/configuration" })
     },
     identity: {
