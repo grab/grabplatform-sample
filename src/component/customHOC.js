@@ -17,3 +17,20 @@ export function copyToClipboardHOC() {
     )
   );
 }
+
+export function handleErrorHOC() {
+  return compose(
+    connect(
+      () => ({}),
+      dispatch => ({
+        handleError: fn => async (...args) => {
+          try {
+            await fn(...args);
+          } catch (e) {
+            dispatch(CommonActionCreators.setError(e));
+          }
+        }
+      })
+    )
+  );
+}
