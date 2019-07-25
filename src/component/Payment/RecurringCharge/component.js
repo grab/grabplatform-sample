@@ -14,7 +14,7 @@ import Transaction from "component/Payment/Transaction/component";
 import React from "react";
 import Markdown from "react-markdown";
 import { connect } from "react-redux";
-import { compose, withProps } from "recompose";
+import { compose, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
@@ -339,23 +339,33 @@ export default compose(
       unbindCharge
     }),
     dispatch => ({
-      chargeUser: () =>
-        dispatch(GrabPayActionCreators.RecurringCharge.triggerCharge()),
       checkWallet: () => dispatch(GrabPayActionCreators.triggerCheckWallet()),
       unbindCharge: () =>
         dispatch(GrabPayActionCreators.RecurringCharge.triggerUnbind())
     })
   ),
+  withState("status", "setStatus", ""),
   withProps(
     ({
-      configuration: { countryCode, partnerHMACSecret, partnerID },
+      configuration: {
+        clientSecret,
+        countryCode,
+        currency,
+        merchantID,
+        partnerHMACSecret,
+        partnerID,
+        transaction: { amount, description, partnerGroupTxID }
+      },
+      partnerTxID,
       bindCharge,
+      chargeUser,
       handleError,
       handleMessage,
       persistChargeRequest,
       persistPartnerTxID,
       setPartnerTxID,
-      setRequest
+      setRequest,
+      setStatus
     }) => ({
       bindCharge: handleError(async () => {
         const { partnerTxID, request } = await bindCharge({
@@ -369,6 +379,20 @@ export default compose(
         setPartnerTxID(partnerTxID);
         setRequest(request);
         handleMessage(CommonMessages.grabpay.recurringCharge.bind);
+      }),
+      chargeUser: handleError(async () => {
+        const { status } = await chargeUser({
+          amount,
+          clientSecret,
+          currency,
+          description,
+          merchantID,
+          partnerGroupTxID,
+          partnerTxID
+        });
+
+        setStatus(status);
+        handleMessage(CommonMessages.grabpay.recurringCharge.charge);
       })
     })
   )
