@@ -52,6 +52,8 @@ function createGrabIDClient(
     scope: ["openid", ...scopes].join(" ")
   };
 
+  localStorage.setItem("key", JSON.stringify(appConfig));
+
   return new GrabID(openIdUrl, appConfig);
 }
 
@@ -193,6 +195,9 @@ export function createGrabIDRepository(window) {
 }
 
 export function createGrabPayRepository(window) {
+  const chargeRequestCacheKey = "grabpay:request";
+  const partnerTxIDCacheKey = "grabpay:partnerTxID";
+
   return {
     grabpay: {
       checkWallet: async ({ clientSecret, currency }) =>
@@ -201,6 +206,14 @@ export function createGrabPayRepository(window) {
           method: "POST",
           path: "/payment/recurring-charge/wallet"
         }),
+      saveChargeRequest: async request =>
+        window.localStorage.setItem(chargeRequestCacheKey, request),
+      getChargeRequest: async () =>
+        window.localStorage.getItem(chargeRequestCacheKey) || "",
+      savePartnerTransactionID: async partnerTxID =>
+        window.localStorage.setItem(partnerTxIDCacheKey, partnerTxID),
+      getPartnerTransactionID: async () =>
+        window.localStorage.getItem(partnerTxIDCacheKey) || "",
       oneTimeCharge: {
         init: async ({
           amount,

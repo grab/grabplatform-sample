@@ -194,6 +194,7 @@ function PrivateGrabIDRedirect({ returnURI }) {
 
 export const GrabIDRedirect = compose(
   mapProps(({ location: { search } }) => parse(search.slice(1))),
+  handleErrorHOC(),
   connect(
     ({
       repository: {
@@ -201,6 +202,11 @@ export const GrabIDRedirect = compose(
       }
     }) => ({ getLoginReturnURI, handleAuthorizationCodeFlowResponse })
   ),
+  withProps(({ handleAuthorizationCodeFlowResponse, handleError }) => ({
+    handleAuthorizationCodeFlowResponse: handleError(
+      handleAuthorizationCodeFlowResponse
+    )
+  })),
   withState("returnURI", "setReturnURI", ""),
   lifecycle({
     async componentDidMount() {

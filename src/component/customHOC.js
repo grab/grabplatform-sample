@@ -3,7 +3,7 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 import { connect } from "react-redux";
-import { compose, withProps } from "recompose";
+import { compose, lifecycle, withProps, withState } from "recompose";
 import { CommonActionCreators, CommonMessages } from "redux/action/common";
 
 export function copyToClipboardHOC() {
@@ -57,22 +57,24 @@ export function grabidPaymentHOC() {
         repository: {
           grabid: {
             payment: { authorize, requestToken }
-          }
+          },
+          grabpay: { getChargeRequest }
         }
-      }) => ({ configuration, authorize, requestToken })
+      }) => ({ configuration, authorize, getChargeRequest, requestToken })
     ),
     withProps(
       ({
         configuration: { clientID, clientSecret, currency, countryCode },
-        request,
-        scopes,
         authorize,
+        getChargeRequest,
         handleError,
         handleMessage,
         requestToken
       }) => ({
         /** GrabPay requires an additional request parameter. */
         makeAuthorizationRequest: handleError(async scopes => {
+          const request = await getChargeRequest();
+
           await authorize({
             clientID,
             countryCode,
@@ -82,11 +84,50 @@ export function grabidPaymentHOC() {
           });
         }),
         /** GrabPay requires an additional request parameter. */
-        makeTokenRequest: handleError(async scopes => {
+        makeTokenRequest: handleError(async () => {
           await requestToken({ clientID, clientSecret });
           handleMessage(CommonMessages.grabid.requestToken);
         })
       })
     )
+  );
+}
+
+export function grabpayTransactionHOC() {
+  return compose(
+    connect(
+      ({
+        repository: {
+          grabpay: {
+            getChargeRequest,
+            saveChargeRequest,
+            getPartnerTransactionID,
+            savePartnerTransactionID
+          }
+        }
+      }) => ({
+        getChargeRequest,
+        getPartnerTransactionID,
+        saveChargeRequest,
+        savePartnerTransactionID
+      })
+    ),
+    withState("partnerTxID", "setPartnerTxID", ""),
+    withState("request", "setRequest", ""),
+    lifecycle({
+      async componentDidMount() {
+        const {
+          getChargeRequest,
+          getPartnerTransactionID,
+          setPartnerTxID,
+          setRequest
+        } = this.props;
+
+        const request = await getChargeRequest();
+        const partnerTxID = await getPartnerTransactionID();
+        setPartnerTxID(partnerTxID);
+        setRequest(request);
+      }
+    })
   );
 }

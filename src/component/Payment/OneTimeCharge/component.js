@@ -2,11 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import {
-  grabidPaymentHOC,
-  handleErrorHOC,
-  handleMessageHOC
-} from "component/customHOC";
+import { grabidPaymentHOC, grabpayTransactionHOC } from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
 import {
   grabidDescription,
@@ -20,7 +16,6 @@ import Markdown from "react-markdown";
 import { connect } from "react-redux";
 import { compose, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
-import { GrabPayActionCreators } from "redux/action/grabpay";
 import "./style.scss";
 
 const initDescription = `
@@ -210,8 +205,8 @@ function PrivateOneTimeCharge({
 }
 
 export default compose(
-  handleMessageHOC(),
-  handleErrorHOC(),
+  grabidPaymentHOC(),
+  grabpayTransactionHOC(),
   connect(
     ({
       configuration,
@@ -233,14 +228,8 @@ export default compose(
       status,
       confirmOneTimeCharge,
       initOneTimeCharge
-    }),
-    dispatch => ({
-      confirmOneTimeCharge: () =>
-        dispatch(GrabPayActionCreators.OneTimeCharge.triggerConfirm())
     })
   ),
-  withState("partnerTxID", "setPartnerTxID", ""),
-  withState("request", "setRequest", ""),
   withState("status", "setStatus", ""),
   withProps(
     ({
@@ -257,6 +246,8 @@ export default compose(
       handleMessage,
       confirmOneTimeCharge,
       initOneTimeCharge,
+      saveChargeRequest,
+      savePartnerTransactionID,
       setPartnerTxID,
       setRequest,
       setStatus
@@ -272,6 +263,8 @@ export default compose(
           partnerID
         });
 
+        await saveChargeRequest(request);
+        await savePartnerTransactionID(partnerTxID);
         setPartnerTxID(partnerTxID);
         setRequest(request);
         handleMessage(CommonMessages.grabpay.oneTimeCharge.init);
@@ -286,6 +279,5 @@ export default compose(
         handleMessage(CommonMessages.grabpay.oneTimeCharge.confirm);
       })
     })
-  ),
-  grabidPaymentHOC()
+  )
 )(PrivateOneTimeCharge);
