@@ -1,0 +1,17 @@
+@import "src/global";
+
+.template-container {
+  display: flex;
+  flex-direction: column;
+
+  & > * {
+    &:not(:first-child) {
+      margin-top: 8px;
+    }
+
+    &.template-select {
+      height: 40px;
+      outline: none;
+    }
+  }
+}
