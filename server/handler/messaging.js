@@ -16,25 +16,8 @@ module.exports = {
             partnerHMACSecret,
             partnerID,
             recipientType = "passenger",
-            template = {
-              id: "510095c0-c4a6-40f5-b80e-f2b9e69d49e2",
-              language: "en",
-              params: {
-                title: "1.56 Inbox title",
-                subtitle: "Inbox subtitle",
-                button_link: "button link valur",
-                button_text: "button text value",
-                category_icon: "category icon value",
-                category: "category value",
-                code: "code value",
-                cover_image: "cover image value",
-                icon_image: "icon_image value",
-                message_content: "message content value",
-                message_date: "24/07/2019",
-                message_title: "message_title value",
-                min_app_version: "5.44"
-              }
-            }
+            templateID,
+            templateParams
           },
           headers: { authorization, "content-type": contentType }
         },
@@ -47,7 +30,12 @@ module.exports = {
           "content-type": contentType
         });
 
-        const requestBody = { recipientID, recipientType, template };
+        const requestBody = {
+          recipientID,
+          recipientType,
+          template: { id: templateID, params: templateParams }
+        };
+
         const timestamp = new Date().toUTCString();
 
         const hmacDigest = await generateHMACSignature({
@@ -81,14 +69,8 @@ module.exports = {
             partnerHMACSecret,
             partnerID,
             recipientType = "passenger",
-            template = {
-              id: "7aaa43b5-e27a-4d08-a349-425b372610cd",
-              language: "en",
-              params: {
-                title: "my push title - change this",
-                message: " my message body - change this"
-              }
-            }
+            templateID,
+            templateParams
           },
           headers: { authorization, "content-type": contentType }
         },
@@ -101,7 +83,12 @@ module.exports = {
           "content-type": contentType
         });
 
-        const requestBody = { recipientID, recipientType, template };
+        const requestBody = {
+          recipientID,
+          recipientType,
+          template: { id: templateID, params: templateParams }
+        };
+
         const timestamp = new Date().toUTCString();
 
         const hmacDigest = await generateHMACSignature({

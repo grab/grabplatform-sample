@@ -3,6 +3,7 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 import GrabID from "@grab-id/grab-id-client";
+import { environment } from "utils";
 
 export function createWindowRepository(window) {
   return {
@@ -285,7 +286,7 @@ export function createGrabPayRepository(window) {
 }
 
 export function createGrabAPIRepository(window) {
-  const configCacheKey = "configuration";
+  const configCacheKey = `${environment()}-configuration`;
 
   return {
     configuration: {
@@ -303,15 +304,25 @@ export function createGrabAPIRepository(window) {
         makeRequest(window, { method: "GET", path: "/loyalty/rewards-tier" })
     },
     messaging: {
-      sendInboxMessage: async ({ partnerHMACSecret, partnerID }) =>
+      sendInboxMessage: async ({
+        partnerHMACSecret,
+        partnerID,
+        templateID,
+        templateParams
+      }) =>
         makeRequest(window, {
-          body: { partnerHMACSecret, partnerID },
+          body: { partnerHMACSecret, partnerID, templateID, templateParams },
           method: "POST",
           path: "/messaging/inbox"
         }),
-      sendPushMessage: async ({ partnerHMACSecret, partnerID }) =>
+      sendPushMessage: async ({
+        partnerHMACSecret,
+        partnerID,
+        templateID,
+        templateParams
+      }) =>
         makeRequest(window, {
-          body: { partnerHMACSecret, partnerID },
+          body: { partnerHMACSecret, partnerID, templateID, templateParams },
           method: "POST",
           path: "/messaging/push"
         })
