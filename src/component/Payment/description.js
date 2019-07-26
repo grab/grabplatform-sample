@@ -83,8 +83,7 @@ ${"```"}
 
 export const xgidAuthPOPDescription = `
 ${"```javascript"}
-async function generateHMACForXGIDAUXPOP({ authorization, clientSecret, date }) {
-  const accessToken = authorization.match(/bearer (.*)/i)[1];
+async function generateHMACForXGIDAUXPOP({ accessToken, clientSecret, date }) {
   const timestamp = getUnixTimestamp(date);
   const message = timestamp + accessToken;
   const signature = CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(message, clientSecret));

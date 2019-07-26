@@ -19,7 +19,7 @@ import "./style.scss";
 // ############################## GRABID AUTH ##############################
 
 const grabidDescription = `
-GrabID flow is as follows:
+The normal GrabID flow is as follows:
 - Authorize with user's consent for permission to access user information. A
 browser popup will appear with the authentication/consent screens.
 - Handle authorize result with a redirect page. GrabID will give back 
@@ -31,7 +31,7 @@ access token POP is required, this call can be from client (no need for
 In the case of partners, upon redirection to partner website (after user is
 shown the consent screen and has given consent), the partner will receive an
 **id_token**, which is a JSON Web Token (JWT) containing information of the
-logged in user. This **id_token** can then be used to request of the 
+logged in user. This **id_token** can then be used to request the 
 authorization token like so:
 
 ${"```javascript"}

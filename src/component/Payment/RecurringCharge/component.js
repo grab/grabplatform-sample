@@ -32,10 +32,7 @@ Then the bind endpoint is invoked like so (notice the request body used to
 generate the HMAC):
 
 ${"```javascript"}
-async (
-  { body: { countryCode, partnerHMACSecret, partnerID } },
-  res
-) => {
+app.post('...', async ({ body: { countryCode } }, res) => {
   const partnerTxID = await generatePartnerTransactionID();
   const requestBody = { countryCode, partnerTxID };
   const timestamp = new Date().toUTCString();
@@ -60,7 +57,7 @@ async (
   );
 
   res.status(status).json({ ...data, partnerTxID });
-}
+});
 ${"```"}
             
 This call will give us back:
@@ -79,21 +76,20 @@ ${xgidAuthPOPDescription}
 This HMAC will be used as an extra header for the charge:
 
 ${"```javascript"}
-async (
+app.post('...', async (
   {
     body: {
       amount,
-      clientSecret,
       currency,
       description,
-      merchantID,
       partnerGroupTxID,
       partnerTxID
-    },
-    headers: { authorization }
+    }
   },
   res
 ) => {
+  const accessToken = await dbClient.getAccessToken();
+
   const requestBody = {
     partnerGroupTxID,
     partnerTxID,
@@ -106,7 +102,7 @@ async (
   const date = new Date();
 
   const hmac = await generateHMACForXGIDAUXPOP({
-    authorization,
+    accessToken,
     clientSecret,
     date
   });
@@ -123,20 +119,18 @@ async (
   );
 
   res.status(status).json(data);
-}
+});
 ${"```"}
 
 The wallet check only works after you've done the binding:
 
 ${"```javascript"}
-async (
-  { body: { clientSecret, currency }, headers: { authorization } },
-  res
-) => {
+app.get('...', async ({ query: { currency } }, res) => {
+  const accessToken = await dbClient.getAccessToken();
   const date = new Date();
 
   const hmac = await generateHMACForXGIDAUXPOP({
-    authorization,
+    accessToken,
     clientSecret,
     date
   });
@@ -151,7 +145,7 @@ async (
   );
 
   res.status(status).json(data);
-}
+});
 ${"```"}
 `;
 
@@ -160,14 +154,12 @@ There is no **unbind** endpoint - to unbind, you simply fire a DELETE request
 to the bind endpoint with the necessary credentials:
 
 ${"```javascript"}
-async (
-  { body: { clientSecret, partnerTxID }, headers: { authorization } },
-  res
-) => {
+app.post('...', async ({ body: { partnerTxID } }, res) => {
+  const accessToken = await dbClient.getAccessToken();
   const date = new Date();
 
   const hmac = await generateHMACForXGIDAUXPOP({
-    authorization,
+    accessToken,
     clientSecret,
     date
   });
@@ -184,7 +176,7 @@ async (
   );
 
   res.status(status).json({});
-}
+});
 ${"```"}
 `;
 

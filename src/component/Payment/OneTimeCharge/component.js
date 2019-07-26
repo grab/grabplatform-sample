@@ -32,18 +32,8 @@ Then the init endpoint is invoked like so (notice the request body used to
 generate the HMAC):
 
 ${"```javascript"}
-async (
-  {
-    body: {
-      amount,
-      currency,
-      description,
-      merchantID,
-      partnerGroupTxID,
-      partnerHMACSecret,
-      partnerID
-    }
-  },
+app.post('...', async (
+  { body: { amount, currency, description, partnerGroupTxID } },
   res
 ) => {
   const partnerTxID = await generatePartnerTransactionID();
@@ -79,7 +69,7 @@ async (
   );
 
   res.status(status).json(data);
-}
+});
 ${"```"}
             
 This call will give us back:
@@ -96,14 +86,12 @@ ${xgidAuthPOPDescription}
 This HMAC will be used as an extra header for the confirmation:
 
 ${"```javascript"}
-async ({
-  body: { clientSecret, partnerTxID }, headers: { authorization } }, 
-  res
-) => {
+app.post('...', async ({ body: { partnerTxID } }, res) => { 
+  const accessToken = await dbClient.getAccessToken();
   const date = new Date();
   
   const hmac = await generateHMACForXGIDAUXPOP({
-    authorization,
+    accessToken,
     clientSecret,
     date
   });
@@ -119,7 +107,7 @@ async ({
   );
 
   res.status(status).json(data);
-}
+});
 ${"```"}
 `;
 
