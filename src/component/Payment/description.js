@@ -54,7 +54,7 @@ After authorization is completed, we must request token from backend since the
 token endpoint requires client secret.
 
 ${"```javascript"}
-async ({ body: { code, codeVerifier, clientID, clientSecret, redirectURI } }, res) => {
+app.post('...', async ({ body: { code, codeVerifier, redirectURI } }, res) => {
   // Make sure to run service discovery instead of using hardcoded values.
   const baseURL =
     process.env.NODE_ENV === "production"
@@ -77,7 +77,7 @@ async ({ body: { code, codeVerifier, clientID, clientSecret, redirectURI } }, re
   );
 
   res.status(status).json({ accessToken, idToken });
-}
+});
 ${"```"}
 `;
 

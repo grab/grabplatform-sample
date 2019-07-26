@@ -4,6 +4,7 @@
  */
 import { grabidPaymentHOC, grabpayTransactionHOC } from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
+import Markdown from "component/Markdown/component";
 import {
   grabidDescription,
   hmacDescription,
@@ -13,7 +14,6 @@ import {
 import Transaction from "component/Payment/Transaction/component";
 import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
-import Markdown from "react-markdown";
 import { connect } from "react-redux";
 import { compose, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";

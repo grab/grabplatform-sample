@@ -26,10 +26,6 @@
         width: calc(70% - 8px * 2);
       }
 
-      @include xl {
-        width: calc(60% - 8px * 2);
-      }
-
       & > * {
         &:not(:first-child) {
           margin-top: 16px;

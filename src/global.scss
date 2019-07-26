@@ -110,7 +110,6 @@
     }
 
     &.stage-description {
-      background: rgba(0, 0, 0, 0.1);
       margin: 0 0 -8px 0;
       padding: 0 8px;
 
@@ -125,8 +124,9 @@
           border: 1px solid grey;
           padding: 8px;
 
-          code {
-            font-size: 11px;
+          code,
+          span {
+            font-size: 12px;
           }
         }
       }

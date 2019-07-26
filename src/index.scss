@@ -44,6 +44,7 @@ input {
   padding: 0 8px;
 
   &:disabled {
+    border: 1px solid lightgrey;
     color: grey;
   }
 }

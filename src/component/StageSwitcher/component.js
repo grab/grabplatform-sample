@@ -11,9 +11,10 @@ export default function PrivateStageSwitcher({
       {[...Array(stageCount).keys()].map(stage => (
         <div
           className={`stage${currentStage === stage ? " selected" : ""}`}
+          key={stage}
           onClick={() => setStage(stage)}
         >
-          {stage + 1}
+          Stage {stage + 1}
         </div>
       ))}
     </div>

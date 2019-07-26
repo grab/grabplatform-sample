@@ -7,9 +7,9 @@ import {
   handleErrorHOC,
   handleMessageHOC
 } from "component/customHOC";
+import Markdown from "component/Markdown/component";
 import { parse } from "querystring";
 import React from "react";
-import Markdown from "react-markdown";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { compose, lifecycle, mapProps, withProps, withState } from "recompose";
