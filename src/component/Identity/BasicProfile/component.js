@@ -4,44 +4,60 @@
  */
 import { handleErrorHOC, handleMessageHOC } from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
+import StageSwitch from "component/StageSwitcher/component";
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import "./style.scss";
 
-function PrivateBasicProfile({ basicProfile, getBasicProfile }) {
+function PrivateBasicProfile({
+  basicProfile,
+  currentStage,
+  getBasicProfile,
+  setCurrentStage
+}) {
   return (
     <div className="basic-profile-container">
-      <GrabIDLogin currentProductStageFlow={1} scopes={["profile.read"]} />
+      <StageSwitch
+        currentStage={currentStage}
+        setStage={setCurrentStage}
+        stageCount={2}
+      />
 
-      <div className="main-container">
-        <div className="intro-title">Stage 2: Basic profile</div>
-        <div className="title">Endpoint</div>
-        <input disabled readOnly value={"GET /grabid/v1/oauth2/userinfo"} />
-        <div className="title">Profile information</div>
+      {currentStage === 0 && (
+        <GrabIDLogin currentProductStageFlow={1} scopes={["profile.read"]} />
+      )}
 
-        <div className="info-container">
-          {!!basicProfile && !!Object.keys(basicProfile).length
-            ? Object.entries(basicProfile)
-                .map(([key, value]) => [
-                  key,
-                  <>
-                    <b>{key}</b>: {`${value}`}
-                  </>
-                ])
-                .map(([key, info]) => (
-                  <div className="info" key={key}>
-                    {info}
-                  </div>
-                ))
-            : "No profile information yet"}
+      {currentStage === 1 && (
+        <div className="main-container">
+          <div className="intro-title">Stage 2: Basic profile</div>
+          <div className="title">Endpoint</div>
+          <input disabled readOnly value={"GET /grabid/v1/oauth2/userinfo"} />
+          <div className="title">Profile information</div>
+
+          <div className="info-container">
+            {!!basicProfile && !!Object.keys(basicProfile).length
+              ? Object.entries(basicProfile)
+                  .map(([key, value]) => [
+                    key,
+                    <>
+                      <b>{key}</b>: {`${value}`}
+                    </>
+                  ])
+                  .map(([key, info]) => (
+                    <div className="info" key={key}>
+                      {info}
+                    </div>
+                  ))
+              : "No profile information yet"}
+          </div>
+
+          <div className="get-profile" onClick={getBasicProfile}>
+            Get basic profile
+          </div>
         </div>
-
-        <div className="get-profile" onClick={getBasicProfile}>
-          Get basic profile
-        </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -52,6 +68,7 @@ export default compose(
   connect(({ repository: { identity: { getBasicProfile } } }) => ({
     getBasicProfile
   })),
+  withState("currentStage", "setCurrentStage", 0),
   withState("basicProfile", "setBasicProfile", {}),
   withProps(
     ({ getBasicProfile, handleError, handleMessage, setBasicProfile }) => ({

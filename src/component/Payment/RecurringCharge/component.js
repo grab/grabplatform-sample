@@ -203,7 +203,11 @@ function RecurringCharge({
 }) {
   return (
     <div className="recurring-charge-container">
-      <StageSwitcher stageCount={4} setStage={setCurrentStage} />
+      <StageSwitcher
+        currentStage={currentStage}
+        setStage={setCurrentStage}
+        stageCount={4}
+      />
 
       {currentStage === 0 && (
         <div className="bind-container">

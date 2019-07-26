@@ -4,29 +4,52 @@
  */
 import { handleErrorHOC, handleMessageHOC } from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
+import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import "./style.scss";
 
-function PrivateInbox({ sendPushMessage }) {
+function PrivateInbox({
+  currentStage,
+  messageID,
+  sendPushMessage,
+  setCurrentStage
+}) {
   return (
     <div className="basic-push-container">
-      <GrabIDLogin
-        currentProductStageFlow={1}
-        scopes={["message.notifications"]}
+      <StageSwitcher
+        currentStage={currentStage}
+        setStage={setCurrentStage}
+        stageCount={2}
       />
 
-      <div className="main-container">
-        <div className="intro-title">Stage 2: Push</div>
-        <div className="title">Endpoint</div>
-        <input disabled readOnly value={"GET /message/v1/push"} />
+      {currentStage === 0 && (
+        <GrabIDLogin
+          currentProductStageFlow={1}
+          scopes={["message.notifications"]}
+        />
+      )}
 
-        <div className="send-push" onClick={sendPushMessage}>
-          Send push message
+      {currentStage === 1 && (
+        <div className="main-container">
+          <div className="intro-title">Stage 2: Push</div>
+          <div className="title">Endpoint</div>
+          <input disabled readOnly value={"GET /message/v1/push"} />
+
+          {!!messageID && (
+            <>
+              <div className="title">Message ID</div>
+              <input disabled readOnly value={messageID} />
+            </>
+          )}
+
+          <div className="send-push" onClick={sendPushMessage}>
+            Send push message
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -42,6 +65,7 @@ export default compose(
       }
     }) => ({ configuration, sendPushMessage })
   ),
+  withState("currentStage", "setCurrentStage", 0),
   withState("messageID", "setMessageID", ""),
   withProps(
     ({

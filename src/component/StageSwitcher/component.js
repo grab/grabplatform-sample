@@ -1,11 +1,18 @@
 import React from "react";
 import "./style.scss";
 
-export default function PrivateStageSwitcher({ stageCount, setStage }) {
+export default function PrivateStageSwitcher({
+  currentStage,
+  stageCount,
+  setStage
+}) {
   return (
     <div className="stage-container">
       {[...Array(stageCount).keys()].map(stage => (
-        <div className="stage" onClick={() => setStage(stage)}>
+        <div
+          className={`stage${currentStage === stage ? " selected" : ""}`}
+          onClick={() => setStage(stage)}
+        >
           {stage + 1}
         </div>
       ))}

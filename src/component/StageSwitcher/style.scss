@@ -2,6 +2,7 @@
 
 .stage-container {
   display: flex;
+  justify-content: center;
 
   & > * {
     &:not(:first-child) {
@@ -10,7 +11,11 @@
 
     &.stage {
       @include confirm-button;
-      flex: 1 0 0;
+      flex: 0 1 calc(100% / 4);
+
+      &.selected {
+        background: $grab-primary-color-dark;
+      }
     }
   }
 }

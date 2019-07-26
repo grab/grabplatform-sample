@@ -136,7 +136,11 @@ function PrivateOneTimeCharge({
 }) {
   return (
     <div className="one-time-charge-container">
-      <StageSwitcher stageCount={3} setStage={setCurrentStage} />
+      <StageSwitcher
+        currentStage={currentStage}
+        setStage={setCurrentStage}
+        stageCount={3}
+      />
 
       {currentStage === 0 && (
         <div className="init-charge-container">

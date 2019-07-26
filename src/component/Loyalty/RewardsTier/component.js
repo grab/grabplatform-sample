@@ -4,33 +4,52 @@
  */
 import { handleErrorHOC, handleMessageHOC } from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
+import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import "./style.scss";
 
-function PrivateRewardsTier({ rewardsTier, getRewardsTier }) {
+function PrivateRewardsTier({
+  currentStage,
+  rewardsTier,
+  getRewardsTier,
+  setCurrentStage
+}) {
   return (
     <div className="rewards-tier-container">
-      <GrabIDLogin currentProductStageFlow={1} scopes={["rewards.tierinfo"]} />
+      <StageSwitcher
+        currentStage={currentStage}
+        setStage={setCurrentStage}
+        stageCount={2}
+      />
 
-      <div className="main-container">
-        <div className="intro-title">Stage 2: Rewards tier</div>
-        <div className="title">Endpoint</div>
-        <input disabled readOnly value={"GET /loyalty/rewards/v1/tier"} />
-        <div className="title">Rewards tier</div>
+      {currentStage === 0 && (
+        <GrabIDLogin
+          currentProductStageFlow={1}
+          scopes={["rewards.tierinfo"]}
+        />
+      )}
 
-        <div className="tier">
-          {!!rewardsTier
-            ? `You are a/an (${rewardsTier.toUpperCase()}) member`
-            : "No tier information yet"}
+      {currentStage === 1 && (
+        <div className="main-container">
+          <div className="intro-title">Stage 2: Rewards tier</div>
+          <div className="title">Endpoint</div>
+          <input disabled readOnly value={"GET /loyalty/rewards/v1/tier"} />
+          <div className="title">Rewards tier</div>
+
+          <div className="tier">
+            {!!rewardsTier
+              ? `You are a/an (${rewardsTier.toUpperCase()}) member`
+              : "No tier information yet"}
+          </div>
+
+          <div className="get-tier" onClick={getRewardsTier}>
+            Get rewards tier
+          </div>
         </div>
-
-        <div className="get-tier" onClick={getRewardsTier}>
-          Get rewards tier
-        </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -41,6 +60,7 @@ export default compose(
   connect(({ repository: { loyalty: { getRewardsTier } } }) => ({
     getRewardsTier
   })),
+  withState("currentStage", "setCurrentStage", 0),
   withState("rewardsTier", "setRewardsTier", ""),
   withProps(
     ({ getRewardsTier, handleError, handleMessage, setRewardsTier }) => ({

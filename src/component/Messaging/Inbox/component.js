@@ -4,36 +4,52 @@
  */
 import { handleErrorHOC, handleMessageHOC } from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
+import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import "./style.scss";
 
-function PrivateInbox({ messageID, sendInboxMessage }) {
+function PrivateInbox({
+  currentStage,
+  messageID,
+  sendInboxMessage,
+  setCurrentStage
+}) {
   return (
     <div className="basic-inbox-container">
-      <GrabIDLogin
-        currentProductStageFlow={1}
-        scopes={["message.notifications"]}
+      <StageSwitcher
+        currentStage={currentStage}
+        setStage={setCurrentStage}
+        stageCount={2}
       />
 
-      <div className="main-container">
-        <div className="intro-title">Stage 2: Inbox</div>
-        <div className="title">Endpoint</div>
-        <input disabled readOnly value={"GET /message/v1/inbox"} />
+      {currentStage === 0 && (
+        <GrabIDLogin
+          currentProductStageFlow={1}
+          scopes={["message.notifications"]}
+        />
+      )}
 
-        {!!messageID && (
-          <>
-            <div className="title">Message ID</div>
-            <input disabled readOnly value={messageID} />
-          </>
-        )}
+      {currentStage === 1 && (
+        <div className="main-container">
+          <div className="intro-title">Stage 2: Inbox</div>
+          <div className="title">Endpoint</div>
+          <input disabled readOnly value={"GET /message/v1/inbox"} />
 
-        <div className="send-inbox" onClick={sendInboxMessage}>
-          Send inbox message
+          {!!messageID && (
+            <>
+              <div className="title">Message ID</div>
+              <input disabled readOnly value={messageID} />
+            </>
+          )}
+
+          <div className="send-inbox" onClick={sendInboxMessage}>
+            Send inbox message
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -49,6 +65,7 @@ export default compose(
       }
     }) => ({ configuration, sendInboxMessage })
   ),
+  withState("currentStage", "setCurrentStage", 0),
   withState("messageID", "setMessageID", ""),
   withProps(
     ({
