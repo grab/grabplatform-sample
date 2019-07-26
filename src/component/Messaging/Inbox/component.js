@@ -4,18 +4,49 @@
  */
 import { handleErrorHOC, handleMessageHOC } from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
+import Template from "component/Messaging/Template/component";
 import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
 import { connect } from "react-redux";
 import { compose, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
+import { environment } from "utils";
 import "./style.scss";
+
+const templates = (function() {
+  const isProduction = environment() === "production";
+
+  return {
+    [!!isProduction
+      ? "510095c0-c4a6-40f5-b80e-f2b9e69d49e2"
+      : "28427675-74b3-427f-96bd-a0f489ffdb25"]: {
+      name: { readonly: true, value: "Inbox Message" },
+      title: { value: "" },
+      subtitle: { value: "" },
+      button_link: { value: "" },
+      button_text: { value: "" },
+      category_icon: { value: "" },
+      category: { value: "" },
+      code: { value: "" },
+      cover_image: { value: "" },
+      icon_image: { value: "" },
+      message_content: { value: "" },
+      message_date: { value: "" },
+      message_title: { value: "" },
+      min_app_version: { value: "" }
+    }
+  };
+})();
 
 function PrivateInbox({
   currentStage,
   messageID,
+  templateID,
+  templateParams,
   sendInboxMessage,
-  setCurrentStage
+  setCurrentStage,
+  setTemplateID,
+  setTemplateParams
 }) {
   return (
     <div className="basic-inbox-container">
@@ -37,6 +68,14 @@ function PrivateInbox({
           <div className="intro-title">Stage 2: Inbox</div>
           <div className="title">Endpoint</div>
           <input disabled readOnly value={"GET /message/v1/inbox"} />
+
+          <Template
+            onTemplateIDChange={setTemplateID}
+            onTemplateParamsChange={setTemplateParams}
+            templates={templates}
+            templateID={templateID}
+            templateParams={templateParams}
+          />
 
           {!!messageID && (
             <>
@@ -66,6 +105,8 @@ export default compose(
     }) => ({ configuration, sendInboxMessage })
   ),
   withState("currentStage", "setCurrentStage", 0),
+  withState("templateID", "setTemplateID", ""),
+  withState("templateParams", "setTemplateParams", {}),
   withState("messageID", "setMessageID", ""),
   withProps(
     ({
@@ -73,12 +114,16 @@ export default compose(
       handleError,
       handleMessage,
       sendInboxMessage,
-      setMessageID
+      setMessageID,
+      templateID,
+      templateParams
     }) => ({
       sendInboxMessage: handleError(async () => {
         const { messageID } = await sendInboxMessage({
           partnerHMACSecret,
-          partnerID
+          partnerID,
+          templateID,
+          templateParams
         });
 
         setMessageID(messageID);
