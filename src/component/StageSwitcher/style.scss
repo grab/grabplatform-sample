@@ -1,0 +1,16 @@
+@import "src/global";
+
+.stage-container {
+  display: flex;
+
+  & > * {
+    &:not(:first-child) {
+      margin-left: 8px;
+    }
+
+    &.stage {
+      @include confirm-button;
+      flex: 1 0 0;
+    }
+  }
+}
