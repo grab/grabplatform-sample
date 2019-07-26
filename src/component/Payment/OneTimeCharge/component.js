@@ -11,6 +11,7 @@ import {
   xgidAuthPOPDescription
 } from "component/Payment/description";
 import Transaction from "component/Payment/Transaction/component";
+import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
 import Markdown from "react-markdown";
 import { connect } from "react-redux";
@@ -123,83 +124,93 @@ ${"```"}
 `;
 
 function PrivateOneTimeCharge({
+  currentStage,
   partnerTxID,
   request,
   status,
   confirmOneTimeCharge,
   initOneTimeCharge,
   makeAuthorizationRequest,
-  makeTokenRequest
+  makeTokenRequest,
+  setCurrentStage
 }) {
   return (
     <div className="one-time-charge-container">
-      <div className="init-charge-container">
-        <div className="intro-title">Stage 1: Init charge</div>
+      <StageSwitcher stageCount={3} setStage={setCurrentStage} />
 
-        <div className="stage-description">
-          <Markdown className="source-code" source={initDescription} />
+      {currentStage === 0 && (
+        <div className="init-charge-container">
+          <div className="intro-title">Stage 1: Init charge</div>
+
+          <div className="stage-description">
+            <Markdown className="source-code" source={initDescription} />
+          </div>
+
+          <div className="divider" />
+          <div className="title">Endpoint</div>
+
+          <input
+            disabled
+            readOnly
+            value={"POST /grabpay/partner/v2/charge/init"}
+          />
+
+          <Transaction partnerTxID={partnerTxID} />
+
+          {!!request && (
+            <>
+              <div className="title">Charge request</div>
+              <input disabled readOnly spellCheck={false} value={request} />
+            </>
+          )}
+
+          <div className="init-charge" onClick={initOneTimeCharge}>
+            Init transaction
+          </div>
         </div>
+      )}
 
-        <div className="divider" />
-        <div className="title">Endpoint</div>
-
-        <input
-          disabled
-          readOnly
-          value={"POST /grabpay/partner/v2/charge/init"}
+      {currentStage === 1 && (
+        <GrabIDLogin
+          currentProductStageFlow={2}
+          makeAuthorizationRequest={makeAuthorizationRequest}
+          makeTokenRequest={makeTokenRequest}
+          popRequired
+          scopes={["payment.one_time_charge", "payment.online_acceptance"]}
+          stageDescription={
+            <Markdown className="source-code" source={grabidDescription} />
+          }
         />
+      )}
 
-        <Transaction partnerTxID={partnerTxID} />
+      {currentStage === 2 && (
+        <div className="confirm-charge-container">
+          <div className="intro-title">Stage 3: Confirm charge</div>
 
-        {!!request && (
-          <>
-            <div className="title">Charge request</div>
-            <input disabled readOnly spellCheck={false} value={request} />
-          </>
-        )}
+          <div className="stage-description">
+            <Markdown className="source-code" source={confirmDescription} />
+          </div>
 
-        <div className="init-charge" onClick={initOneTimeCharge}>
-          Init transaction
+          <div className="divider" />
+          <div className="title">Endpoint</div>
+
+          <input
+            disabled
+            readOnly
+            value={"POST /grabpay/partner/v2/charge/complete"}
+          />
+
+          <div className="title">Transaction status</div>
+
+          <div className="transaction-status">
+            <b>{status || "unconfirmed"}</b>
+          </div>
+
+          <div className="confirm-charge" onClick={confirmOneTimeCharge}>
+            Confirm transaction
+          </div>
         </div>
-      </div>
-
-      <GrabIDLogin
-        currentProductStageFlow={2}
-        makeAuthorizationRequest={makeAuthorizationRequest}
-        makeTokenRequest={makeTokenRequest}
-        popRequired
-        scopes={["payment.one_time_charge", "payment.online_acceptance"]}
-        stageDescription={
-          <Markdown className="source-code" source={grabidDescription} />
-        }
-      />
-
-      <div className="confirm-charge-container">
-        <div className="intro-title">Stage 3: Confirm charge</div>
-
-        <div className="stage-description">
-          <Markdown className="source-code" source={confirmDescription} />
-        </div>
-
-        <div className="divider" />
-        <div className="title">Endpoint</div>
-
-        <input
-          disabled
-          readOnly
-          value={"POST /grabpay/partner/v2/charge/complete"}
-        />
-
-        <div className="title">Transaction status</div>
-
-        <div className="transaction-status">
-          <b>{status || "unconfirmed"}</b>
-        </div>
-
-        <div className="confirm-charge" onClick={confirmOneTimeCharge}>
-          Confirm transaction
-        </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -224,6 +235,7 @@ export default compose(
       initOneTimeCharge
     })
   ),
+  withState("currentStage", "setCurrentStage", 0),
   withState("status", "setStatus", ""),
   withProps(
     ({
