@@ -924,10 +924,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-9.0.1.tgz#c27b391d8457d1e893f1eddeaf5e5412d12ffbb5"
   integrity sha512-6It2EVfGskxZCQhuykrfnALg7oVeiI6KclWSmGDqB0AiInVrTGB9Jp9i4/Ad21u9Jde/voVQz6eFX/eSg/UsPA==
 
-"@grab-id/grab-id-client@1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@grab-id/grab-id-client/-/grab-id-client-1.1.4.tgz#4fc4075ad29fdfa61bcc29e2b05479b13a85d791"
-  integrity sha512-dTdM4Os2HQaoc48KUD5PPH/x2VV+VZ+Z83PUur8DfwQDUCEbPO65CBNcj4KuxSnpBDycfV/Q6zr68lY3S6yetw==
+"@grab-id/grab-id-client@1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@grab-id/grab-id-client/-/grab-id-client-1.1.5.tgz#8009d05281a46b265503180456f12947fff71c41"
+  integrity sha512-EFRsgLUR2Gr6KMOnAriDa127rtOWJvHw7Xrk3ZOS3GBLUn6tHEWxzsI50+kP9tCHuwwg/5H6nIHsNcL9JED1UA==
   dependencies:
     crypto-js "^3.1.9-1"
 

@@ -61,7 +61,7 @@ function createGrabIDClient(
 function getRelativeURLPath(url) {
   const a = document.createElement("a");
   a.href = url;
-  return a.pathname;
+  return `${a.pathname}${a.search}`;
 }
 
 function getAbsoluteURLPath(window, relativeURL) {
@@ -137,7 +137,7 @@ export function createGrabIDRepository(window) {
       })(),
       pop: {
         requestToken: async ({ clientID, clientSecret, redirectURI }) => {
-          const code = window.localStorage.getItem("grabid:code");
+          const { code } = GrabID.getResult();
           const { codeVerifier } = await repository.grabid.getGrabIDResult();
 
           makeRequest(window, {
