@@ -1,11 +1,9 @@
+import { parse, stringify } from "querystring";
 import React from "react";
+import { compose, withProps } from "recompose";
 import "./style.scss";
 
-export default function PrivateStageSwitcher({
-  currentStage,
-  stageCount,
-  setStage
-}) {
+function PrivateStageSwitcher({ currentStage, stageCount, setStage }) {
   return (
     <div className="stage-container">
       {[...Array(stageCount).keys()].map(stage => (
@@ -20,3 +18,16 @@ export default function PrivateStageSwitcher({
     </div>
   );
 }
+
+export default compose(
+  withProps(({ setStage }) => ({
+    setStage: stage => {
+      const currentURL = `${window.location.origin}${window.location.pathname}`;
+      const search = window.location.search;
+      const newQuery = { ...parse(search.substr(1)), stage: stage + 1 };
+      const newSearch = `?${stringify(newQuery)}`;
+      window.history.replaceState(null, null, `${currentURL}${newSearch}`);
+      setStage(stage);
+    }
+  }))
+)(PrivateStageSwitcher);
