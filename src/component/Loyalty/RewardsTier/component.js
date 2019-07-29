@@ -2,7 +2,11 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import { handleErrorHOC, handleMessageHOC } from "component/customHOC";
+import {
+  handleErrorHOC,
+  handleMessageHOC,
+  stageSwitcherHOC
+} from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
 import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
@@ -57,10 +61,10 @@ function PrivateRewardsTier({
 export default compose(
   handleMessageHOC(),
   handleErrorHOC(),
+  stageSwitcherHOC(),
   connect(({ repository: { loyalty: { getRewardsTier } } }) => ({
     getRewardsTier
   })),
-  withState("currentStage", "setCurrentStage", 0),
   withState("rewardsTier", "setRewardsTier", ""),
   withProps(
     ({ getRewardsTier, handleError, handleMessage, setRewardsTier }) => ({

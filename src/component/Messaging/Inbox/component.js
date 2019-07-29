@@ -2,7 +2,11 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import { handleErrorHOC, handleMessageHOC } from "component/customHOC";
+import {
+  handleErrorHOC,
+  handleMessageHOC,
+  stageSwitcherHOC
+} from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
 import Template from "component/Messaging/Template/component";
 import StageSwitcher from "component/StageSwitcher/component";
@@ -96,6 +100,7 @@ function PrivateInbox({
 export default compose(
   handleMessageHOC(),
   handleErrorHOC(),
+  stageSwitcherHOC(),
   connect(
     ({
       configuration,
@@ -104,7 +109,6 @@ export default compose(
       }
     }) => ({ configuration, sendInboxMessage })
   ),
-  withState("currentStage", "setCurrentStage", 0),
   withState("templateID", "setTemplateID", ""),
   withState("templateParams", "setTemplateParams", {}),
   withState("messageID", "setMessageID", ""),

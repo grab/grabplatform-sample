@@ -17,13 +17,13 @@ export default function({ products = [], urlPath }) {
             className="tab"
             exact
             key={product}
-            to={join(
+            to={`${join(
               urlPath,
               product
                 .split(" ")
                 .map(component => component.toLowerCase())
                 .join("-")
-            )}
+            )}?stage=1`}
           >
             {product}
           </NavLink>

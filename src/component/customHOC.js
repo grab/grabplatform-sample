@@ -2,6 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
+import { parse } from "querystring";
 import { connect } from "react-redux";
 import { compose, lifecycle, withProps, withState } from "recompose";
 import { CommonActionCreators, CommonMessages } from "redux/action/common";
@@ -135,5 +136,19 @@ export function grabpayTransactionHOC() {
         setRequest(request);
       }
     })
+  );
+}
+
+export function stageSwitcherHOC() {
+  return compose(
+    withProps(({ location: { search } }) => ({
+      currentStage:
+        (parseInt(parse(search.substr(1)).stage, undefined) || 1) - 1
+    })),
+    withState(
+      "currentStage",
+      "setCurrentStage",
+      ({ currentStage }) => currentStage
+    )
   );
 }
