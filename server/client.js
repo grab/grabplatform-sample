@@ -38,12 +38,13 @@ exports.createDBClient = async function() {
     url: process.env.REDIS_URL
   });
 
-  const get = promisify(redis.get).bind(redis);
-  const set = promisify(redis.set).bind(redis);
-  const del = promisify(redis.del).bind(redis);
+  const baseGet = promisify(redis.get).bind(redis);
+  const baseSet = promisify(redis.set).bind(redis);
+  const get = async k => baseGet(`${process.env.NODE_ENV}-${k}`);
+  const set = async (k, v) => baseSet(`${process.env.NODE_ENV}-${k}`, v);
 
   const keys = {
-    configuration: "CONFIGURATION",
+    configuration: "configuration",
     grabid: {
       ACCESS_TOKEN: "grabid.access_token",
       ID_TOKEN: "grabid.id_token"

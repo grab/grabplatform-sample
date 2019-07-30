@@ -28,6 +28,8 @@ async function initialize() {
   app.get("/", (req, res) => {
     res.status(200).json("Never should have come here");
   });
+  app.get("/configuration", configuration.getConfiguration(dbClient));
+  app.post("/configuration", configuration.setConfiguration(dbClient));
   app.post("/grabid/token", grabid.popToken(dbClient, httpClient));
   app.get("/identity/basic-profile", identity.basicProfile(httpClient));
   app.get("/loyalty/rewards-tier", loyalty.rewardsTier(httpClient));

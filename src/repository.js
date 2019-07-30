@@ -3,7 +3,6 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 import GrabID from "@grab-id/grab-id-client";
-import { environment } from "utils";
 
 export function createWindowRepository(window) {
   return {
@@ -286,14 +285,16 @@ export function createGrabPayRepository(window) {
 }
 
 export function createGrabAPIRepository(window) {
-  const configCacheKey = `${environment()}-configuration`;
-
   return {
     configuration: {
       getConfigurationFromPersistence: () =>
-        JSON.parse(window.localStorage.getItem(configCacheKey) || "{}"),
+        makeRequest(window, { method: "GET", path: "/configuration" }),
       persistConfiguration: config =>
-        window.localStorage.setItem(configCacheKey, JSON.stringify(config))
+        makeRequest(window, {
+          body: config,
+          method: "POST",
+          path: "/configuration"
+        })
     },
     identity: {
       getBasicProfile: () =>
