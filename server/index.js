@@ -33,11 +33,11 @@ async function initialize() {
   app.post("/grabid/token", grabid.popToken(dbClient, httpClient));
   app.get("/identity/basic-profile", identity.basicProfile(httpClient));
   app.get("/loyalty/rewards-tier", loyalty.rewardsTier(httpClient));
-  app.post("/messaging/inbox", messaging.inbox(httpClient));
-  app.post("/messaging/push", messaging.push(httpClient));
+  app.post("/messaging/inbox", messaging.inbox(dbClient, httpClient));
+  app.post("/messaging/push", messaging.push(dbClient, httpClient));
   app.post(
     "/payment/one-time-charge/init",
-    payment.oneTimeCharge.init(httpClient)
+    payment.oneTimeCharge.init(dbClient, httpClient)
   );
   app.post(
     "/payment/one-time-charge/confirm",
@@ -45,7 +45,7 @@ async function initialize() {
   );
   app.post(
     "/payment/recurring-charge/bind",
-    payment.recurringCharge.bind(httpClient)
+    payment.recurringCharge.bind(dbClient, httpClient)
   );
   app.post(
     "/payment/recurring-charge/wallet",

@@ -8,21 +8,20 @@ const {
 const { generateHMACSignature, handleError } = require("./util");
 
 module.exports = {
-  inbox: httpClient => {
+  inbox: (dbClient, httpClient) => {
     return handleError(
       async (
         {
-          body: {
-            partnerHMACSecret,
-            partnerID,
-            recipientType = "passenger",
-            templateID,
-            templateParams
-          },
+          body: { recipientType = "passenger", templateID, templateParams },
           headers: { authorization, "content-type": contentType }
         },
         res
       ) => {
+        const {
+          partnerHMACSecret,
+          partnerID
+        } = await dbClient.config.getConfiguration();
+
         const {
           data: { partner_user_id: recipientID }
         } = await requestTokenInfo(httpClient, {
@@ -61,21 +60,20 @@ module.exports = {
       }
     );
   },
-  push: httpClient => {
+  push: (dbClient, httpClient) => {
     return handleError(
       async (
         {
-          body: {
-            partnerHMACSecret,
-            partnerID,
-            recipientType = "passenger",
-            templateID,
-            templateParams
-          },
+          body: { recipientType = "passenger", templateID, templateParams },
           headers: { authorization, "content-type": contentType }
         },
         res
       ) => {
+        const {
+          partnerHMACSecret,
+          partnerID
+        } = await dbClient.config.getConfiguration();
+
         const {
           data: { partner_user_id: recipientID }
         } = await requestTokenInfo(httpClient, {

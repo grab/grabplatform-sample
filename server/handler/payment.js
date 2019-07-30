@@ -18,22 +18,18 @@ async function generatePartnerTransactionID() {
 
 module.exports = {
   oneTimeCharge: {
-    init: function(httpClient) {
+    init: function(dbClient, httpClient) {
       return handleError(
         async (
-          {
-            body: {
-              amount,
-              currency,
-              description,
-              merchantID,
-              partnerGroupTxID,
-              partnerHMACSecret,
-              partnerID
-            }
-          },
+          { body: { amount, currency, description, partnerGroupTxID } },
           res
         ) => {
+          const {
+            merchantID,
+            partnerHMACSecret,
+            partnerID
+          } = await dbClient.config.getConfiguration();
+
           const partnerTxID = await generatePartnerTransactionID();
           amount = parseInt(amount, undefined);
 
@@ -98,38 +94,38 @@ module.exports = {
     }
   },
   recurringCharge: {
-    bind: function(httpClient) {
-      return handleError(
-        async (
-          { body: { countryCode, partnerHMACSecret, partnerID } },
-          res
-        ) => {
-          const partnerTxID = await generatePartnerTransactionID();
-          const requestBody = { countryCode, partnerTxID };
-          const timestamp = new Date().toUTCString();
+    bind: function(dbClient, httpClient) {
+      return handleError(async ({ body: { countryCode } }, res) => {
+        const {
+          partnerHMACSecret,
+          partnerID
+        } = await dbClient.config.getConfiguration();
 
-          const hmacDigest = await generateHMACSignature({
-            httpMethod: "POST",
-            contentType: "application/json",
-            partnerHMACSecret,
-            requestBody,
-            requestURL: "/grabpay/partner/v2/bind",
-            timestamp
-          });
+        const partnerTxID = await generatePartnerTransactionID();
+        const requestBody = { countryCode, partnerTxID };
+        const timestamp = new Date().toUTCString();
 
-          const { data, status } = await httpClient.post(
-            "/grabpay/partner/v2/bind",
-            requestBody,
-            {
-              "Content-Type": "application/json",
-              Authorization: `${partnerID}:${hmacDigest}`,
-              Date: timestamp
-            }
-          );
+        const hmacDigest = await generateHMACSignature({
+          httpMethod: "POST",
+          contentType: "application/json",
+          partnerHMACSecret,
+          requestBody,
+          requestURL: "/grabpay/partner/v2/bind",
+          timestamp
+        });
 
-          res.status(status).json({ ...data, partnerTxID });
-        }
-      );
+        const { data, status } = await httpClient.post(
+          "/grabpay/partner/v2/bind",
+          requestBody,
+          {
+            "Content-Type": "application/json",
+            Authorization: `${partnerID}:${hmacDigest}`,
+            Date: timestamp
+          }
+        );
+
+        res.status(status).json({ ...data, partnerTxID });
+      });
     },
     charge: function(dbClient, httpClient) {
       return handleError(

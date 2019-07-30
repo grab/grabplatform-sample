@@ -237,9 +237,6 @@ export default compose(
     ({
       configuration: {
         currency,
-        partnerHMACSecret,
-        partnerID,
-        merchantID,
         transaction: { amount, description, partnerGroupTxID }
       },
       partnerTxID,
@@ -258,10 +255,7 @@ export default compose(
           amount,
           currency,
           description,
-          merchantID,
-          partnerGroupTxID,
-          partnerHMACSecret,
-          partnerID
+          partnerGroupTxID
         });
 
         await persistChargeRequest(request);

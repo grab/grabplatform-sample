@@ -157,18 +157,12 @@ export default compose(
   handleErrorHOC(),
   messagingTemplateHOC(templates),
   stageSwitcherHOC(),
-  connect(
-    ({
-      configuration,
-      repository: {
-        messaging: { sendPushMessage }
-      }
-    }) => ({ configuration, sendPushMessage })
-  ),
+  connect(({ repository: { messaging: { sendPushMessage } } }) => ({
+    sendPushMessage
+  })),
   withState("messageID", "setMessageID", ""),
   withProps(
     ({
-      configuration: { partnerHMACSecret, partnerID },
       handleError,
       sendPushMessage,
       handleMessage,
@@ -177,8 +171,6 @@ export default compose(
     }) => ({
       sendPushMessage: handleError(async () => {
         const { messageID } = await sendPushMessage({
-          partnerHMACSecret,
-          partnerID,
           templateID,
           templateParams
         });

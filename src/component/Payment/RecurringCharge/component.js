@@ -364,8 +364,6 @@ export default compose(
       configuration: {
         countryCode,
         currency,
-        partnerHMACSecret,
-        partnerID,
         transaction: { amount, description, partnerGroupTxID }
       },
       partnerTxID,
@@ -382,12 +380,7 @@ export default compose(
       unbindCharge
     }) => ({
       bindCharge: handleError(async () => {
-        const { partnerTxID, request } = await bindCharge({
-          countryCode,
-          partnerHMACSecret,
-          partnerID
-        });
-
+        const { partnerTxID, request } = await bindCharge({ countryCode });
         await persistChargeRequest(request);
         await persistPartnerTxID(partnerTxID);
         setPartnerTxID(partnerTxID);

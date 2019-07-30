@@ -210,24 +210,13 @@ export function createGrabPayRepository(window) {
       getPartnerTxIDFromPersistence: async () =>
         window.localStorage.getItem(partnerTxIDCacheKey) || "",
       oneTimeCharge: {
-        init: async ({
-          amount,
-          currency,
-          description,
-          merchantID,
-          partnerHMACSecret,
-          partnerGroupTxID,
-          partnerID
-        }) =>
+        init: async ({ amount, currency, description, partnerGroupTxID }) =>
           makeRequest(window, {
             body: {
               amount,
               currency,
               description,
-              merchantID,
-              partnerHMACSecret,
-              partnerGroupTxID,
-              partnerID
+              partnerGroupTxID
             },
             method: "POST",
             path: "/payment/one-time-charge/init"
@@ -240,9 +229,9 @@ export function createGrabPayRepository(window) {
           })
       },
       recurringCharge: {
-        bind: async ({ countryCode, partnerHMACSecret, partnerID }) =>
+        bind: async ({ countryCode }) =>
           makeRequest(window, {
-            body: { countryCode, partnerHMACSecret, partnerID },
+            body: { countryCode },
             method: "POST",
             path: "/payment/recurring-charge/bind"
           }),
@@ -296,25 +285,15 @@ export function createGrabAPIRepository(window) {
         makeRequest(window, { method: "GET", path: "/loyalty/rewards-tier" })
     },
     messaging: {
-      sendInboxMessage: async ({
-        partnerHMACSecret,
-        partnerID,
-        templateID,
-        templateParams
-      }) =>
+      sendInboxMessage: async ({ templateID, templateParams }) =>
         makeRequest(window, {
-          body: { partnerHMACSecret, partnerID, templateID, templateParams },
+          body: { templateID, templateParams },
           method: "POST",
           path: "/messaging/inbox"
         }),
-      sendPushMessage: async ({
-        partnerHMACSecret,
-        partnerID,
-        templateID,
-        templateParams
-      }) =>
+      sendPushMessage: async ({ templateID, templateParams }) =>
         makeRequest(window, {
-          body: { partnerHMACSecret, partnerID, templateID, templateParams },
+          body: { templateID, templateParams },
           method: "POST",
           path: "/messaging/push"
         })
