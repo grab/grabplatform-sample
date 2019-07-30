@@ -5,6 +5,7 @@
 import {
   handleErrorHOC,
   handleMessageHOC,
+  messagingTemplateHOC,
   stageSwitcherHOC
 } from "component/customHOC";
 import { GrabIDLogin } from "component/GrabID/component";
@@ -21,10 +22,13 @@ const templates = (function() {
   const isProduction = environment() === "production";
 
   return {
-    [!!isProduction
-      ? "510095c0-c4a6-40f5-b80e-f2b9e69d49e2"
-      : "28427675-74b3-427f-96bd-a0f489ffdb25"]: {
-      name: { readonly: true, value: "Inbox Message" },
+    "Inbox Message": {
+      id: {
+        readonly: true,
+        value: !!isProduction
+          ? "510095c0-c4a6-40f5-b80e-f2b9e69d49e2"
+          : "28427675-74b3-427f-96bd-a0f489ffdb25"
+      },
       title: { value: "" },
       subtitle: { value: "" },
       button_link: { value: "" },
@@ -45,11 +49,11 @@ const templates = (function() {
 function PrivateInbox({
   currentStage,
   messageID,
-  templateID,
+  templateName,
   templateParams,
   sendInboxMessage,
   setCurrentStage,
-  setTemplateID,
+  setTemplateName,
   setTemplateParams
 }) {
   return (
@@ -74,10 +78,10 @@ function PrivateInbox({
           <input disabled readOnly value={"GET /message/v1/inbox"} />
 
           <Template
-            onTemplateIDChange={setTemplateID}
+            onTemplateNameChange={setTemplateName}
             onTemplateParamsChange={setTemplateParams}
             templates={templates}
-            templateID={templateID}
+            templateName={templateName}
             templateParams={templateParams}
           />
 
@@ -100,6 +104,7 @@ function PrivateInbox({
 export default compose(
   handleMessageHOC(),
   handleErrorHOC(),
+  messagingTemplateHOC(templates),
   stageSwitcherHOC(),
   connect(
     ({
@@ -109,8 +114,6 @@ export default compose(
       }
     }) => ({ configuration, sendInboxMessage })
   ),
-  withState("templateID", "setTemplateID", ""),
-  withState("templateParams", "setTemplateParams", {}),
   withState("messageID", "setMessageID", ""),
   withProps(
     ({
@@ -119,8 +122,7 @@ export default compose(
       handleMessage,
       sendInboxMessage,
       setMessageID,
-      templateID,
-      templateParams
+      templateParams: { id: templateID, ...templateParams }
     }) => ({
       sendInboxMessage: handleError(async () => {
         const { messageID } = await sendInboxMessage({

@@ -139,6 +139,24 @@ export function grabpayTransactionHOC() {
   );
 }
 
+export function messagingTemplateHOC(templates) {
+  return compose(
+    withState("templateName", "setTemplateName", ""),
+    withState("templateParams", "setTemplateParams", {}),
+    withProps(({ setTemplateName, setTemplateParams }) => ({
+      setTemplateName: name => {
+        setTemplateName(name);
+
+        setTemplateParams(
+          Object.entries(templates[name] || {})
+            .map(([key, { value }]) => ({ [key]: value }))
+            .reduce((acc, item) => ({ ...acc, ...item }), {})
+        );
+      }
+    }))
+  );
+}
+
 export function stageSwitcherHOC() {
   return compose(
     withProps(({ location: { search } }) => ({

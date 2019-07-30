@@ -4,9 +4,9 @@ import "./style.scss";
 
 function PrivateTemplate({
   templates = {},
-  templateID = "",
+  templateName = "",
   templateParams = {},
-  onTemplateIDChange,
+  onTemplateNameChange,
   onTemplateParamsChange
 }) {
   return (
@@ -15,21 +15,18 @@ function PrivateTemplate({
 
       <select
         className="template-select"
-        onChange={({ currentTarget: { value } }) => onTemplateIDChange(value)}
+        onChange={({ currentTarget: { value } }) => onTemplateNameChange(value)}
       >
         <option key={""} label={"Please select a template"} value={""} />
 
-        {Object.entries(templates).map(([key, { name: { value } }]) => (
-          <option key={key} label={value} value={key} />
+        {Object.keys(templates).map(key => (
+          <option key={key} label={key} value={key} />
         ))}
       </select>
 
-      {!!templateID && (
+      {!!templateName && (
         <>
-          <div className="title">ID</div>
-          <input disabled readonly value={templateID} />
-
-          {Object.entries(templates[templateID])
+          {Object.entries(templates[templateName])
             .filter(([key]) => key !== "name")
             .map(([key, { readonly, value }]) => (
               <Fragment key={key}>
@@ -40,7 +37,7 @@ function PrivateTemplate({
                   onChange={({ target: { value } }) =>
                     onTemplateParamsChange({ ...templateParams, [key]: value })
                   }
-                  readonly={!!readonly}
+                  readOnly={!!readonly}
                   value={templateParams[key] || value || ""}
                 />
               </Fragment>
