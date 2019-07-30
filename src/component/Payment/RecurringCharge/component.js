@@ -7,11 +7,11 @@ import {
   grabpayTransactionHOC,
   stageSwitcherHOC
 } from "component/customHOC";
+import { hmacDescription } from "component/description";
 import { GrabIDLogin } from "component/GrabID/component";
 import Markdown from "component/Markdown/component";
 import {
   grabidDescription,
-  hmacDescription,
   partnerTxIDDescription,
   xgidAuthPOPDescription
 } from "component/Payment/description";
@@ -37,6 +37,11 @@ generate the HMAC):
 
 ${"```javascript"}
 app.post('...', async ({ body: { countryCode } }, res) => {
+  const {
+    partnerHMACSecret,
+    partnerID
+  } = await dbClient.config.getConfiguration();
+
   const partnerTxID = await generatePartnerTransactionID();
   const requestBody = { countryCode, partnerTxID };
   const timestamp = new Date().toUTCString();
@@ -93,6 +98,11 @@ app.post('...', async (
   res
 ) => {
   const accessToken = await dbClient.getAccessToken();
+
+  const {
+    clientSecret,
+    merchantID
+  } = await dbClient.config.getConfiguration();
 
   const requestBody = {
     partnerGroupTxID,

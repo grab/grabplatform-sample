@@ -8,7 +8,9 @@ import {
   messagingTemplateHOC,
   stageSwitcherHOC
 } from "component/customHOC";
+import { hmacDescription } from "component/description";
 import { GrabIDLogin } from "component/GrabID/component";
+import Markdown from "component/Markdown/component";
 import Template from "component/Messaging/Template/component";
 import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
@@ -17,6 +19,68 @@ import { compose, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import { environment } from "utils";
 import "./style.scss";
+
+const inboxDescription = `
+Authorization is HMAC:
+
+${hmacDescription}
+
+The call requires provision of a template whose ID is preset:
+
+${"```javascript"}
+app.post('...', async (
+  {
+    body: { recipientType = "passenger", templateID, templateParams },
+    headers: { authorization, "content-type": contentType }
+  },
+  res
+) => {
+  const {
+    partnerHMACSecret,
+    partnerID
+  } = await dbClient.config.getConfiguration();
+
+  const {
+    data: { partner_user_id: recipientID }
+  } = await requestTokenInfo(httpClient, {
+    authorization,
+    "content-type": contentType
+  });
+
+  const requestBody = {
+    recipientID,
+    recipientType,
+    template: { id: templateID, params: templateParams }
+  };
+
+  const timestamp = new Date().toUTCString();
+
+  const hmacDigest = await generateHMACSignature({
+    contentType: "application/json",
+    httpMethod: "POST",
+    partnerHMACSecret,
+    requestBody,
+    requestURL: "/message/v1/inbox",
+    timestamp
+  });
+
+  const { data, status } = await httpClient.post(
+    "/message/v1/inbox",
+    requestBody,
+    {
+      "Content-Type": "application/json",
+      Authorization: ${"`"}${"$"}{partnerID}:${"$"}{hmacDigest}${"`"},,
+      Date: timestamp
+    }
+  );
+
+  res.status(status).json(data);
+});
+${"```"}
+
+This call will give us back:
+- **messageID**: The ID of the message that was sent.
+`;
 
 const templates = (function() {
   const isProduction = environment() === "production";
@@ -74,6 +138,11 @@ function PrivateInbox({
       {currentStage === 1 && (
         <div className="main-container">
           <div className="intro-title">Stage 2: Inbox</div>
+
+          <div className="stage-description">
+            <Markdown className="source-code" source={inboxDescription} />
+          </div>
+
           <div className="title">Endpoint</div>
           <input disabled readOnly value={"GET /message/v1/inbox"} />
 

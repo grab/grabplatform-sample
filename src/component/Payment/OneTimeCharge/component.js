@@ -7,11 +7,11 @@ import {
   grabpayTransactionHOC,
   stageSwitcherHOC
 } from "component/customHOC";
+import { hmacDescription } from "component/description";
 import { GrabIDLogin } from "component/GrabID/component";
 import Markdown from "component/Markdown/component";
 import {
   grabidDescription,
-  hmacDescription,
   partnerTxIDDescription,
   xgidAuthPOPDescription
 } from "component/Payment/description";
@@ -40,6 +40,12 @@ app.post('...', async (
   { body: { amount, currency, description, partnerGroupTxID } },
   res
 ) => {
+  const {
+    merchantID,
+    partnerHMACSecret,
+    partnerID
+  } = await dbClient.config.getConfiguration();
+
   const partnerTxID = await generatePartnerTransactionID();
 
   const requestBody = {
@@ -67,7 +73,7 @@ app.post('...', async (
     requestBody,
     {
       "Content-Type": "application/json",
-      Authorization: ${"`"}${"$"}{partnerID}:${"$"}{hmacDigest}${"`"},
+      Authorization: ${"`"}${"$"}{partnerID}:${"$"}{hmacDigest}${"`"},,
       Date: timestamp
     }
   );
@@ -92,6 +98,7 @@ This HMAC will be used as an extra header for the confirmation:
 ${"```javascript"}
 app.post('...', async ({ body: { partnerTxID } }, res) => { 
   const accessToken = await dbClient.getAccessToken();
+  const { clientSecret } = await dbClient.config.getConfiguration();
   const date = new Date();
   
   const hmac = await generateHMACForXGIDAUXPOP({
