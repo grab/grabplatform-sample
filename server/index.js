@@ -60,9 +60,7 @@ async function initialize() {
     payment.recurringCharge.unbind(dbClient, httpClient)
   );
 
-  if (process.env.NODE_ENV === "production") {
-    app.listen(port, () => console.log(`Listening at ${port}`));
-  } else {
+  if (process.env.USE_SELF_SIGNED_CERT !== "false") {
     https
       .createServer(
         {
@@ -72,6 +70,8 @@ async function initialize() {
         app
       )
       .listen(port, () => console.log(`Listening at ${port}`));
+  } else {
+    app.listen(port, () => console.log(`Listening at ${port}`));
   }
 }
 
