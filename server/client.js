@@ -57,7 +57,7 @@ exports.createDBClient = async function() {
       setIDToken: idToken => set(keys.grabid.ID_TOKEN, idToken),
       getAccessToken: () => get(keys.grabid.ACCESS_TOKEN)
     },
-    configuration: {
+    config: {
       setConfiguration: config =>
         set(keys.configuration, JSON.stringify(config)),
       getConfiguration: () =>

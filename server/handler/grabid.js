@@ -9,14 +9,13 @@ const grabid = {
   /** These requests must be made from backend since it requires clientSecret. */
   popToken: function(dbClient, httpClient) {
     return handleError(
-      async (
-        { body: { code, codeVerifier, clientID, clientSecret, redirectURI } },
-        res
-      ) => {
+      async ({ body: { code, codeVerifier, clientID, redirectURI } }, res) => {
         const baseURL =
           process.env.NODE_ENV === "production"
             ? GrabPartnerUrls.PRODUCTION
             : GrabPartnerUrls.STAGING;
+
+        const { clientSecret } = await dbClient.config.getConfiguration();
 
         const {
           data: { access_token, id_token },

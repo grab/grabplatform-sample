@@ -71,7 +71,7 @@ export function grabidPaymentHOC() {
     ),
     withProps(
       ({
-        configuration: { clientID, clientSecret, currency, countryCode },
+        configuration: { clientID, currency, countryCode },
         authorize,
         getChargeRequestFromPersistence,
         handleError,
@@ -92,7 +92,7 @@ export function grabidPaymentHOC() {
         }),
         /** GrabPay requires an additional request parameter. */
         makeTokenRequest: handleError(async () => {
-          await requestToken({ clientID, clientSecret });
+          await requestToken({ clientID });
           handleMessage(CommonMessages.grabid.requestToken);
         })
       })

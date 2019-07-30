@@ -346,14 +346,14 @@ export default compose(
   withState("wallet", "setWallet", {}),
   withProps(
     ({
-      configuration: { clientSecret, currency },
+      configuration: { currency },
       checkWallet,
       handleError,
       handleMessage,
       setWallet
     }) => ({
       checkWallet: handleError(async () => {
-        const wallet = await checkWallet({ clientSecret, currency });
+        const wallet = await checkWallet({ currency });
         setWallet(wallet);
         handleMessage(`Checked wallet successfully`);
       })
@@ -362,10 +362,8 @@ export default compose(
   withProps(
     ({
       configuration: {
-        clientSecret,
         countryCode,
         currency,
-        merchantID,
         partnerHMACSecret,
         partnerID,
         transaction: { amount, description, partnerGroupTxID }
@@ -399,10 +397,8 @@ export default compose(
       chargeUser: handleError(async () => {
         const { status } = await chargeUser({
           amount,
-          clientSecret,
           currency,
           description,
-          merchantID,
           partnerGroupTxID,
           partnerTxID
         });
@@ -412,7 +408,7 @@ export default compose(
         await checkWallet();
       }),
       unbindCharge: handleError(async () => {
-        await unbindCharge({ clientSecret, partnerTxID });
+        await unbindCharge({ partnerTxID });
         handleMessage(CommonMessages.grabpay.recurringCharge.unbind);
       })
     })

@@ -236,7 +236,6 @@ export default compose(
   withProps(
     ({
       configuration: {
-        clientSecret,
         currency,
         partnerHMACSecret,
         partnerID,
@@ -272,11 +271,7 @@ export default compose(
         handleMessage(CommonMessages.grabpay.oneTimeCharge.init);
       }),
       confirmOneTimeCharge: handleError(async () => {
-        const { status } = await confirmOneTimeCharge({
-          clientSecret,
-          partnerTxID
-        });
-
+        const { status } = await confirmOneTimeCharge({ partnerTxID });
         setStatus(status);
         handleMessage(CommonMessages.grabpay.oneTimeCharge.confirm);
       })

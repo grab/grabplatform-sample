@@ -135,7 +135,7 @@ export function createGrabIDRepository(window) {
         };
       })(),
       pop: {
-        requestToken: async ({ clientID, clientSecret, redirectURI }) => {
+        requestToken: async ({ clientID, redirectURI }) => {
           const { code } = GrabID.getResult();
           const { codeVerifier } = await repository.grabid.getGrabIDResult();
 
@@ -144,7 +144,6 @@ export function createGrabIDRepository(window) {
               code,
               codeVerifier,
               clientID,
-              clientSecret,
               redirectURI: getAbsoluteURLPath(window, redirectURI)
             },
             method: "POST",
@@ -180,12 +179,8 @@ export function createGrabIDRepository(window) {
 
             await client.makeAuthorizationRequest();
           },
-          requestToken: async ({ clientID, clientSecret }) =>
-            repository.grabid.pop.requestToken({
-              clientID,
-              clientSecret,
-              redirectURI
-            })
+          requestToken: async ({ clientID }) =>
+            repository.grabid.pop.requestToken({ clientID, redirectURI })
         };
       })()
     }
@@ -200,9 +195,9 @@ export function createGrabPayRepository(window) {
 
   return {
     grabpay: {
-      checkWallet: async ({ clientSecret, currency }) =>
+      checkWallet: async ({ currency }) =>
         makeRequest(window, {
-          body: { clientSecret, currency },
+          body: { currency },
           method: "POST",
           path: "/payment/recurring-charge/wallet"
         }),
@@ -237,9 +232,9 @@ export function createGrabPayRepository(window) {
             method: "POST",
             path: "/payment/one-time-charge/init"
           }),
-        confirm: async ({ clientSecret, partnerTxID }) =>
+        confirm: async ({ partnerTxID }) =>
           makeRequest(window, {
-            body: { clientSecret, partnerTxID },
+            body: { partnerTxID },
             method: "POST",
             path: "/payment/one-time-charge/confirm"
           })
@@ -253,29 +248,25 @@ export function createGrabPayRepository(window) {
           }),
         charge: async ({
           amount,
-          clientSecret,
           currency,
           description,
-          merchantID,
           partnerGroupTxID,
           partnerTxID
         }) =>
           makeRequest(window, {
             body: {
               amount,
-              clientSecret,
               currency,
               description,
-              merchantID,
               partnerGroupTxID,
               partnerTxID
             },
             method: "POST",
             path: "/payment/recurring-charge/charge"
           }),
-        unbind: async ({ clientSecret, partnerTxID }) =>
+        unbind: async ({ partnerTxID }) =>
           makeRequest(window, {
-            body: { clientSecret, partnerTxID },
+            body: { partnerTxID },
             method: "POST",
             path: "/payment/recurring-charge/unbind"
           })

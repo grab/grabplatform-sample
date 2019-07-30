@@ -7,13 +7,13 @@ const { handleError } = require("./util");
 module.exports = {
   setConfiguration: function(dbClient) {
     return handleError(async ({ body }, res) => {
-      await dbClient.configuration.setConfiguration(body);
+      await dbClient.config.setConfiguration(body);
       res.status(200).json({ message: "Successful" });
     });
   },
   getConfiguration: function(dbClient) {
     return handleError(async ({ body }, res) => {
-      const config = await dbClient.configuration.getConfiguration(body);
+      const config = await dbClient.config.getConfiguration(body);
       res.status(200).json(config);
     });
   }

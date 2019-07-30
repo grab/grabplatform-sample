@@ -72,30 +72,29 @@ module.exports = {
       );
     },
     confirm: function(dbClient, httpClient) {
-      return handleError(
-        async ({ body: { clientSecret, partnerTxID } }, res) => {
-          const accessToken = await dbClient.grabid.getAccessToken();
-          const date = new Date();
+      return handleError(async ({ body: { partnerTxID } }, res) => {
+        const accessToken = await dbClient.grabid.getAccessToken();
+        const { clientSecret } = await dbClient.config.getConfiguration();
+        const date = new Date();
 
-          const hmac = await generateHMACForXGIDAUXPOP({
-            accessToken,
-            clientSecret,
-            date
-          });
+        const hmac = await generateHMACForXGIDAUXPOP({
+          accessToken,
+          clientSecret,
+          date
+        });
 
-          const { data, status } = await httpClient.post(
-            "/grabpay/partner/v2/charge/complete",
-            { partnerTxID },
-            {
-              "X-GID-AUX-POP": hmac,
-              Authorization: `Bearer ${accessToken}`,
-              Date: date.toUTCString()
-            }
-          );
+        const { data, status } = await httpClient.post(
+          "/grabpay/partner/v2/charge/complete",
+          { partnerTxID },
+          {
+            "X-GID-AUX-POP": hmac,
+            Authorization: `Bearer ${accessToken}`,
+            Date: date.toUTCString()
+          }
+        );
 
-          res.status(status).json(data);
-        }
-      );
+        res.status(status).json(data);
+      });
     }
   },
   recurringCharge: {
@@ -138,10 +137,8 @@ module.exports = {
           {
             body: {
               amount,
-              clientSecret,
               currency,
               description,
-              merchantID,
               partnerGroupTxID,
               partnerTxID
             }
@@ -149,6 +146,12 @@ module.exports = {
           res
         ) => {
           const accessToken = await dbClient.grabid.getAccessToken();
+
+          const {
+            clientSecret,
+            merchantID
+          } = await dbClient.config.getConfiguration();
+
           amount = parseInt(amount, undefined);
 
           const requestBody = {
@@ -184,36 +187,36 @@ module.exports = {
       );
     },
     unbind: function(dbClient, httpClient) {
-      return handleError(
-        async ({ body: { clientSecret, partnerTxID } }, res) => {
-          const accessToken = await dbClient.grabid.getAccessToken();
-          const date = new Date();
+      return handleError(async ({ body: { partnerTxID } }, res) => {
+        const accessToken = await dbClient.grabid.getAccessToken();
+        const { clientSecret } = await dbClient.config.getConfiguration();
+        const date = new Date();
 
-          const hmac = await generateHMACForXGIDAUXPOP({
-            accessToken,
-            clientSecret,
-            date
-          });
+        const hmac = await generateHMACForXGIDAUXPOP({
+          accessToken,
+          clientSecret,
+          date
+        });
 
-          const { status } = await httpClient.delete(
-            "/grabpay/partner/v2/bind",
-            { partnerTxID },
-            {
-              "Content-Type": "application/json",
-              "X-GID-AUX-POP": hmac,
-              Authorization: `Bearer ${accessToken}`,
-              Date: date.toUTCString()
-            }
-          );
+        const { status } = await httpClient.delete(
+          "/grabpay/partner/v2/bind",
+          { partnerTxID },
+          {
+            "Content-Type": "application/json",
+            "X-GID-AUX-POP": hmac,
+            Authorization: `Bearer ${accessToken}`,
+            Date: date.toUTCString()
+          }
+        );
 
-          res.status(status).json({});
-        }
-      );
+        res.status(status).json({});
+      });
     }
   },
   checkWallet: function(dbClient, httpClient) {
-    return handleError(async ({ body: { clientSecret, currency } }, res) => {
+    return handleError(async ({ body: { currency } }, res) => {
       const accessToken = await dbClient.grabid.getAccessToken();
+      const { clientSecret } = await dbClient.config.getConfiguration();
       const date = new Date();
 
       const hmac = await generateHMACForXGIDAUXPOP({
