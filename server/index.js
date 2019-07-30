@@ -60,15 +60,19 @@ async function initialize() {
     payment.recurringCharge.unbind(dbClient, httpClient)
   );
 
-  https
-    .createServer(
-      {
-        key: fs.readFileSync("server/server.key"),
-        cert: fs.readFileSync("server/server.cert")
-      },
-      app
-    )
-    .listen(port, () => console.log(`Listening at ${port}`));
+  if (process.env.NODE_ENV === "production") {
+    app.listen(port, () => console.log(`Listening at ${port}`));
+  } else {
+    https
+      .createServer(
+        {
+          key: fs.readFileSync("server/server.key"),
+          cert: fs.readFileSync("server/server.cert")
+        },
+        app
+      )
+      .listen(port, () => console.log(`Listening at ${port}`));
+  }
 }
 
 initialize();
