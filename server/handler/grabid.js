@@ -10,28 +10,23 @@ const grabid = {
   popToken: function(dbClient, httpClient) {
     return handleError(
       async ({ body: { code, codeVerifier, clientID, redirectURI } }, res) => {
-        const baseURL =
-          process.env.NODE_ENV === "production"
-            ? GrabPartnerUrls.PRODUCTION
-            : GrabPartnerUrls.STAGING;
-
         const { clientSecret } = await dbClient.config.getConfiguration();
+
+        const {
+          data: { token_endpoint }
+        } = await grabid.utils.runServiceDiscovery(httpClient);
 
         const {
           data: { access_token, id_token },
           status
-        } = await httpClient.post(
-          "/grabid/v1/oauth2/token",
-          {
-            code,
-            code_verifier: codeVerifier,
-            client_id: clientID,
-            client_secret: clientSecret,
-            grant_type: "authorization_code",
-            redirect_uri: redirectURI
-          },
-          { baseURL }
-        );
+        } = await httpClient.post(token_endpoint, {
+          code,
+          code_verifier: codeVerifier,
+          client_id: clientID,
+          client_secret: clientSecret,
+          grant_type: "authorization_code",
+          redirect_uri: redirectURI
+        });
 
         await dbClient.grabid.setAccessToken(access_token);
         await dbClient.grabid.setIDToken(id_token);
@@ -40,6 +35,20 @@ const grabid = {
     );
   },
   utils: {
+    runServiceDiscovery: async httpClient => {
+      const baseURL =
+        process.env.NODE_ENV === "production"
+          ? GrabPartnerUrls.PRODUCTION
+          : GrabPartnerUrls.STAGING;
+
+      const { data, status } = await httpClient.get(
+        "/grabid/v1/oauth2/.well-known/openid-configuration",
+        { "Content-Type": "application/json" },
+        { baseURL }
+      );
+
+      return { data, status };
+    },
     requestTokenInfo: async (
       httpClient,
       { authorization, "content-type": contentType }

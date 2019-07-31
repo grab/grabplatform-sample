@@ -308,7 +308,7 @@ function RecurringCharge({
 
       {currentStage === 3 && (
         <div className="unbind-container">
-          <div className="intro-title">Stage 5: Unbind charge</div>
+          <div className="intro-title">Stage 4: Unbind charge</div>
 
           <div className="stage-description">
             <Markdown className="source-code" source={unbindDescription} />
