@@ -3,6 +3,7 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 import GrabID from "@grab-id/grab-id-client";
+import { requireAllValid } from "utils";
 
 export function createWindowRepository(window) {
   return {
@@ -111,7 +112,9 @@ export function createGrabIDRepository(window) {
         };
 
         return {
-          authorize: async ({ clientID, countryCode, scopes }) => {
+          authorize: async args => {
+            const { clientID, countryCode, scopes } = requireAllValid(args);
+
             const client = createGrabIDClient(window, {
               clientID,
               countryCode,
@@ -122,7 +125,9 @@ export function createGrabIDRepository(window) {
             const idTokenHint = window.localStorage.getItem(LOCAL_ID_TOKEN_KEY);
             await client.makeAuthorizationRequest(undefined, idTokenHint);
           },
-          requestToken: async ({ clientID, countryCode, scopes }) => {
+          requestToken: async args => {
+            const { clientID, countryCode, scopes } = requireAllValid(args);
+
             const client = createGrabIDClient(window, {
               clientID,
               countryCode,
@@ -135,9 +140,13 @@ export function createGrabIDRepository(window) {
         };
       })(),
       pop: {
-        requestToken: async ({ clientID, redirectURI }) => {
-          const { code } = GrabID.getResult();
-          const { codeVerifier } = await repository.grabid.getGrabIDResult();
+        requestToken: async args => {
+          const { clientID, redirectURI } = requireAllValid(args);
+
+          const {
+            code,
+            codeVerifier
+          } = await repository.grabid.getGrabIDResult();
 
           makeRequest(window, {
             body: {
@@ -162,13 +171,15 @@ export function createGrabIDRepository(window) {
         }
 
         return {
-          authorize: async ({
-            clientID,
-            countryCode,
-            currency,
-            request,
-            scopes
-          }) => {
+          authorize: async args => {
+            const {
+              clientID,
+              countryCode,
+              currency,
+              request,
+              scopes
+            } = requireAllValid(args);
+
             const client = createGrabIDClient(window, {
               clientID,
               countryCode,
@@ -179,8 +190,14 @@ export function createGrabIDRepository(window) {
 
             await client.makeAuthorizationRequest();
           },
-          requestToken: async ({ clientID }) =>
-            repository.grabid.pop.requestToken({ clientID, redirectURI })
+          requestToken: async args => {
+            const { clientID } = requireAllValid(args);
+
+            return repository.grabid.pop.requestToken({
+              clientID,
+              redirectURI
+            });
+          }
         };
       })()
     }
@@ -195,12 +212,15 @@ export function createGrabPayRepository(window) {
 
   return {
     grabpay: {
-      checkWallet: async ({ currency }) =>
-        makeRequest(window, {
+      checkWallet: async args => {
+        const { currency } = requireAllValid(args);
+
+        return makeRequest(window, {
           body: { currency },
           method: "POST",
           path: "/payment/recurring-charge/wallet"
-        }),
+        });
+      },
       persistChargeRequest: async request =>
         window.localStorage.setItem(chargeRequestCacheKey, request),
       getChargeRequestFromPersistence: async () =>
@@ -210,7 +230,14 @@ export function createGrabPayRepository(window) {
       getPartnerTxIDFromPersistence: async () =>
         window.localStorage.getItem(partnerTxIDCacheKey) || "",
       oneTimeCharge: {
-        init: async ({ amount, currency, description, partnerGroupTxID }) =>
+        init: async args => {
+          const {
+            amount,
+            currency,
+            description,
+            partnerGroupTxID
+          } = requireAllValid(args);
+
           makeRequest(window, {
             body: {
               amount,
@@ -220,29 +247,38 @@ export function createGrabPayRepository(window) {
             },
             method: "POST",
             path: "/payment/one-time-charge/init"
-          }),
-        confirm: async ({ partnerTxID }) =>
-          makeRequest(window, {
+          });
+        },
+        confirm: async args => {
+          const { partnerTxID } = requireAllValid(args);
+
+          return makeRequest(window, {
             body: { partnerTxID },
             method: "POST",
             path: "/payment/one-time-charge/confirm"
-          })
+          });
+        }
       },
       recurringCharge: {
-        bind: async ({ countryCode }) =>
-          makeRequest(window, {
+        bind: async args => {
+          const { countryCode } = requireAllValid(args);
+
+          return makeRequest(window, {
             body: { countryCode },
             method: "POST",
             path: "/payment/recurring-charge/bind"
-          }),
-        charge: async ({
-          amount,
-          currency,
-          description,
-          partnerGroupTxID,
-          partnerTxID
-        }) =>
-          makeRequest(window, {
+          });
+        },
+        charge: async args => {
+          const {
+            amount,
+            currency,
+            description,
+            partnerGroupTxID,
+            partnerTxID
+          } = requireAllValid(args);
+
+          return makeRequest(window, {
             body: {
               amount,
               currency,
@@ -252,13 +288,17 @@ export function createGrabPayRepository(window) {
             },
             method: "POST",
             path: "/payment/recurring-charge/charge"
-          }),
-        unbind: async ({ partnerTxID }) =>
-          makeRequest(window, {
+          });
+        },
+        unbind: async args => {
+          const { partnerTxID } = requireAllValid(args);
+
+          return makeRequest(window, {
             body: { partnerTxID },
             method: "POST",
             path: "/payment/recurring-charge/unbind"
-          })
+          });
+        }
       }
     }
   };
@@ -285,18 +325,24 @@ export function createGrabAPIRepository(window) {
         makeRequest(window, { method: "GET", path: "/loyalty/rewards-tier" })
     },
     messaging: {
-      sendInboxMessage: async ({ templateID, templateParams }) =>
-        makeRequest(window, {
+      sendInboxMessage: async args => {
+        const { templateID, templateParams } = requireAllValid(args);
+
+        return makeRequest(window, {
           body: { templateID, templateParams },
           method: "POST",
           path: "/messaging/inbox"
-        }),
-      sendPushMessage: async ({ templateID, templateParams }) =>
-        makeRequest(window, {
+        });
+      },
+      sendPushMessage: async args => {
+        const { templateID, templateParams } = requireAllValid(args);
+
+        return makeRequest(window, {
           body: { templateID, templateParams },
           method: "POST",
           path: "/messaging/push"
-        })
+        });
+      }
     }
   };
 }

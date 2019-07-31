@@ -4,3 +4,15 @@ export function environment() {
     ? "production"
     : "development";
 }
+
+export function requireAllValid(args) {
+  if (typeof args === "object" && !!Object.keys(args).length) {
+    Object.entries(args).forEach(([key, value]) => {
+      if (value === null || value === undefined || !requireAllValid(value)) {
+        throw new Error(`Invalid ${key}: ${undefined}`);
+      }
+    });
+  }
+
+  return args;
+}
