@@ -9,10 +9,10 @@ This is a consolidated sample for all products offered on [Grab's Developer Port
 
 ## How to run
 
-1. Go to root of the project, `cd server` and run this command to generate a self-signed certificate for HTTPS:
+1. Go to root of the project, run this command to generate a self-signed certificate for HTTPS:
 
 ```shell
-openssl req -nodes -new -x509 -keyout server.key -out server.cert
+openssl req -nodes -new -x509 -keyout server/server.key -out server/server.cert
 ```
 
 2. Edit `/etc/hosts` with `sudo vi /etc/hosts` and append `127.0.0.1 grabplatform.stg-myteksi.com` and `127.0.0.1 grabplatform.grab.com`. Save the file with `:x`. This must be done because GrabID does not accept `localhost`.
