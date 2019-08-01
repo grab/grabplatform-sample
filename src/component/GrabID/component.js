@@ -13,6 +13,7 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { compose, lifecycle, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
+import { parse } from "querystring";
 import "./style.scss";
 
 // ############################## GRABID AUTH ##############################
@@ -222,19 +223,26 @@ export const GrabIDNonPOPRedirect = compose(
 )(PrivateGrabIDRedirect);
 
 export const GrabIDPOPRedirect = compose(
+  withProps(({ location: { search } }) => parse(search.substr(1))),
   handleErrorHOC(),
-  connect(({ repository: { grabid: { getLoginReturnURI } } }) => ({
-    getLoginReturnURI
-  })),
-  withProps(({ handleAuthorizationCodeFlowResponse, handleError }) => ({
-    handleAuthorizationCodeFlowResponse: handleError(
-      handleAuthorizationCodeFlowResponse
-    )
-  })),
+  connect(
+    ({
+      repository: {
+        grabid: { getLoginReturnURI, persistAuthorizationCode }
+      }
+    }) => ({ getLoginReturnURI, persistAuthorizationCode })
+  ),
   withState("returnURI", "setReturnURI", ""),
   lifecycle({
     async componentDidMount() {
-      const { getLoginReturnURI, setReturnURI } = this.props;
+      const {
+        code,
+        getLoginReturnURI,
+        persistAuthorizationCode,
+        setReturnURI
+      } = this.props;
+
+      await persistAuthorizationCode(code);
       const returnURI = await getLoginReturnURI();
       setReturnURI(returnURI);
     }

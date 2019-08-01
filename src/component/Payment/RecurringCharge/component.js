@@ -2,11 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import {
-  grabidPaymentHOC,
-  grabpayTransactionHOC,
-  stageSwitcherHOC
-} from "component/customHOC";
+import { grabidPaymentHOC, stageSwitcherHOC } from "component/customHOC";
 import { hmacDescription } from "component/description";
 import { GrabIDLogin } from "component/GrabID/component";
 import Markdown from "component/Markdown/component";
@@ -329,7 +325,6 @@ function RecurringCharge({
 
 export default compose(
   grabidPaymentHOC(),
-  grabpayTransactionHOC(),
   stageSwitcherHOC(),
   connect(
     ({
@@ -352,6 +347,8 @@ export default compose(
       unbindCharge
     })
   ),
+  withState("partnerTxID", "setPartnerTxID", ""),
+  withState("request", "setRequest", ""),
   withState("status", "setStatus", ""),
   withState("wallet", "setWallet", {}),
   withProps(
@@ -376,7 +373,6 @@ export default compose(
         currency,
         transaction: { amount, description, partnerGroupTxID }
       },
-      partnerTxID,
       bindCharge,
       chargeUser,
       checkWallet,
@@ -391,8 +387,6 @@ export default compose(
     }) => ({
       bindCharge: handleError(async () => {
         const { partnerTxID, request } = await bindCharge({ countryCode });
-        await persistChargeRequest(request);
-        await persistPartnerTxID(partnerTxID);
         setPartnerTxID(partnerTxID);
         setRequest(request);
         handleMessage(CommonMessages.grabpay.recurringCharge.bind);
@@ -402,8 +396,7 @@ export default compose(
           amount,
           currency,
           description,
-          partnerGroupTxID,
-          partnerTxID
+          partnerGroupTxID
         });
 
         setStatus(status);
@@ -411,7 +404,7 @@ export default compose(
         await checkWallet();
       }),
       unbindCharge: handleError(async () => {
-        await unbindCharge({ partnerTxID });
+        await unbindCharge();
         handleMessage(CommonMessages.grabpay.recurringCharge.unbind);
       })
     })

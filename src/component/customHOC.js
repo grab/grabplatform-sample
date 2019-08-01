@@ -4,7 +4,7 @@
  */
 import { parse } from "querystring";
 import { connect } from "react-redux";
-import { compose, lifecycle, withProps, withState } from "recompose";
+import { compose, withProps, withState } from "recompose";
 import { CommonActionCreators, CommonMessages } from "redux/action/common";
 
 export function copyToClipboardHOC() {
@@ -59,13 +59,11 @@ export function grabidPaymentHOC() {
         repository: {
           grabid: {
             payment: { authorize, requestToken }
-          },
-          grabpay: { getChargeRequestFromPersistence }
+          }
         }
       }) => ({
         configuration,
         authorize,
-        getChargeRequestFromPersistence,
         requestToken
       })
     ),
@@ -73,20 +71,16 @@ export function grabidPaymentHOC() {
       ({
         configuration: { clientID, currency, countryCode },
         authorize,
-        getChargeRequestFromPersistence,
         handleError,
         handleMessage,
         requestToken
       }) => ({
         /** GrabPay requires an additional request parameter. */
         makeAuthorizationRequest: handleError(async scopes => {
-          const request = await getChargeRequestFromPersistence();
-
           await authorize({
             clientID,
             countryCode,
             currency,
-            request,
             scopes
           });
         }),
@@ -97,45 +91,6 @@ export function grabidPaymentHOC() {
         })
       })
     )
-  );
-}
-
-export function grabpayTransactionHOC() {
-  return compose(
-    connect(
-      ({
-        repository: {
-          grabpay: {
-            getChargeRequestFromPersistence,
-            persistChargeRequest,
-            getPartnerTxIDFromPersistence,
-            persistPartnerTxID
-          }
-        }
-      }) => ({
-        getChargeRequestFromPersistence,
-        getPartnerTxIDFromPersistence,
-        persistChargeRequest,
-        persistPartnerTxID
-      })
-    ),
-    withState("partnerTxID", "setPartnerTxID", ""),
-    withState("request", "setRequest", ""),
-    lifecycle({
-      async componentDidMount() {
-        const {
-          getChargeRequestFromPersistence,
-          getPartnerTxIDFromPersistence,
-          setPartnerTxID,
-          setRequest
-        } = this.props;
-
-        const request = await getChargeRequestFromPersistence();
-        const partnerTxID = await getPartnerTxIDFromPersistence();
-        setPartnerTxID(partnerTxID);
-        setRequest(request);
-      }
-    })
   );
 }
 

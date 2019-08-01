@@ -3,7 +3,7 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 import GrabID from "@grab-id/grab-id-client";
-import { requireAllValid } from "utils";
+import { environment, requireAllValid } from "utils";
 
 export function createWindowRepository(window) {
   return {
@@ -37,8 +37,8 @@ function createGrabIDClient(
     scopes
   }
 ) {
-  const openIdUrl =
-    process.env.REACT_APP_NODE_ENV === "production"
+  const openIDURL =
+    environment() === "production"
       ? GrabID.GrabPartnerUrls.PRODUCTION
       : GrabID.GrabPartnerUrls.STAGING;
 
@@ -53,9 +53,7 @@ function createGrabIDClient(
     scope: ["openid", ...scopes].join(" ")
   };
 
-  localStorage.setItem("key", JSON.stringify(appConfig));
-
-  return new GrabID(openIdUrl, appConfig);
+  return new GrabID(openIDURL, appConfig);
 }
 
 function getRelativeURLPath(url) {
@@ -102,13 +100,15 @@ export function createGrabIDRepository(window) {
         getRelativeURLPath(GrabID.getLoginReturnURI()),
       persistInitialIDToken: async idToken =>
         window.localStorage.setItem(LOCAL_ID_TOKEN_KEY, idToken),
+      persistAuthorizationCode: async code =>
+        window.localStorage.setItem("grabid:code", code),
       handleAuthorizationCodeFlowResponse: async () => {
         GrabID.handleAuthorizationCodeFlowResponse();
       },
       nonPOP: (() => {
         const extraConfig = {
           additionalACRValues: { service: "PASSENGER" },
-          redirectURI: "/grabid/redirect"
+          redirectURI: "/grabid/redirect/nonpop"
         };
 
         return {
@@ -142,17 +142,12 @@ export function createGrabIDRepository(window) {
       pop: {
         requestToken: async args => {
           const { clientID, redirectURI } = requireAllValid(args);
-
-          const {
-            code,
-            codeVerifier
-          } = await repository.grabid.getGrabIDResult();
+          const { code } = await repository.grabid.getGrabIDResult();
 
           return makeRequest(window, {
             body: {
-              code,
-              codeVerifier,
               clientID,
+              code,
               redirectURI: getAbsoluteURLPath(window, redirectURI)
             },
             method: "POST",
@@ -161,34 +156,32 @@ export function createGrabIDRepository(window) {
         }
       },
       payment: (() => {
-        const redirectURI = "/grabid/redirect";
-
-        function extraGrabIDConfig(currency) {
-          return {
-            additionalACRValues: { consentContext: { currency } },
-            redirectURI
-          };
-        }
+        const redirectURI = "/grabid/redirect/pop";
 
         return {
           authorize: async args => {
-            const {
-              clientID,
-              countryCode,
-              currency,
-              request,
-              scopes
-            } = requireAllValid(args);
+            const { clientID, countryCode, currency, scopes } = requireAllValid(
+              args
+            );
 
-            const client = createGrabIDClient(window, {
-              clientID,
-              countryCode,
-              request,
-              scopes,
-              ...extraGrabIDConfig(currency)
+            const { authorizeURL } = await makeRequest(window, {
+              body: {
+                clientID,
+                countryCode,
+                currency,
+                redirectURI: getAbsoluteURLPath(window, redirectURI),
+                scopes
+              },
+              method: "POST",
+              path: "/grabid/payment/authorize"
             });
 
-            await client.makeAuthorizationRequest();
+            window.localStorage.setItem(
+              "grabid:login_return_uri",
+              window.location.href
+            );
+
+            window.location.assign(authorizeURL);
           },
           requestToken: async args => {
             const { clientID } = requireAllValid(args);
@@ -207,9 +200,6 @@ export function createGrabIDRepository(window) {
 }
 
 export function createGrabPayRepository(window) {
-  const chargeRequestCacheKey = "grabpay:request";
-  const partnerTxIDCacheKey = "grabpay:partnerTxID";
-
   return {
     grabpay: {
       checkWallet: async args => {
@@ -221,14 +211,6 @@ export function createGrabPayRepository(window) {
           path: "/payment/recurring-charge/wallet"
         });
       },
-      persistChargeRequest: async request =>
-        window.localStorage.setItem(chargeRequestCacheKey, request),
-      getChargeRequestFromPersistence: async () =>
-        window.localStorage.getItem(chargeRequestCacheKey) || "",
-      persistPartnerTxID: async partnerTxID =>
-        window.localStorage.setItem(partnerTxIDCacheKey, partnerTxID),
-      getPartnerTxIDFromPersistence: async () =>
-        window.localStorage.getItem(partnerTxIDCacheKey) || "",
       oneTimeCharge: {
         init: async args => {
           const {
@@ -249,15 +231,11 @@ export function createGrabPayRepository(window) {
             path: "/payment/one-time-charge/init"
           });
         },
-        confirm: async args => {
-          const { partnerTxID } = requireAllValid(args);
-
-          return makeRequest(window, {
-            body: { partnerTxID },
+        confirm: async () =>
+          makeRequest(window, {
             method: "POST",
             path: "/payment/one-time-charge/confirm"
-          });
-        }
+          })
       },
       recurringCharge: {
         bind: async args => {
@@ -274,8 +252,7 @@ export function createGrabPayRepository(window) {
             amount,
             currency,
             description,
-            partnerGroupTxID,
-            partnerTxID
+            partnerGroupTxID
           } = requireAllValid(args);
 
           return makeRequest(window, {
@@ -283,22 +260,17 @@ export function createGrabPayRepository(window) {
               amount,
               currency,
               description,
-              partnerGroupTxID,
-              partnerTxID
+              partnerGroupTxID
             },
             method: "POST",
             path: "/payment/recurring-charge/charge"
           });
         },
-        unbind: async args => {
-          const { partnerTxID } = requireAllValid(args);
-
-          return makeRequest(window, {
-            body: { partnerTxID },
+        unbind: async () =>
+          makeRequest(window, {
             method: "POST",
             path: "/payment/recurring-charge/unbind"
-          });
-        }
+          })
       }
     }
   };

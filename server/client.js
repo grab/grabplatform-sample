@@ -51,7 +51,8 @@ exports.createDBClient = async function() {
       ID_TOKEN: "grabid.id_token"
     },
     grabpay: {
-      LAST_TRANSACTION_REQUEST: "grabpay.last_transaction_request"
+      LAST_TRANSACTION_REQUEST: "grabpay.last_transaction_request",
+      LAST_TRANSACTION_ID: "grabpay.last_transaction_id"
     }
   };
 
@@ -72,8 +73,11 @@ exports.createDBClient = async function() {
       getCodeVerifier: () => get(keys.grabid.CODE_VERIFIER)
     },
     grabpay: {
+      getLastTransactionID: () => get(keys.grabpay.LAST_TRANSACTION_ID),
       getLastTransactionRequest: () =>
         get(keys.grabpay.LAST_TRANSACTION_REQUEST),
+      setLastTransactionID: partnerTxID =>
+        set(keys.grabpay.LAST_TRANSACTION_ID, partnerTxID),
       setLastTransactionRequest: request =>
         set(keys.grabpay.LAST_TRANSACTION_REQUEST, request)
     }

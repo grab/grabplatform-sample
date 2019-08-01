@@ -53,7 +53,10 @@ module.exports = {
             timestamp
           });
 
-          const { data, status } = await httpClient.post(
+          const {
+            data: { request, partnerTxID: resultTxID },
+            status
+          } = await httpClient.post(
             "/grabpay/partner/v2/charge/init",
             requestBody,
             {
@@ -63,14 +66,17 @@ module.exports = {
             }
           );
 
-          res.status(status).json(data);
+          await dbClient.grabpay.setLastTransactionID(resultTxID);
+          await dbClient.grabpay.setLastTransactionRequest(request);
+          res.status(status).json({ request, partnerTxID: resultTxID });
         }
       );
     },
     confirm: function(dbClient, httpClient) {
-      return handleError(async ({ body: { partnerTxID } }, res) => {
+      return handleError(async (req, res) => {
         const accessToken = await dbClient.grabid.getAccessToken();
         const { clientSecret } = await dbClient.config.getConfiguration();
+        const partnerTxID = await dbClient.grabpay.getLastTransactionID();
         const date = new Date();
 
         const hmac = await generateHMACForXGIDAUXPOP({
@@ -114,34 +120,28 @@ module.exports = {
           timestamp
         });
 
-        const { data, status } = await httpClient.post(
-          "/grabpay/partner/v2/bind",
-          requestBody,
-          {
-            "Content-Type": "application/json",
-            Authorization: `${partnerID}:${hmacDigest}`,
-            Date: timestamp
-          }
-        );
+        const {
+          data: { request },
+          status
+        } = await httpClient.post("/grabpay/partner/v2/bind", requestBody, {
+          "Content-Type": "application/json",
+          Authorization: `${partnerID}:${hmacDigest}`,
+          Date: timestamp
+        });
 
-        res.status(status).json({ ...data, partnerTxID });
+        await dbClient.grabpay.setLastTransactionID(partnerTxID);
+        await dbClient.grabpay.setLastTransactionRequest(request);
+        res.status(status).json({ request, partnerTxID });
       });
     },
     charge: function(dbClient, httpClient) {
       return handleError(
         async (
-          {
-            body: {
-              amount,
-              currency,
-              description,
-              partnerGroupTxID,
-              partnerTxID
-            }
-          },
+          { body: { amount, currency, description, partnerGroupTxID } },
           res
         ) => {
           const accessToken = await dbClient.grabid.getAccessToken();
+          const partnerTxID = await dbClient.grabpay.getLastTransactionID();
 
           const {
             clientSecret,
@@ -183,8 +183,9 @@ module.exports = {
       );
     },
     unbind: function(dbClient, httpClient) {
-      return handleError(async ({ body: { partnerTxID } }, res) => {
+      return handleError(async (req, res) => {
         const accessToken = await dbClient.grabid.getAccessToken();
+        const partnerTxID = await dbClient.grabpay.getLastTransactionID();
         const { clientSecret } = await dbClient.config.getConfiguration();
         const date = new Date();
 

@@ -2,11 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
-import {
-  grabidPaymentHOC,
-  grabpayTransactionHOC,
-  stageSwitcherHOC
-} from "component/customHOC";
+import { grabidPaymentHOC, stageSwitcherHOC } from "component/customHOC";
 import { hmacDescription } from "component/description";
 import { GrabIDLogin } from "component/GrabID/component";
 import Markdown from "component/Markdown/component";
@@ -220,7 +216,6 @@ function PrivateOneTimeCharge({
 
 export default compose(
   grabidPaymentHOC(),
-  grabpayTransactionHOC(),
   stageSwitcherHOC(),
   connect(
     ({
@@ -239,6 +234,8 @@ export default compose(
       initOneTimeCharge
     })
   ),
+  withState("partnerTxID", "setPartnerTxID", ""),
+  withState("request", "setRequest", ""),
   withState("status", "setStatus", ""),
   withProps(
     ({
@@ -246,13 +243,10 @@ export default compose(
         currency,
         transaction: { amount, description, partnerGroupTxID }
       },
-      partnerTxID,
       handleError,
       handleMessage,
       confirmOneTimeCharge,
       initOneTimeCharge,
-      persistChargeRequest,
-      persistPartnerTxID,
       setPartnerTxID,
       setRequest,
       setStatus
@@ -265,14 +259,12 @@ export default compose(
           partnerGroupTxID
         });
 
-        await persistChargeRequest(request);
-        await persistPartnerTxID(partnerTxID);
         setPartnerTxID(partnerTxID);
         setRequest(request);
         handleMessage(CommonMessages.grabpay.oneTimeCharge.init);
       }),
       confirmOneTimeCharge: handleError(async () => {
-        const { status } = await confirmOneTimeCharge({ partnerTxID });
+        const { status } = await confirmOneTimeCharge();
         setStatus(status);
         handleMessage(CommonMessages.grabpay.oneTimeCharge.confirm);
       })
