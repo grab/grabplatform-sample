@@ -148,7 +148,7 @@ export function createGrabIDRepository(window) {
             codeVerifier
           } = await repository.grabid.getGrabIDResult();
 
-          makeRequest(window, {
+          return makeRequest(window, {
             body: {
               code,
               codeVerifier,
@@ -238,7 +238,7 @@ export function createGrabPayRepository(window) {
             partnerGroupTxID
           } = requireAllValid(args);
 
-          makeRequest(window, {
+          return makeRequest(window, {
             body: {
               amount,
               currency,
