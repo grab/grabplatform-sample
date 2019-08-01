@@ -16,14 +16,15 @@ const grabid = {
   requestToken: (dbClient, httpClient) => {
     return handleError(
       async (
-        { body: { clientID: client_id, code, redirectURI: redirect_uri } },
+        {
+          body: { clientID: client_id, code, redirectURI: redirect_uri },
+          session: { codeVerifier: code_verifier }
+        },
         res
       ) => {
         const {
           clientSecret: client_secret
         } = await dbClient.config.getConfiguration();
-
-        const code_verifier = await dbClient.grabid.getCodeVerifier();
 
         const {
           data: { token_endpoint }
@@ -50,6 +51,7 @@ const grabid = {
   utils: {
     authorize: async (
       dbClient,
+      session,
       httpClient,
       { clientID: client_id, countryCode, currency, redirectURI, scopes }
     ) => {
@@ -84,7 +86,7 @@ const grabid = {
       );
 
       const authorizeURL = `${authorization_endpoint}?${queryParams}`;
-      await dbClient.grabid.setCodeVerifier(codeVerifier);
+      session.codeVerifier = codeVerifier;
       return { authorizeURL };
     },
     runServiceDiscovery: async httpClient => {

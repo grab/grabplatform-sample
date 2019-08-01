@@ -4,6 +4,7 @@
  */
 const dotenv = require("dotenv");
 const express = require("express");
+const session = require("express-session");
 const fs = require("fs");
 const https = require("https");
 
@@ -25,16 +26,25 @@ async function initialize() {
 
   app.use(express.json());
 
-  app.get("/", (req, res) => {
-    res.status(200).json("Never should have come here");
+  app.use(
+    session({
+      resave: true,
+      secret: "grabplatform-sample",
+      saveUninitialized: true
+    })
+  );
+
+  app.get("/", ({ session }, res) => {
+    res
+      .status(200)
+      .json(`Never should have come here: ${JSON.stringify(session)}`);
   });
   app.get("/configuration", configuration.getConfiguration(dbClient));
   app.post("/configuration", configuration.setConfiguration(dbClient));
-  app.post("/grabid/payment/authorize", async (req, res) => {
-    const { body } = req;
-
+  app.post("/grabid/payment/authorize", async ({ body, session }, res) => {
     const { authorizeURL } = await grabid.utils.authorize(
       dbClient,
+      session,
       httpClient,
       body
     );
