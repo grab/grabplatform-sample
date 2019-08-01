@@ -5,6 +5,14 @@
 const btoa = require("btoa");
 const CryptoJS = require("crypto-js");
 
+async function base64URLEncode(str) {
+  return str
+    .toString(CryptoJS.enc.Base64)
+    .replace(/=/g, "")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_");
+}
+
 function getRelativeURLPath(url) {
   let pathRegex = /.+?:\/\/.+?(\/.+?)(?:#|\?|$)/;
   let result = url.match(pathRegex);
@@ -22,13 +30,7 @@ function getUnixTimestamp(date) {
   return Math.round(date.getTime() / 1000);
 }
 
-exports.base64URLEncode = async function(str) {
-  return str
-    .toString(CryptoJS.enc.Base64)
-    .replace(/=/g, "")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_");
-};
+exports.base64URLEncode = base64URLEncode;
 
 exports.handleError = function(requestHandler) {
   return async (req, res) => {

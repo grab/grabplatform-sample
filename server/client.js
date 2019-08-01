@@ -68,7 +68,8 @@ exports.createDBClient = async function() {
       setAccessToken: accessToken => set(keys.grabid.ACCESS_TOKEN, accessToken),
       setCodeVerifier: code => set(keys.grabid.CODE_VERIFIER, code),
       setIDToken: idToken => set(keys.grabid.ID_TOKEN, idToken),
-      getAccessToken: () => get(keys.grabid.ACCESS_TOKEN)
+      getAccessToken: () => get(keys.grabid.ACCESS_TOKEN),
+      getCodeVerifier: () => get(keys.grabid.CODE_VERIFIER)
     },
     grabpay: {
       getLastTransactionRequest: () =>

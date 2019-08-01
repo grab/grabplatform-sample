@@ -15,8 +15,15 @@ const grabid = {
   /** These requests must be made from backend since it requires clientSecret. */
   requestToken: (dbClient, httpClient) => {
     return handleError(
-      async ({ body: { code, codeVerifier, clientID, redirectURI } }, res) => {
-        const { clientSecret } = await dbClient.config.getConfiguration();
+      async (
+        { body: { clientID: client_id, code, redirectURI: redirect_uri } },
+        res
+      ) => {
+        const {
+          clientSecret: client_secret
+        } = await dbClient.config.getConfiguration();
+
+        const code_verifier = await dbClient.grabid.getCodeVerifier();
 
         const {
           data: { token_endpoint }
@@ -27,11 +34,11 @@ const grabid = {
           status
         } = await httpClient.post(token_endpoint, {
           code,
-          code_verifier: codeVerifier,
-          client_id: clientID,
-          client_secret: clientSecret,
+          code_verifier,
+          client_id,
+          client_secret,
           grant_type: "authorization_code",
-          redirect_uri: redirectURI
+          redirect_uri
         });
 
         await dbClient.grabid.setAccessToken(access_token);
