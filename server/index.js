@@ -43,7 +43,6 @@ async function initialize() {
   app.post("/configuration", configuration.setConfiguration(dbClient));
   app.post("/grabid/payment/authorize", async ({ body, session }, res) => {
     const { authorizeURL } = await grabid.utils.authorize(
-      dbClient,
       session,
       httpClient,
       body

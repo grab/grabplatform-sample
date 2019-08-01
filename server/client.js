@@ -69,15 +69,6 @@ exports.createDBClient = async function() {
       setAccessToken: accessToken => set(keys.grabid.ACCESS_TOKEN, accessToken),
       setIDToken: idToken => set(keys.grabid.ID_TOKEN, idToken),
       getAccessToken: () => get(keys.grabid.ACCESS_TOKEN)
-    },
-    grabpay: {
-      getLastTransactionID: () => get(keys.grabpay.LAST_TRANSACTION_ID),
-      getLastTransactionRequest: () =>
-        get(keys.grabpay.LAST_TRANSACTION_REQUEST),
-      setLastTransactionID: partnerTxID =>
-        set(keys.grabpay.LAST_TRANSACTION_ID, partnerTxID),
-      setLastTransactionRequest: request =>
-        set(keys.grabpay.LAST_TRANSACTION_REQUEST, request)
     }
   };
 };

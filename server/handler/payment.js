@@ -18,10 +18,13 @@ async function generatePartnerTransactionID() {
 
 module.exports = {
   oneTimeCharge: {
-    init: function(dbClient, httpClient) {
-      return handleError(
+    init: (dbClient, httpClient) =>
+      handleError(
         async (
-          { body: { amount, currency, description, partnerGroupTxID } },
+          {
+            body: { amount, currency, description, partnerGroupTxID },
+            session
+          },
           res
         ) => {
           const {
@@ -66,17 +69,15 @@ module.exports = {
             }
           );
 
-          await dbClient.grabpay.setLastTransactionID(resultTxID);
-          await dbClient.grabpay.setLastTransactionRequest(request);
+          session.partnerTxID = partnerTxID;
+          session.request = request;
           res.status(status).json({ request, partnerTxID: resultTxID });
         }
-      );
-    },
-    confirm: function(dbClient, httpClient) {
-      return handleError(async (req, res) => {
+      ),
+    confirm: (dbClient, httpClient) =>
+      handleError(async ({ session: { partnerTxID } }, res) => {
         const accessToken = await dbClient.grabid.getAccessToken();
         const { clientSecret } = await dbClient.config.getConfiguration();
-        const partnerTxID = await dbClient.grabpay.getLastTransactionID();
         const date = new Date();
 
         const hmac = await generateHMACForXGIDAUXPOP({
@@ -96,12 +97,11 @@ module.exports = {
         );
 
         res.status(status).json(data);
-      });
-    }
+      })
   },
   recurringCharge: {
-    bind: function(dbClient, httpClient) {
-      return handleError(async ({ body: { countryCode } }, res) => {
+    bind: (dbClient, httpClient) =>
+      handleError(async ({ body: { countryCode }, session }, res) => {
         const {
           partnerHMACSecret,
           partnerID
@@ -129,19 +129,20 @@ module.exports = {
           Date: timestamp
         });
 
-        await dbClient.grabpay.setLastTransactionID(partnerTxID);
-        await dbClient.grabpay.setLastTransactionRequest(request);
+        session.partnerTxID = partnerTxID;
+        session.request = request;
         res.status(status).json({ request, partnerTxID });
-      });
-    },
-    charge: function(dbClient, httpClient) {
-      return handleError(
+      }),
+    charge: (dbClient, httpClient) =>
+      handleError(
         async (
-          { body: { amount, currency, description, partnerGroupTxID } },
+          {
+            body: { amount, currency, description, partnerGroupTxID },
+            session: { partnerTxID, ...rest }
+          },
           res
         ) => {
           const accessToken = await dbClient.grabid.getAccessToken();
-          const partnerTxID = await dbClient.grabpay.getLastTransactionID();
 
           const {
             clientSecret,
@@ -180,12 +181,10 @@ module.exports = {
 
           res.status(status).json(data);
         }
-      );
-    },
+      ),
     unbind: function(dbClient, httpClient) {
-      return handleError(async (req, res) => {
+      return handleError(async ({ session: { partnerTxID } }, res) => {
         const accessToken = await dbClient.grabid.getAccessToken();
-        const partnerTxID = await dbClient.grabpay.getLastTransactionID();
         const { clientSecret } = await dbClient.config.getConfiguration();
         const date = new Date();
 

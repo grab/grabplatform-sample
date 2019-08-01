@@ -50,12 +50,11 @@ const grabid = {
   },
   utils: {
     authorize: async (
-      dbClient,
       session,
       httpClient,
       { clientID: client_id, countryCode, currency, redirectURI, scopes }
     ) => {
-      const request = await dbClient.grabpay.getLastTransactionRequest();
+      const { request } = session;
       const nonce = await generateRandomString(16);
       const state = await generateRandomString(7);
       const codeVerifier = await generateRandomString(64).then(base64URLEncode);
