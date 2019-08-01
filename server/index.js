@@ -30,7 +30,18 @@ async function initialize() {
   });
   app.get("/configuration", configuration.getConfiguration(dbClient));
   app.post("/configuration", configuration.setConfiguration(dbClient));
-  app.post("/grabid/token", grabid.popToken(dbClient, httpClient));
+  app.post("/grabid/payment/authorize", async (req, res) => {
+    const { body } = req;
+
+    const { authorizeURL } = await grabid.utils.authorize(
+      dbClient,
+      httpClient,
+      body
+    );
+
+    res.status(200).json({ authorizeURL });
+  });
+  app.post("/grabid/token", grabid.requestToken(dbClient, httpClient));
   app.get("/identity/basic-profile", identity.basicProfile(httpClient));
   app.get("/loyalty/rewards-tier", loyalty.rewardsTier(httpClient));
   app.post("/messaging/inbox", messaging.inbox(dbClient, httpClient));

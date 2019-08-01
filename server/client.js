@@ -47,16 +47,15 @@ exports.createDBClient = async function() {
     configuration: "configuration",
     grabid: {
       ACCESS_TOKEN: "grabid.access_token",
+      CODE_VERIFIER: "grabid.code_verified",
       ID_TOKEN: "grabid.id_token"
+    },
+    grabpay: {
+      LAST_TRANSACTION_REQUEST: "grabpay.last_transaction_request"
     }
   };
 
   return {
-    grabid: {
-      setAccessToken: accessToken => set(keys.grabid.ACCESS_TOKEN, accessToken),
-      setIDToken: idToken => set(keys.grabid.ID_TOKEN, idToken),
-      getAccessToken: () => get(keys.grabid.ACCESS_TOKEN)
-    },
     config: {
       setConfiguration: config =>
         set(keys.configuration, JSON.stringify(config)),
@@ -64,6 +63,18 @@ exports.createDBClient = async function() {
         get(keys.configuration)
           .then(JSON.parse)
           .catch(() => ({}))
+    },
+    grabid: {
+      setAccessToken: accessToken => set(keys.grabid.ACCESS_TOKEN, accessToken),
+      setCodeVerifier: code => set(keys.grabid.CODE_VERIFIER, code),
+      setIDToken: idToken => set(keys.grabid.ID_TOKEN, idToken),
+      getAccessToken: () => get(keys.grabid.ACCESS_TOKEN)
+    },
+    grabpay: {
+      getLastTransactionRequest: () =>
+        get(keys.grabpay.LAST_TRANSACTION_REQUEST),
+      setLastTransactionRequest: request =>
+        set(keys.grabpay.LAST_TRANSACTION_REQUEST, request)
     }
   };
 };

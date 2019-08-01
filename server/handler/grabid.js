@@ -2,12 +2,18 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
+const CryptoJS = require("crypto-js");
 const { GrabPartnerUrls } = require("@grab-id/grab-id-client");
-const { handleError } = require("./util");
+const { stringify } = require("querystring");
+const {
+  base64URLEncode,
+  generateRandomString,
+  handleError
+} = require("./util");
 
 const grabid = {
   /** These requests must be made from backend since it requires clientSecret. */
-  popToken: function(dbClient, httpClient) {
+  requestToken: (dbClient, httpClient) => {
     return handleError(
       async ({ body: { code, codeVerifier, clientID, redirectURI } }, res) => {
         const { clientSecret } = await dbClient.config.getConfiguration();
@@ -35,6 +41,45 @@ const grabid = {
     );
   },
   utils: {
+    authorize: async (
+      dbClient,
+      httpClient,
+      { clientID: client_id, countryCode, currency, redirectURI, scopes }
+    ) => {
+      const request = await dbClient.grabpay.getLastTransactionRequest();
+      const nonce = await generateRandomString(16);
+      const state = await generateRandomString(7);
+      const codeVerifier = await generateRandomString(64).then(base64URLEncode);
+
+      const code_challenge = await base64URLEncode(
+        CryptoJS.SHA256(codeVerifier)
+      );
+
+      const {
+        data: { authorization_endpoint }
+      } = await grabid.utils.runServiceDiscovery(httpClient);
+
+      const queryParams = stringify(
+        [
+          {
+            acr_values: `consent_ctx:countryCode=${countryCode},currency=${currency}`,
+            client_id,
+            code_challenge,
+            code_challenge_method: "S256",
+            nonce,
+            redirect_uri: redirectURI,
+            request,
+            response_type: "code",
+            scope: scopes.join(" "),
+            state
+          }
+        ].reduce((acc, item) => ({ ...acc, ...item }), {})
+      );
+
+      const authorizeURL = `${authorization_endpoint}?${queryParams}`;
+      await dbClient.grabid.setCodeVerifier(codeVerifier);
+      return { authorizeURL };
+    },
     runServiceDiscovery: async httpClient => {
       const baseURL =
         process.env.NODE_ENV === "production"
