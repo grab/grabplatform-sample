@@ -8,11 +8,10 @@ import {
   handleMessageHOC
 } from "component/customHOC";
 import Markdown from "component/Markdown/component";
-import { parse } from "querystring";
 import React from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
-import { compose, lifecycle, mapProps, withProps, withState } from "recompose";
+import { compose, lifecycle, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import "./style.scss";
 
@@ -192,8 +191,7 @@ function PrivateGrabIDRedirect({ returnURI }) {
   );
 }
 
-export const GrabIDRedirect = compose(
-  mapProps(({ location: { search } }) => parse(search.slice(1))),
+export const GrabIDNonPOPRedirect = compose(
   handleErrorHOC(),
   connect(
     ({
@@ -217,6 +215,26 @@ export const GrabIDRedirect = compose(
       } = this.props;
 
       await handleAuthorizationCodeFlowResponse();
+      const returnURI = await getLoginReturnURI();
+      setReturnURI(returnURI);
+    }
+  })
+)(PrivateGrabIDRedirect);
+
+export const GrabIDPOPRedirect = compose(
+  handleErrorHOC(),
+  connect(({ repository: { grabid: { getLoginReturnURI } } }) => ({
+    getLoginReturnURI
+  })),
+  withProps(({ handleAuthorizationCodeFlowResponse, handleError }) => ({
+    handleAuthorizationCodeFlowResponse: handleError(
+      handleAuthorizationCodeFlowResponse
+    )
+  })),
+  withState("returnURI", "setReturnURI", ""),
+  lifecycle({
+    async componentDidMount() {
+      const { getLoginReturnURI, setReturnURI } = this.props;
       const returnURI = await getLoginReturnURI();
       setReturnURI(returnURI);
     }

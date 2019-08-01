@@ -3,7 +3,10 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 import Configuration from "component/Configuration/component";
-import { GrabIDRedirect } from "component/GrabID/component";
+import {
+  GrabIDNonPOPRedirect,
+  GrabIDPOPRedirect
+} from "component/GrabID/component";
 import Identity from "component/Identity/component";
 import Loyalty from "component/Loyalty/component";
 import Messaging from "component/Messaging/component";
@@ -123,7 +126,18 @@ const AppContent = compose(
 function PrivateApp() {
   return (
     <Switch>
-      <Route component={GrabIDRedirect} exact path={"/grabid/redirect"} />
+      <Route
+        component={GrabIDNonPOPRedirect}
+        exact
+        path={"/grabid/redirect/nonpop"}
+      />
+
+      <Route
+        component={GrabIDPOPRedirect}
+        exact
+        path={"/grabid/redirect/pop"}
+      />
+
       <Route component={AppContent} />
     </Switch>
   );
