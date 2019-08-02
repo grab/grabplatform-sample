@@ -22,8 +22,8 @@ function PrivateStageSwitcher({ currentStage, stageCount, setStage }) {
 export default compose(
   withProps(({ setStage }) => ({
     setStage: stage => {
-      const currentURL = `${window.location.origin}${window.location.pathname}`;
-      const search = window.location.search;
+      const { origin, pathname, search } = window.location;
+      const currentURL = `${origin}${pathname}`;
       const newQuery = { ...parse(search.substr(1)), stage: stage + 1 };
       const newSearch = `?${stringify(newQuery)}`;
       window.history.replaceState(null, null, `${currentURL}${newSearch}`);

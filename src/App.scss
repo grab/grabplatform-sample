@@ -21,7 +21,8 @@
 
       & > * {
         &.configure,
-        &.clear-everything {
+        &.clear-everything,
+        &.documentation {
           @include stage-confirm-button;
         }
 

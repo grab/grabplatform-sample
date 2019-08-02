@@ -11,11 +11,11 @@ import Identity from "component/Identity/component";
 import Loyalty from "component/Loyalty/component";
 import Messaging from "component/Messaging/component";
 import Payment from "component/Payment/component";
-import querystring from "querystring";
+import querystring, { parse, stringify } from "querystring";
 import React from "react";
 import { connect } from "react-redux";
 import { NavLink, Route, Switch } from "react-router-dom";
-import { compose, lifecycle, mapProps, withState } from "recompose";
+import { compose, lifecycle, withProps, withState } from "recompose";
 import { CommonActionCreators } from "redux/action/common";
 import { ConfigurationActionCreators } from "redux/action/configuration";
 import "./App.scss";
@@ -30,7 +30,8 @@ const categories = [
 function PrivateAppContent({
   clearEverything,
   showConfiguration,
-  setShowConfiguration
+  setShowConfiguration,
+  toggleDocumentation
 }) {
   return (
     <div className="App">
@@ -45,6 +46,10 @@ function PrivateAppContent({
       <div className="global-action-container">
         <div className="configure" onClick={() => setShowConfiguration(true)}>
           Configure
+        </div>
+
+        <div className="documentation" onClick={toggleDocumentation}>
+          Toggle documentation
         </div>
 
         <div className="clear-everything" onClick={clearEverything}>
@@ -85,11 +90,19 @@ function PrivateAppContent({
 }
 
 const AppContent = compose(
-  mapProps(({ location: { hash }, ...rest }) => ({
-    ...rest,
-    ...querystring.parse(hash.substr(1))
+  withProps(({ location: { hash } }) => querystring.parse(hash.substr(1))),
+  withProps(({ id_token: idToken }) => ({ idToken })),
+  withProps(() => ({
+    toggleDocumentation: () => {
+      const { origin, pathname, search } = window.location;
+      const currentURL = `${origin}${pathname}`;
+      const { documentation, ...query } = parse(search.substr(1));
+      const newQuery = { ...query, documentation: documentation !== "true" };
+      const newSearch = `?${stringify(newQuery)}`;
+      window.history.replaceState(null, null, `${currentURL}${newSearch}`);
+      window.location.reload();
+    }
   })),
-  mapProps(({ id_token: idToken, ...rest }) => ({ ...rest, idToken })),
   connect(
     ({
       repository: {
@@ -113,6 +126,7 @@ const AppContent = compose(
         idToken,
         persistInitialIDToken
       } = this.props;
+
       await persistInitialIDToken(idToken);
       await getConfigurationFromPersistence();
     }
