@@ -3,6 +3,38 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 const axios = require("axios").default;
+var color =  require("colors");
+
+axios.interceptors.request.use(request => {
+  console.log('Starting Request'.bgBlue, request.method.toUpperCase(), request.url)
+  console.log('Request Headers:') 
+  console.log('\tContent-Type: ', request.headers['Content-Type'])
+  console.log('\tDate: ', request.headers['Date'])
+  console.log('\tAuthorization: ', request.headers['Authorization'])
+  console.log('\tX-GID-AUX-POP: ', request.headers['X-GID-AUX-POP'])
+  console.log('Request Data:\n', request.data)
+  console.log('--')
+  return request
+})
+
+axios.interceptors.response.use(response => {
+    console.log('Response: '.bgGreen, response.status, response.statusText)
+    console.log('Response Headers:\n', response.headers)
+    console.log('Response Data:\n', response.data)
+    console.log('--')
+    return response
+  },
+  error=> {
+    if (typeof(error.response) != "undefined") {
+      console.log('Response: '.bgRed, error.response.status, error.response.statusText)
+      console.log('Response Headers:\n', error.response.headers)
+      console.log('Response Data:\n', error.response.data)
+      console.log('--')
+    } else console.error(error)
+    return error
+  }
+)
+
 const { createClient: createRedisClient } = require("redis");
 const { promisify } = require("util");
 
