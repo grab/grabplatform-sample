@@ -2,29 +2,27 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
+import App from "App";
+import "index.scss";
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { applyMiddleware, createStore } from "redux";
 import thunkMiddleware from "redux-thunk";
-import App from "./App";
-import "./index.scss";
-import { alertMiddleware, thunkUnwrapMiddleware } from "./redux/middleware";
-import reducer from "./redux/reducer";
-import {
-  createGrabAPIRepository,
-  createGrabIDRepository,
-  createGrabPayRepository,
-  createWindowRepository
-} from "./repository";
+import { alertMiddleware, thunkUnwrapMiddleware } from "redux/middleware";
+import reducer from "redux/reducer";
+import createGeneralRepository from "repository/general";
+import createGrabIDRepository from "repository/grabid";
+import createGrabPayRepository from "repository/grabpay";
+import createWindowRepository from "repository/window";
 import * as serviceWorker from "./serviceWorker";
 
 const repository = {
-  ...createWindowRepository(window),
   ...createGrabIDRepository(window),
   ...createGrabPayRepository(window),
-  ...createGrabAPIRepository(window)
+  ...createWindowRepository(window),
+  ...createGeneralRepository(window)
 };
 
 const store = createStore(
