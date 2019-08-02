@@ -11,7 +11,7 @@ import Identity from "component/Identity/component";
 import Loyalty from "component/Loyalty/component";
 import Messaging from "component/Messaging/component";
 import Payment from "component/Payment/component";
-import querystring, { parse, stringify } from "querystring";
+import querystring from "querystring";
 import React from "react";
 import { connect } from "react-redux";
 import { NavLink, Route, Switch } from "react-router-dom";
@@ -92,23 +92,13 @@ function PrivateAppContent({
 const AppContent = compose(
   withProps(({ location: { hash } }) => querystring.parse(hash.substr(1))),
   withProps(({ id_token: idToken }) => ({ idToken })),
-  withProps(() => ({
-    toggleDocumentation: () => {
-      const { origin, pathname, search } = window.location;
-      const currentURL = `${origin}${pathname}`;
-      const { documentation, ...query } = parse(search.substr(1));
-      const newQuery = { ...query, documentation: documentation !== "true" };
-      const newSearch = `?${stringify(newQuery)}`;
-      window.history.replaceState(null, null, `${currentURL}${newSearch}`);
-      window.location.reload();
-    }
-  })),
   connect(
     ({
       repository: {
-        grabid: { persistInitialIDToken }
+        grabid: { persistInitialIDToken },
+        navigation: { overrideQuery, reloadPage }
       }
-    }) => ({ persistInitialIDToken }),
+    }) => ({ overrideQuery, persistInitialIDToken, reloadPage }),
     dispatch => ({
       clearEverything: () =>
         dispatch(CommonActionCreators.triggerClearEverything()),
@@ -118,6 +108,15 @@ const AppContent = compose(
         )
     })
   ),
+  withProps(({ overrideQuery, reloadPage }) => ({
+    toggleDocumentation: async () => {
+      await overrideQuery(({ documentation }) => ({
+        documentation: documentation !== "true"
+      }));
+
+      await reloadPage();
+    }
+  })),
   withState("showConfiguration", "setShowConfiguration", false),
   lifecycle({
     async componentDidMount() {

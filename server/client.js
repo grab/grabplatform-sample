@@ -108,7 +108,7 @@ exports.createDBClient = async function() {
       },
       getAccessToken: puid => {
         const key = formatPartnerUserIDKey(puid, keys.grabid.ACCESS_TOKEN);
-        return get(formatPartnerUserIDKey(key));
+        return get(key);
       }
     }
   };

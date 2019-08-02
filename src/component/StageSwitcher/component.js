@@ -1,5 +1,5 @@
-import { parse, stringify } from "querystring";
 import React from "react";
+import { connect } from "react-redux";
 import { compose, withProps } from "recompose";
 import "./style.scss";
 
@@ -20,13 +20,12 @@ function PrivateStageSwitcher({ currentStage, stageCount, setStage }) {
 }
 
 export default compose(
-  withProps(({ setStage }) => ({
-    setStage: stage => {
-      const { origin, pathname, search } = window.location;
-      const currentURL = `${origin}${pathname}`;
-      const newQuery = { ...parse(search.substr(1)), stage: stage + 1 };
-      const newSearch = `?${stringify(newQuery)}`;
-      window.history.replaceState(null, null, `${currentURL}${newSearch}`);
+  connect(({ repository: { navigation: { overrideQuery } } }) => ({
+    overrideQuery
+  })),
+  withProps(({ overrideQuery, setStage }) => ({
+    setStage: async stage => {
+      await overrideQuery({ stage: stage + 1 });
       setStage(stage);
     }
   }))
