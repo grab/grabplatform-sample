@@ -4,8 +4,8 @@
  */
 import { grabidPaymentHOC, stageSwitcherHOC } from "component/customHOC";
 import { hmacDescription } from "component/description";
+import Documentation from "component/Documentation/component";
 import { GrabIDLogin } from "component/GrabID/component";
-import Markdown from "component/Markdown/component";
 import {
   grabidDescription,
   partnerTxIDDescription,
@@ -221,7 +221,7 @@ function RecurringCharge({
           <div className="intro-title">Stage 1: Bind charge</div>
 
           <div className="stage-description">
-            <Markdown className="source-code" source={bindDescription} />
+            <Documentation className="source-code" source={bindDescription} />
           </div>
 
           <div className="divider" />
@@ -249,7 +249,7 @@ function RecurringCharge({
           popRequired
           scopes={["payment.recurring_charge", "payment.online_acceptance"]}
           stageDescription={
-            <Markdown className="source-code" source={grabidDescription} />
+            <Documentation className="source-code" source={grabidDescription} />
           }
         />
       )}
@@ -259,7 +259,7 @@ function RecurringCharge({
           <div className="intro-title">Stage 3: Charge user</div>
 
           <div className="stage-description">
-            <Markdown className="source-code" source={chargeDescription} />
+            <Documentation className="source-code" source={chargeDescription} />
           </div>
 
           <div className="divider" />
@@ -312,7 +312,7 @@ function RecurringCharge({
           <div className="intro-title">Stage 4: Unbind charge</div>
 
           <div className="stage-description">
-            <Markdown className="source-code" source={unbindDescription} />
+            <Documentation className="source-code" source={unbindDescription} />
           </div>
 
           <div className="divider" />

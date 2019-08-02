@@ -7,13 +7,13 @@ import {
   handleErrorHOC,
   handleMessageHOC
 } from "component/customHOC";
-import Markdown from "component/Markdown/component";
+import Documentation from "component/Documentation/component";
+import { parse } from "querystring";
 import React from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { compose, lifecycle, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
-import { parse } from "querystring";
 import "./style.scss";
 
 // ############################## GRABID AUTH ##############################
@@ -56,7 +56,7 @@ function PrivateGrabIDLogin({
       <div className="intro-title">{`Stage ${currentProductStageFlow}: GrabID`}</div>
 
       <div className="stage-description">
-        <Markdown className="source-code" source={grabidDescription} />
+        <Documentation className="source-code" source={grabidDescription} />
         {!!stageDescription && stageDescription}
       </div>
 

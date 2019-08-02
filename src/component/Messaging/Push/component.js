@@ -9,8 +9,8 @@ import {
   stageSwitcherHOC
 } from "component/customHOC";
 import { hmacDescription } from "component/description";
+import Documentation from "component/Documentation/component";
 import { GrabIDLogin } from "component/GrabID/component";
-import Markdown from "component/Markdown/component";
 import Template from "component/Messaging/Template/component";
 import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
@@ -188,7 +188,7 @@ function PrivateInbox({
           <div className="intro-title">Stage 2: Push</div>
 
           <div className="stage-description">
-            <Markdown className="source-code" source={inboxDescription} />
+            <Documentation className="source-code" source={inboxDescription} />
           </div>
 
           <div className="divider" />

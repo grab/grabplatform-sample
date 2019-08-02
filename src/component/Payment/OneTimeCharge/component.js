@@ -4,8 +4,8 @@
  */
 import { grabidPaymentHOC, stageSwitcherHOC } from "component/customHOC";
 import { hmacDescription } from "component/description";
+import Documentation from "component/Documentation/component";
 import { GrabIDLogin } from "component/GrabID/component";
-import Markdown from "component/Markdown/component";
 import {
   grabidDescription,
   partnerTxIDDescription,
@@ -149,7 +149,7 @@ function PrivateOneTimeCharge({
           <div className="intro-title">Stage 1: Init charge</div>
 
           <div className="stage-description">
-            <Markdown className="source-code" source={initDescription} />
+            <Documentation className="source-code" source={initDescription} />
           </div>
 
           <div className="divider" />
@@ -184,7 +184,7 @@ function PrivateOneTimeCharge({
           popRequired
           scopes={["payment.one_time_charge", "payment.online_acceptance"]}
           stageDescription={
-            <Markdown className="source-code" source={grabidDescription} />
+            <Documentation className="source-code" source={grabidDescription} />
           }
         />
       )}
@@ -194,7 +194,10 @@ function PrivateOneTimeCharge({
           <div className="intro-title">Stage 3: Confirm charge</div>
 
           <div className="stage-description">
-            <Markdown className="source-code" source={confirmDescription} />
+            <Documentation
+              className="source-code"
+              source={confirmDescription}
+            />
           </div>
 
           <div className="divider" />
