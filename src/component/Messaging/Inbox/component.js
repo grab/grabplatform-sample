@@ -31,7 +31,7 @@ ${"```javascript"}
 app.post('...', async (
   {
     body: { recipientType = "passenger", templateID, templateParams },
-    headers: { authorization, "content-type": contentType }
+    headers: { authorization }
   },
   res
 ) => {
@@ -42,10 +42,7 @@ app.post('...', async (
 
   const {
     data: { partner_user_id: recipientID }
-  } = await requestAccessTokenInfo(httpClient, {
-    authorization,
-    "content-type": contentType
-  });
+  } = await requestAccessTokenInfo(httpClient, { authorization });
 
   const requestBody = {
     recipientID,
@@ -143,6 +140,7 @@ function PrivateInbox({
             <Markdown className="source-code" source={inboxDescription} />
           </div>
 
+          <div className="divider" />
           <div className="title">Endpoint</div>
           <input disabled readOnly value={"GET /message/v1/inbox"} />
 

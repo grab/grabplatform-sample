@@ -51,22 +51,24 @@ app.post('...', async ({ body: { countryCode } }, res) => {
     timestamp
   });
 
-  const { data, status } = await client.post(
-    "/grabpay/partner/v2/bind",
-    requestBody,
-    {
-      "Content-Type": "application/json",
-      Authorization: ${"`"}${"$"}{partnerID}:${"$"}{hmacDigest}${"`"},
-      Date: timestamp
-    }
-  );
+  const {
+    data: { request },
+    status
+  } = await httpClient.post("/grabpay/partner/v2/bind", requestBody, {
+    "Content-Type": "application/json",
+    Authorization: ${"`"}${"$"}{partnerID}:${"$"}{hmacDigest}${"`"},
+    Date: timestamp
+  });
 
-  res.status(status).json({ ...data, partnerTxID });
+  session.partnerTxID = partnerTxID;
+  session.request = request;
+  res.status(status).json({ request, partnerTxID });
 });
 ${"```"}
             
 This call will give us back:
-- **request**: The request body that will need to be passed to GrabID to authorize the charge.
+- **request**: The request body that will need to be passed to GrabID to 
+authorize the charge.
 
 Please store the partnerTxID somewhere because you will need it later to charge
 the user.
@@ -87,18 +89,20 @@ app.post('...', async (
       amount,
       currency,
       description,
-      partnerGroupTxID,
-      partnerTxID
-    }
+      partnerGroupTxID
+    },
+    session: { partnerTxID, puid }
   },
   res
 ) => {
-  const accessToken = await dbClient.getAccessToken();
+  const accessToken = await dbClient.grabid.getAccessToken(puid);
 
   const {
     clientSecret,
     merchantID
   } = await dbClient.config.getConfiguration();
+
+  amount = parseInt(amount, undefined);
 
   const requestBody = {
     partnerGroupTxID,
@@ -117,13 +121,13 @@ app.post('...', async (
     date
   });
 
-  const { data, status } = await client.post(
+  const { data, status } = await httpClient.post(
     "/grabpay/partner/v2/charge",
     requestBody,
     {
       "Content-Type": "application/json",
       "X-GID-AUX-POP": hmac,
-      Authorization: authorization,
+      Authorization: ${"`"}Bearer ${"$"}{accessToken}${"`"},
       Date: date.toUTCString()
     }
   );
@@ -135,8 +139,8 @@ ${"```"}
 The wallet check only works after you've done the binding:
 
 ${"```javascript"}
-app.get('...', async ({ query: { currency } }, res) => {
-  const accessToken = await dbClient.getAccessToken();
+app.post('...', async ({ body: { currency }, session: { puid } }, res) => {
+  const accessToken = await dbClient.getAccessToken(puid);
   const date = new Date();
 
   const hmac = await generateHMACForXGIDAUXPOP({
@@ -164,8 +168,9 @@ There is no **unbind** endpoint - to unbind, you simply fire a DELETE request
 to the bind endpoint with the necessary credentials:
 
 ${"```javascript"}
-app.post('...', async ({ body: { partnerTxID } }, res) => {
-  const accessToken = await dbClient.getAccessToken();
+app.post('...', async ({ session: { partnerTxID, puid } }, res) => {
+  const accessToken = await dbClient.grabid.getAccessToken(puid);
+  const { clientSecret } = await dbClient.config.getConfiguration();
   const date = new Date();
 
   const hmac = await generateHMACForXGIDAUXPOP({
@@ -174,13 +179,13 @@ app.post('...', async ({ body: { partnerTxID } }, res) => {
     date
   });
 
-  const { status } = await client.delete(
+  const { status } = await httpClient.delete(
     "/grabpay/partner/v2/bind",
     { partnerTxID },
     {
       "Content-Type": "application/json",
       "X-GID-AUX-POP": hmac,
-      Authorization: authorization,
+      Authorization: ${"`"}Bearer ${"$"}{accessToken}${"`"},
       Date: date.toUTCString()
     }
   );
@@ -213,7 +218,7 @@ function RecurringCharge({
 
       {currentStage === 0 && (
         <div className="bind-container">
-          <div className="intro-title">Stage 1: Bind</div>
+          <div className="intro-title">Stage 1: Bind charge</div>
 
           <div className="stage-description">
             <Markdown className="source-code" source={bindDescription} />
@@ -378,8 +383,6 @@ export default compose(
       checkWallet,
       handleError,
       handleMessage,
-      persistChargeRequest,
-      persistPartnerTxID,
       setPartnerTxID,
       setRequest,
       setStatus,

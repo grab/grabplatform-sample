@@ -33,7 +33,7 @@ generate the HMAC):
 
 ${"```javascript"}
 app.post('...', async (
-  { body: { amount, currency, description, partnerGroupTxID } },
+  { body: { amount, currency, description, partnerGroupTxID }, session },
   res
 ) => {
   const {
@@ -43,6 +43,7 @@ app.post('...', async (
   } = await dbClient.config.getConfiguration();
 
   const partnerTxID = await generatePartnerTransactionID();
+  amount = parseInt(amount, undefined);
 
   const requestBody = {
     partnerGroupTxID,
@@ -64,23 +65,29 @@ app.post('...', async (
     timestamp
   });
 
-  const { data, status } = await client.post(
+  const {
+    data: { request, partnerTxID: resultTxID },
+    status
+  } = await httpClient.post(
     "/grabpay/partner/v2/charge/init",
     requestBody,
     {
       "Content-Type": "application/json",
-      Authorization: ${"`"}${"$"}{partnerID}:${"$"}{hmacDigest}${"`"},,
+      Authorization: ${"`"}${"$"}{partnerID}:${"$"}{hmacDigest}${"`"},
       Date: timestamp
     }
   );
 
-  res.status(status).json(data);
+  session.partnerTxID = partnerTxID;
+  session.request = request;
+  res.status(status).json({ request, partnerTxID: resultTxID });
 });
 ${"```"}
             
 This call will give us back:
 - **partnerTxID**: The same transaction ID generated above.
-- **request**: The request body that will need to be passed to GrabID to authorize the charge.
+- **request**: The request body that will need to be passed to GrabID to 
+authorize the charge.
 `;
 
 const confirmDescription = `
@@ -92,8 +99,8 @@ ${xgidAuthPOPDescription}
 This HMAC will be used as an extra header for the confirmation:
 
 ${"```javascript"}
-app.post('...', async ({ body: { partnerTxID } }, res) => { 
-  const accessToken = await dbClient.getAccessToken();
+app.post('...', async ({ session: { partnerTxID, puid } }, res) => { 
+  const accessToken = await dbClient.getAccessToken(puid);
   const { clientSecret } = await dbClient.config.getConfiguration();
   const date = new Date();
   
