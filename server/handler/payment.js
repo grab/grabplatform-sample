@@ -75,8 +75,8 @@ module.exports = {
         }
       ),
     confirm: (dbClient, httpClient) =>
-      handleError(async ({ session: { partnerTxID } }, res) => {
-        const accessToken = await dbClient.grabid.getAccessToken();
+      handleError(async ({ session: { partnerTxID, puid } }, res) => {
+        const accessToken = await dbClient.grabid.getAccessToken(puid);
         const { clientSecret } = await dbClient.config.getConfiguration();
         const date = new Date();
 
@@ -138,11 +138,11 @@ module.exports = {
         async (
           {
             body: { amount, currency, description, partnerGroupTxID },
-            session: { partnerTxID, ...rest }
+            session: { partnerTxID, puid }
           },
           res
         ) => {
-          const accessToken = await dbClient.grabid.getAccessToken();
+          const accessToken = await dbClient.grabid.getAccessToken(puid);
 
           const {
             clientSecret,
@@ -183,8 +183,8 @@ module.exports = {
         }
       ),
     unbind: function(dbClient, httpClient) {
-      return handleError(async ({ session: { partnerTxID } }, res) => {
-        const accessToken = await dbClient.grabid.getAccessToken();
+      return handleError(async ({ session: { partnerTxID, puid } }, res) => {
+        const accessToken = await dbClient.grabid.getAccessToken(puid);
         const { clientSecret } = await dbClient.config.getConfiguration();
         const date = new Date();
 
@@ -210,27 +210,29 @@ module.exports = {
     }
   },
   checkWallet: function(dbClient, httpClient) {
-    return handleError(async ({ body: { currency } }, res) => {
-      const accessToken = await dbClient.grabid.getAccessToken();
-      const { clientSecret } = await dbClient.config.getConfiguration();
-      const date = new Date();
+    return handleError(
+      async ({ body: { currency }, session: { puid } }, res) => {
+        const accessToken = await dbClient.grabid.getAccessToken(puid);
+        const { clientSecret } = await dbClient.config.getConfiguration();
+        const date = new Date();
 
-      const hmac = await generateHMACForXGIDAUXPOP({
-        accessToken,
-        clientSecret,
-        date
-      });
+        const hmac = await generateHMACForXGIDAUXPOP({
+          accessToken,
+          clientSecret,
+          date
+        });
 
-      const { data, status } = await httpClient.get(
-        `/grabpay/partner/v2/wallet/info?currency=${currency}`,
-        {
-          Authorization: `Bearer ${accessToken}`,
-          "X-GID-AUX-POP": hmac,
-          Date: date.toUTCString()
-        }
-      );
+        const { data, status } = await httpClient.get(
+          `/grabpay/partner/v2/wallet/info?currency=${currency}`,
+          {
+            Authorization: `Bearer ${accessToken}`,
+            "X-GID-AUX-POP": hmac,
+            Date: date.toUTCString()
+          }
+        );
 
-      res.status(status).json(data);
-    });
+        res.status(status).json(data);
+      }
+    );
   }
 };

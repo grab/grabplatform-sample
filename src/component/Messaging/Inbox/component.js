@@ -42,7 +42,7 @@ app.post('...', async (
 
   const {
     data: { partner_user_id: recipientID }
-  } = await requestTokenInfo(httpClient, {
+  } = await requestAccessTokenInfo(httpClient, {
     authorization,
     "content-type": contentType
   });

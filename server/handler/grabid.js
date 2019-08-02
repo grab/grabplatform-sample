@@ -18,7 +18,7 @@ const grabid = {
       async (
         {
           body: { clientID: client_id, code, redirectURI: redirect_uri },
-          session: { codeVerifier: code_verifier }
+          session
         },
         res
       ) => {
@@ -29,6 +29,8 @@ const grabid = {
         const {
           data: { token_endpoint }
         } = await grabid.utils.runServiceDiscovery(httpClient);
+
+        const { codeVerifier: code_verifier } = session;
 
         const {
           data: { access_token, id_token },
@@ -42,8 +44,15 @@ const grabid = {
           redirect_uri
         });
 
-        await dbClient.grabid.setAccessToken(access_token);
-        await dbClient.grabid.setIDToken(id_token);
+        const {
+          data: { partner_user_id: puid }
+        } = await grabid.utils.requestAccessTokenInfo(httpClient, {
+          authorization: `Bearer ${access_token}`
+        });
+
+        session.puid = puid;
+        await dbClient.grabid.setAccessToken(puid, access_token);
+        await dbClient.grabid.setIDToken(puid, id_token);
         res.status(status).json({ message: "Successful" });
       }
     );
@@ -102,10 +111,7 @@ const grabid = {
 
       return { data, status };
     },
-    requestTokenInfo: async (
-      httpClient,
-      { authorization, "content-type": contentType }
-    ) => {
+    requestAccessTokenInfo: async (httpClient, { authorization }) => {
       const baseURL =
         process.env.NODE_ENV === "production"
           ? GrabPartnerUrls.PRODUCTION
@@ -113,7 +119,7 @@ const grabid = {
 
       const { data, status } = await httpClient.get(
         "/grabid/v1/oauth2/access_tokens/token_info",
-        { authorization, "Content-Type": contentType },
+        { authorization, "Content-Type": "application/json" },
         { baseURL }
       );
 

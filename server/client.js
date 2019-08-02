@@ -81,12 +81,12 @@ exports.createDBClient = async function() {
       ACCESS_TOKEN: "grabid.access_token",
       CODE_VERIFIER: "grabid.code_verified",
       ID_TOKEN: "grabid.id_token"
-    },
-    grabpay: {
-      LAST_TRANSACTION_REQUEST: "grabpay.last_transaction_request",
-      LAST_TRANSACTION_ID: "grabpay.last_transaction_id"
     }
   };
+
+  function formatPartnerUserIDKey(partnerUserID, key) {
+    return `${partnerUserID}-${key}`;
+  }
 
   return {
     config: {
@@ -98,9 +98,18 @@ exports.createDBClient = async function() {
           .catch(() => ({}))
     },
     grabid: {
-      setAccessToken: accessToken => set(keys.grabid.ACCESS_TOKEN, accessToken),
-      setIDToken: idToken => set(keys.grabid.ID_TOKEN, idToken),
-      getAccessToken: () => get(keys.grabid.ACCESS_TOKEN)
+      setAccessToken: (puid, accessToken) => {
+        const key = formatPartnerUserIDKey(puid, keys.grabid.ACCESS_TOKEN);
+        return set(key, accessToken);
+      },
+      setIDToken: (puid, idToken) => {
+        const key = formatPartnerUserIDKey(puid, keys.grabid.ID_TOKEN);
+        return set(key, idToken);
+      },
+      getAccessToken: puid => {
+        const key = formatPartnerUserIDKey(puid, keys.grabid.ACCESS_TOKEN);
+        return get(formatPartnerUserIDKey(key));
+      }
     }
   };
 };

@@ -3,7 +3,7 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 const {
-  utils: { requestTokenInfo }
+  utils: { requestAccessTokenInfo }
 } = require("./grabid");
 const { generateHMACSignature, handleError } = require("./util");
 
@@ -13,7 +13,7 @@ module.exports = {
       async (
         {
           body: { recipientType = "passenger", templateID, templateParams },
-          headers: { authorization, "content-type": contentType }
+          headers: { authorization }
         },
         res
       ) => {
@@ -24,10 +24,7 @@ module.exports = {
 
         const {
           data: { partner_user_id: recipientID }
-        } = await requestTokenInfo(httpClient, {
-          authorization,
-          "content-type": contentType
-        });
+        } = await requestAccessTokenInfo(httpClient, { authorization });
 
         const requestBody = {
           recipientID,
@@ -65,7 +62,7 @@ module.exports = {
       async (
         {
           body: { recipientType = "passenger", templateID, templateParams },
-          headers: { authorization, "content-type": contentType }
+          headers: { authorization }
         },
         res
       ) => {
@@ -76,10 +73,7 @@ module.exports = {
 
         const {
           data: { partner_user_id: recipientID }
-        } = await requestTokenInfo(httpClient, {
-          authorization,
-          "content-type": contentType
-        });
+        } = await requestAccessTokenInfo(httpClient, { authorization });
 
         const requestBody = {
           recipientID,
