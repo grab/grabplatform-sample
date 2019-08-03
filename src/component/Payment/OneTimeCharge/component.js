@@ -227,23 +227,7 @@ function PrivateOneTimeCharge({
 export default compose(
   grabidPaymentHOC(),
   stageSwitcherHOC(),
-  connect(
-    ({
-      configuration,
-      repository: {
-        grabpay: {
-          oneTimeCharge: {
-            init: initOneTimeCharge,
-            confirm: confirmOneTimeCharge
-          }
-        }
-      }
-    }) => ({
-      configuration,
-      confirmOneTimeCharge,
-      initOneTimeCharge
-    })
-  ),
+  connect(({ configuration, repository }) => ({ configuration, repository })),
   withState("partnerTxID", "setPartnerTxID", ""),
   withState("request", "setRequest", ""),
   withState("status", "setStatus", ""),
@@ -255,14 +239,16 @@ export default compose(
       },
       handleError,
       handleMessage,
-      confirmOneTimeCharge,
-      initOneTimeCharge,
+      repository,
       setPartnerTxID,
       setRequest,
       setStatus
     }) => ({
       initOneTimeCharge: handleError(async () => {
-        const { partnerTxID, request } = await initOneTimeCharge({
+        const {
+          partnerTxID,
+          request
+        } = await repository.grabpay.oneTimeCharge.init({
           amount,
           currency,
           description,
@@ -274,7 +260,7 @@ export default compose(
         handleMessage(CommonMessages.grabpay.oneTimeCharge.init);
       }),
       confirmOneTimeCharge: handleError(async () => {
-        const { status } = await confirmOneTimeCharge();
+        const { status } = await repository.grabpay.oneTimeCharge.confirm();
         setStatus(status);
         handleMessage(CommonMessages.grabpay.oneTimeCharge.confirm);
       })

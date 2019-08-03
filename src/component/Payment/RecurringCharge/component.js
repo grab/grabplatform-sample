@@ -331,27 +331,7 @@ function RecurringCharge({
 export default compose(
   grabidPaymentHOC(),
   stageSwitcherHOC(),
-  connect(
-    ({
-      configuration,
-      repository: {
-        grabpay: {
-          checkWallet,
-          recurringCharge: {
-            bind: bindCharge,
-            charge: chargeUser,
-            unbind: unbindCharge
-          }
-        }
-      }
-    }) => ({
-      configuration,
-      bindCharge,
-      chargeUser,
-      checkWallet,
-      unbindCharge
-    })
-  ),
+  connect(({ configuration, repository }) => ({ configuration, repository })),
   withState("partnerTxID", "setPartnerTxID", ""),
   withState("request", "setRequest", ""),
   withState("status", "setStatus", ""),
@@ -359,13 +339,13 @@ export default compose(
   withProps(
     ({
       configuration: { currency },
-      checkWallet,
       handleError,
       handleMessage,
+      repository,
       setWallet
     }) => ({
       checkWallet: handleError(async () => {
-        const wallet = await checkWallet({ currency });
+        const wallet = await repository.grabpay.checkWallet({ currency });
         setWallet(wallet);
         handleMessage(`Checked wallet successfully`);
       })
@@ -378,24 +358,26 @@ export default compose(
         currency,
         transaction: { amount, description, partnerGroupTxID }
       },
-      bindCharge,
-      chargeUser,
       checkWallet,
       handleError,
       handleMessage,
+      repository,
       setPartnerTxID,
       setRequest,
-      setStatus,
-      unbindCharge
+      setStatus
     }) => ({
       bindCharge: handleError(async () => {
-        const { partnerTxID, request } = await bindCharge({ countryCode });
+        const {
+          partnerTxID,
+          request
+        } = await repository.grabpay.recurringCharge.bind({ countryCode });
+
         setPartnerTxID(partnerTxID);
         setRequest(request);
         handleMessage(CommonMessages.grabpay.recurringCharge.bind);
       }),
       chargeUser: handleError(async () => {
-        const { status } = await chargeUser({
+        const { status } = await repository.grabpay.recurringCharge.charge({
           amount,
           currency,
           description,
@@ -407,7 +389,7 @@ export default compose(
         await checkWallet();
       }),
       unbindCharge: handleError(async () => {
-        await unbindCharge();
+        await repository.grabpay.recurringCharge.unbind();
         handleMessage(CommonMessages.grabpay.recurringCharge.unbind);
       })
     })

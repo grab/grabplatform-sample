@@ -121,38 +121,28 @@ export const GrabIDLogin = compose(
   handleMessageHOC(),
   handleErrorHOC(),
   copyToClipboardHOC(),
-  connect(
-    ({
-      configuration,
-      repository: {
-        grabid: {
-          nonPOP: { authorize, requestToken },
-          getGrabIDResult
-        },
-        navigation: { reloadPage }
-      }
-    }) => ({
-      configuration,
-      authorize,
-      getGrabIDResult,
-      reloadPage,
-      requestToken
-    })
-  ),
+  connect(({ configuration, repository }) => ({ configuration, repository })),
   withProps(
     ({
       configuration: { clientID, countryCode },
-      authorize,
       handleError,
       handleMessage,
-      reloadPage,
-      requestToken,
+      repository,
       makeAuthorizationRequest = handleError(async scopes => {
-        await authorize({ clientID, countryCode, scopes });
+        await repository.grabid.nonPOP.authorize({
+          clientID,
+          countryCode,
+          scopes
+        });
       }),
       makeTokenRequest = handleError(async scopes => {
-        await requestToken({ clientID, countryCode, scopes });
-        await reloadPage();
+        await repository.grabid.nonPOP.requestToken({
+          clientID,
+          countryCode,
+          scopes
+        });
+
+        await repository.navigation.reloadPage();
         handleMessage(CommonMessages.grabid.requestToken);
       })
     }) => ({ makeAuthorizationRequest, makeTokenRequest })
@@ -166,17 +156,17 @@ export const GrabIDLogin = compose(
   withState("state", "setState", ""),
   lifecycle({
     async componentDidMount() {
-      const {
-        getGrabIDResult,
-        setAccessToken,
-        setIDToken,
-        setState
-      } = this.props;
+      const { repository, setAccessToken, setIDToken, setState } = this.props;
 
-      const { accessToken, idToken, state } = await getGrabIDResult();
-      setAccessToken(accessToken || "");
-      setIDToken(idToken || "");
-      setState(state || "");
+      const {
+        accessToken = "",
+        idToken = "",
+        state = ""
+      } = await repository.grabid.getGrabIDResult();
+
+      setAccessToken(accessToken);
+      setIDToken(idToken);
+      setState(state);
     }
   })
 )(PrivateGrabIDLogin);
@@ -194,13 +184,7 @@ function PrivateGrabIDRedirect({ returnURI }) {
 
 export const GrabIDNonPOPRedirect = compose(
   handleErrorHOC(),
-  connect(
-    ({
-      repository: {
-        grabid: { getLoginReturnURI, handleAuthorizationCodeFlowResponse }
-      }
-    }) => ({ getLoginReturnURI, handleAuthorizationCodeFlowResponse })
-  ),
+  connect(({ repository }) => ({ repository })),
   withProps(({ handleAuthorizationCodeFlowResponse, handleError }) => ({
     handleAuthorizationCodeFlowResponse: handleError(
       handleAuthorizationCodeFlowResponse
@@ -209,14 +193,9 @@ export const GrabIDNonPOPRedirect = compose(
   withState("returnURI", "setReturnURI", ""),
   lifecycle({
     async componentDidMount() {
-      const {
-        getLoginReturnURI,
-        handleAuthorizationCodeFlowResponse,
-        setReturnURI
-      } = this.props;
-
-      await handleAuthorizationCodeFlowResponse();
-      const returnURI = await getLoginReturnURI();
+      const { repository, setReturnURI } = this.props;
+      await repository.grabid.handleAuthorizationCodeFlowResponse();
+      const returnURI = await repository.grabid.getLoginReturnURI();
       setReturnURI(returnURI);
     }
   })
@@ -225,25 +204,13 @@ export const GrabIDNonPOPRedirect = compose(
 export const GrabIDPOPRedirect = compose(
   withProps(({ location: { search } }) => parse(search.substr(1))),
   handleErrorHOC(),
-  connect(
-    ({
-      repository: {
-        grabid: { getLoginReturnURI, persistAuthorizationCode }
-      }
-    }) => ({ getLoginReturnURI, persistAuthorizationCode })
-  ),
+  connect(({ repository }) => ({ repository })),
   withState("returnURI", "setReturnURI", ""),
   lifecycle({
     async componentDidMount() {
-      const {
-        code,
-        getLoginReturnURI,
-        persistAuthorizationCode,
-        setReturnURI
-      } = this.props;
-
-      await persistAuthorizationCode(code);
-      const returnURI = await getLoginReturnURI();
+      const { code, repository, setReturnURI } = this.props;
+      await repository.grabid.persistAuthorizationCode(code);
+      const returnURI = await repository.grabid.getLoginReturnURI();
       setReturnURI(returnURI);
     }
   })

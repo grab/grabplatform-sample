@@ -20,12 +20,10 @@ function PrivateStageSwitcher({ currentStage, stageCount, setStage }) {
 }
 
 export default compose(
-  connect(({ repository: { navigation: { overrideQuery } } }) => ({
-    overrideQuery
-  })),
-  withProps(({ overrideQuery, setStage }) => ({
+  connect(({ repository }) => ({ repository })),
+  withProps(({ repository, setStage }) => ({
     setStage: async stage => {
-      await overrideQuery({ stage: stage + 1 });
+      await repository.navigation.overrideQuery({ stage: stage + 1 });
       setStage(stage);
     }
   }))

@@ -57,7 +57,7 @@ export const ConfigurationActionCreators = {
     payload: partnerID,
     type: ConfigurationActions.SET_PARTNER_ID
   }),
-  triggergetConfigurationFromPersistence: () => ({
+  triggerGetConfigurationFromPersistence: () => ({
     payload: async (
       dispatch,
       getState,

@@ -62,17 +62,13 @@ export default compose(
   handleMessageHOC(),
   handleErrorHOC(),
   stageSwitcherHOC(),
-  connect(({ repository: { loyalty: { getRewardsTier } } }) => ({
-    getRewardsTier
-  })),
+  connect(({ repository }) => ({ repository })),
   withState("rewardsTier", "setRewardsTier", ""),
-  withProps(
-    ({ getRewardsTier, handleError, handleMessage, setRewardsTier }) => ({
-      getRewardsTier: handleError(async () => {
-        const rewardsTier = await getRewardsTier();
-        setRewardsTier(rewardsTier);
-        handleMessage(CommonMessages.loyalty.rewardsTier);
-      })
+  withProps(({ handleError, handleMessage, repository, setRewardsTier }) => ({
+    getRewardsTier: handleError(async () => {
+      const rewardsTier = await repository.loyalty.getRewardsTier();
+      setRewardsTier(rewardsTier);
+      handleMessage(CommonMessages.loyalty.rewardsTier);
     })
-  )
+  }))
 )(PrivateRewardsTier);

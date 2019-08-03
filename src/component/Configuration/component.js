@@ -240,14 +240,7 @@ function PrivateConfiguration({
 export default compose(
   handleMessageHOC(),
   handleErrorHOC(),
-  connect(
-    ({
-      configuration,
-      repository: {
-        configuration: { persistConfiguration }
-      }
-    }) => ({ configuration, persistConfiguration })
-  ),
+  connect(({ configuration, repository }) => ({ configuration, repository })),
   withState("configurationType", "setConfigurationType", "general"),
   withProps(
     ({
@@ -255,10 +248,10 @@ export default compose(
       closeConfiguration,
       handleError,
       handleMessage,
-      persistConfiguration
+      repository
     }) => ({
       persistConfiguration: handleError(async () => {
-        await persistConfiguration(configuration);
+        await repository.configuration.persistConfiguration(configuration);
         closeConfiguration();
         handleMessage(CommonMessages.configuration.setConfiguration);
       })

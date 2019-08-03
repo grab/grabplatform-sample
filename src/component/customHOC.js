@@ -53,31 +53,17 @@ export function grabidPaymentHOC() {
   return compose(
     handleMessageHOC(),
     handleErrorHOC(),
-    connect(
-      ({
-        configuration,
-        repository: {
-          grabid: {
-            payment: { authorize, requestToken }
-          }
-        }
-      }) => ({
-        configuration,
-        authorize,
-        requestToken
-      })
-    ),
+    connect(({ configuration, repository }) => ({ configuration, repository })),
     withProps(
       ({
         configuration: { clientID, currency, countryCode },
-        authorize,
         handleError,
         handleMessage,
-        requestToken
+        repository
       }) => ({
         /** GrabPay requires an additional request parameter. */
         makeAuthorizationRequest: handleError(async scopes => {
-          await authorize({
+          await repository.grabid.payment.authorize({
             clientID,
             countryCode,
             currency,
@@ -86,7 +72,7 @@ export function grabidPaymentHOC() {
         }),
         /** GrabPay requires an additional request parameter. */
         makeTokenRequest: handleError(async () => {
-          await requestToken({ clientID });
+          await repository.grabid.payment.requestToken({ clientID });
           handleMessage(CommonMessages.grabid.requestToken);
         })
       })

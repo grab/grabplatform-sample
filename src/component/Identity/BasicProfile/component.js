@@ -70,18 +70,13 @@ export default compose(
   handleMessageHOC(),
   handleErrorHOC(),
   stageSwitcherHOC(),
-  connect(({ repository: { identity: { getBasicProfile } } }) => ({
-    getBasicProfile
-  })),
-
+  connect(({ repository }) => ({ repository })),
   withState("basicProfile", "setBasicProfile", {}),
-  withProps(
-    ({ getBasicProfile, handleError, handleMessage, setBasicProfile }) => ({
-      getBasicProfile: handleError(async () => {
-        const profile = await getBasicProfile();
-        setBasicProfile(profile);
-        handleMessage(CommonMessages.identity.basicProfile);
-      })
+  withProps(({ handleError, handleMessage, repository, setBasicProfile }) => ({
+    getBasicProfile: handleError(async () => {
+      const profile = await repository.identity.getBasicProfile();
+      setBasicProfile(profile);
+      handleMessage(CommonMessages.identity.basicProfile);
     })
-  )
+  }))
 )(PrivateBasicProfile);

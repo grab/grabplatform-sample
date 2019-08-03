@@ -173,20 +173,18 @@ export default compose(
   handleErrorHOC(),
   messagingTemplateHOC(templates),
   stageSwitcherHOC(),
-  connect(({ repository: { messaging: { sendInboxMessage } } }) => ({
-    sendInboxMessage
-  })),
+  connect(({ repository }) => ({ repository })),
   withState("messageID", "setMessageID", ""),
   withProps(
     ({
       handleError,
       handleMessage,
-      sendInboxMessage,
+      repository,
       setMessageID,
       templateParams: { id: templateID, ...templateParams }
     }) => ({
       sendInboxMessage: handleError(async () => {
-        const { messageID } = await sendInboxMessage({
+        const { messageID } = await repository.messaging.sendInboxMessage({
           templateID,
           templateParams
         });

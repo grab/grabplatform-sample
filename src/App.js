@@ -93,28 +93,23 @@ const AppContent = compose(
   withProps(({ location: { hash } }) => querystring.parse(hash.substr(1))),
   withProps(({ id_token: idToken }) => ({ idToken })),
   connect(
-    ({
-      repository: {
-        grabid: { persistInitialIDToken },
-        navigation: { overrideQuery, reloadPage }
-      }
-    }) => ({ overrideQuery, persistInitialIDToken, reloadPage }),
+    ({ repository }) => ({ repository }),
     dispatch => ({
       clearEverything: () =>
         dispatch(CommonActionCreators.triggerClearEverything()),
       getConfigurationFromPersistence: () =>
         dispatch(
-          ConfigurationActionCreators.triggergetConfigurationFromPersistence()
+          ConfigurationActionCreators.triggerGetConfigurationFromPersistence()
         )
     })
   ),
-  withProps(({ overrideQuery, reloadPage }) => ({
+  withProps(({ repository }) => ({
     toggleDocumentation: async () => {
-      await overrideQuery(({ documentation }) => ({
+      await repository.navigation.overrideQuery(({ documentation }) => ({
         documentation: documentation !== "true"
       }));
 
-      await reloadPage();
+      await repository.navigation.reloadPage();
     }
   })),
   withState("showConfiguration", "setShowConfiguration", false),
@@ -123,10 +118,10 @@ const AppContent = compose(
       const {
         getConfigurationFromPersistence,
         idToken,
-        persistInitialIDToken
+        repository
       } = this.props;
 
-      await persistInitialIDToken(idToken);
+      await repository.grabid.persistInitialIDToken(idToken);
       await getConfigurationFromPersistence();
     }
   })
