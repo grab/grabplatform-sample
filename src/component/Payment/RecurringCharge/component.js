@@ -15,7 +15,7 @@ import Transaction from "component/Payment/Transaction/component";
 import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
 import { connect } from "react-redux";
-import { compose, withProps, withState } from "recompose";
+import { compose, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import "./style.scss";
 
@@ -331,67 +331,64 @@ function RecurringCharge({
 export default compose(
   grabidPaymentHOC(),
   stageSwitcherHOC(),
-  connect(({ configuration, repository }) => ({ configuration, repository })),
   withState("partnerTxID", "setPartnerTxID", ""),
   withState("request", "setRequest", ""),
   withState("status", "setStatus", ""),
   withState("wallet", "setWallet", {}),
-  withProps(
-    ({
-      configuration: { currency },
-      handleError,
-      handleMessage,
-      repository,
-      setWallet
-    }) => ({
-      checkWallet: handleError(async () => {
+  connect(
+    (
+      {
+        configuration: {
+          countryCode,
+          currency,
+          transaction: { amount, description, partnerGroupTxID }
+        },
+        repository
+      },
+      {
+        handleError,
+        handleMessage,
+        setPartnerTxID,
+        setRequest,
+        setStatus,
+        setWallet
+      }
+    ) => {
+      const checkWallet = handleError(async () => {
         const wallet = await repository.grabpay.checkWallet({ currency });
         setWallet(wallet);
         handleMessage(`Checked wallet successfully`);
-      })
-    })
-  ),
-  withProps(
-    ({
-      configuration: {
-        countryCode,
-        currency,
-        transaction: { amount, description, partnerGroupTxID }
-      },
-      checkWallet,
-      handleError,
-      handleMessage,
-      repository,
-      setPartnerTxID,
-      setRequest,
-      setStatus
-    }) => ({
-      bindCharge: handleError(async () => {
-        const {
-          partnerTxID,
-          request
-        } = await repository.grabpay.recurringCharge.bind({ countryCode });
+      });
 
-        setPartnerTxID(partnerTxID);
-        setRequest(request);
-        handleMessage(CommonMessages.grabpay.recurringCharge.bind);
-      }),
-      chargeUser: handleError(async () => {
-        const { status } = await repository.grabpay.recurringCharge.charge({
-          amount,
-          currency,
-          description,
-          partnerGroupTxID
-        });
+      return {
+        checkWallet,
+        bindCharge: handleError(async () => {
+          const {
+            partnerTxID,
+            request
+          } = await repository.grabpay.recurringCharge.bind({ countryCode });
 
-        setStatus(status);
-        handleMessage(CommonMessages.grabpay.recurringCharge.charge);
-        await checkWallet();
-      }),
-      unbindCharge: handleError(async () => {
-        await repository.grabpay.recurringCharge.unbind();
-        handleMessage(CommonMessages.grabpay.recurringCharge.unbind);
-      })
-    })
+          setPartnerTxID(partnerTxID);
+          setRequest(request);
+          handleMessage(CommonMessages.grabpay.recurringCharge.bind);
+        }),
+        chargeUser: handleError(async () => {
+          const { status } = await repository.grabpay.recurringCharge.charge({
+            amount,
+            currency,
+            description,
+            partnerGroupTxID
+          });
+
+          setStatus(status);
+          handleMessage(CommonMessages.grabpay.recurringCharge.charge);
+          await checkWallet();
+        }),
+        unbindCharge: handleError(async () => {
+          await repository.grabpay.recurringCharge.unbind();
+          handleMessage(CommonMessages.grabpay.recurringCharge.unbind);
+        })
+      };
+    }
   )
 )(RecurringCharge);

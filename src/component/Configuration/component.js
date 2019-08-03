@@ -1,7 +1,7 @@
 import { handleErrorHOC, handleMessageHOC } from "component/customHOC";
 import React from "react";
 import { connect } from "react-redux";
-import { compose, lifecycle, withProps, withState } from "recompose";
+import { compose, lifecycle, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import { ConfigurationActionCreators } from "redux/action/configuration";
 import "./style.scss";
@@ -240,16 +240,12 @@ function PrivateConfiguration({
 export default compose(
   handleMessageHOC(),
   handleErrorHOC(),
-  connect(({ configuration, repository }) => ({ configuration, repository })),
-  withState("configurationType", "setConfigurationType", "general"),
-  withProps(
-    ({
+  connect(
+    (
+      { configuration, repository },
+      { closeConfiguration, handleError, handleMessage }
+    ) => ({
       configuration,
-      closeConfiguration,
-      handleError,
-      handleMessage,
-      repository
-    }) => ({
       persistConfiguration: handleError(async () => {
         await repository.configuration.persistConfiguration(configuration);
         closeConfiguration();
@@ -257,6 +253,7 @@ export default compose(
       })
     })
   ),
+  withState("configurationType", "setConfigurationType", "general"),
   lifecycle(
     (() => {
       let keyHandler = null;

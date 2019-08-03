@@ -15,7 +15,7 @@ import Template from "component/Messaging/Template/component";
 import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
 import { connect } from "react-redux";
-import { compose, withProps, withState } from "recompose";
+import { compose, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import { environment } from "utils";
 import "./style.scss";
@@ -224,16 +224,17 @@ export default compose(
   handleErrorHOC(),
   messagingTemplateHOC(templates),
   stageSwitcherHOC(),
-  connect(({ repository }) => ({ repository })),
   withState("messageID", "setMessageID", ""),
-  withProps(
-    ({
-      handleError,
-      handleMessage,
-      repository,
-      setMessageID,
-      templateParams: { id: templateID, ...templateParams }
-    }) => ({
+  connect(
+    (
+      { repository },
+      {
+        handleError,
+        handleMessage,
+        setMessageID,
+        templateParams: { id: templateID, ...templateParams }
+      }
+    ) => ({
       sendPushMessage: handleError(async () => {
         const { messageID } = await repository.messaging.sendPushMessage({
           templateID,

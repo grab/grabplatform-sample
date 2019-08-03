@@ -11,7 +11,7 @@ import { GrabIDLogin } from "component/GrabID/component";
 import StageSwitch from "component/StageSwitcher/component";
 import React from "react";
 import { connect } from "react-redux";
-import { compose, withProps, withState } from "recompose";
+import { compose, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import "./style.scss";
 
@@ -70,13 +70,14 @@ export default compose(
   handleMessageHOC(),
   handleErrorHOC(),
   stageSwitcherHOC(),
-  connect(({ repository }) => ({ repository })),
   withState("basicProfile", "setBasicProfile", {}),
-  withProps(({ handleError, handleMessage, repository, setBasicProfile }) => ({
-    getBasicProfile: handleError(async () => {
-      const profile = await repository.identity.getBasicProfile();
-      setBasicProfile(profile);
-      handleMessage(CommonMessages.identity.basicProfile);
+  connect(
+    ({ repository }, { handleError, handleMessage, setBasicProfile }) => ({
+      getBasicProfile: handleError(async () => {
+        const profile = await repository.identity.getBasicProfile();
+        setBasicProfile(profile);
+        handleMessage(CommonMessages.identity.basicProfile);
+      })
     })
-  }))
+  )
 )(PrivateBasicProfile);

@@ -11,7 +11,7 @@ import { GrabIDLogin } from "component/GrabID/component";
 import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
 import { connect } from "react-redux";
-import { compose, withProps, withState } from "recompose";
+import { compose, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import "./style.scss";
 
@@ -62,9 +62,8 @@ export default compose(
   handleMessageHOC(),
   handleErrorHOC(),
   stageSwitcherHOC(),
-  connect(({ repository }) => ({ repository })),
   withState("rewardsTier", "setRewardsTier", ""),
-  withProps(({ handleError, handleMessage, repository, setRewardsTier }) => ({
+  connect(({ repository }, { handleError, handleMessage, setRewardsTier }) => ({
     getRewardsTier: handleError(async () => {
       const rewardsTier = await repository.loyalty.getRewardsTier();
       setRewardsTier(rewardsTier);

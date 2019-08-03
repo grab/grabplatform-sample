@@ -93,7 +93,16 @@ const AppContent = compose(
   withProps(({ location: { hash } }) => querystring.parse(hash.substr(1))),
   withProps(({ id_token: idToken }) => ({ idToken })),
   connect(
-    ({ repository }) => ({ repository }),
+    ({ repository }) => ({
+      repository,
+      toggleDocumentation: async () => {
+        await repository.navigation.overrideQuery(({ documentation }) => ({
+          documentation: documentation !== "true"
+        }));
+
+        await repository.navigation.reloadPage();
+      }
+    }),
     dispatch => ({
       clearEverything: () =>
         dispatch(CommonActionCreators.triggerClearEverything()),
@@ -103,15 +112,6 @@ const AppContent = compose(
         )
     })
   ),
-  withProps(({ repository }) => ({
-    toggleDocumentation: async () => {
-      await repository.navigation.overrideQuery(({ documentation }) => ({
-        documentation: documentation !== "true"
-      }));
-
-      await repository.navigation.reloadPage();
-    }
-  })),
   withState("showConfiguration", "setShowConfiguration", false),
   lifecycle({
     async componentDidMount() {

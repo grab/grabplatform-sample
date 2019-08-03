@@ -15,7 +15,7 @@ import Transaction from "component/Payment/Transaction/component";
 import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
 import { connect } from "react-redux";
-import { compose, withProps, withState } from "recompose";
+import { compose, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import "./style.scss";
 
@@ -227,23 +227,20 @@ function PrivateOneTimeCharge({
 export default compose(
   grabidPaymentHOC(),
   stageSwitcherHOC(),
-  connect(({ configuration, repository }) => ({ configuration, repository })),
   withState("partnerTxID", "setPartnerTxID", ""),
   withState("request", "setRequest", ""),
   withState("status", "setStatus", ""),
-  withProps(
-    ({
-      configuration: {
-        currency,
-        transaction: { amount, description, partnerGroupTxID }
+  connect(
+    (
+      {
+        configuration: {
+          currency,
+          transaction: { amount, description, partnerGroupTxID }
+        },
+        repository
       },
-      handleError,
-      handleMessage,
-      repository,
-      setPartnerTxID,
-      setRequest,
-      setStatus
-    }) => ({
+      { handleError, handleMessage, setPartnerTxID, setRequest, setStatus }
+    ) => ({
       initOneTimeCharge: handleError(async () => {
         const {
           partnerTxID,

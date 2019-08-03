@@ -75,7 +75,10 @@ function PrivateGrabIDLogin({
             ))}
         </div>
 
-        <div className="authorize" onClick={makeAuthorizationRequest}>
+        <div
+          className="authorize"
+          onClick={() => makeAuthorizationRequest(scopes)}
+        >
           Authorize
         </div>
       </>
@@ -109,7 +112,7 @@ function PrivateGrabIDLogin({
       )}
 
       <>
-        <div className="request-token" onClick={makeTokenRequest}>
+        <div className="request-token" onClick={() => makeTokenRequest(scopes)}>
           Request token
         </div>
       </>
@@ -121,36 +124,32 @@ export const GrabIDLogin = compose(
   handleMessageHOC(),
   handleErrorHOC(),
   copyToClipboardHOC(),
-  connect(({ configuration, repository }) => ({ configuration, repository })),
-  withProps(
-    ({
-      configuration: { clientID, countryCode },
-      handleError,
-      handleMessage,
-      repository,
-      makeAuthorizationRequest = handleError(async scopes => {
-        await repository.grabid.nonPOP.authorize({
-          clientID,
-          countryCode,
-          scopes
-        });
-      }),
-      makeTokenRequest = handleError(async scopes => {
-        await repository.grabid.nonPOP.requestToken({
-          clientID,
-          countryCode,
-          scopes
-        });
+  connect(
+    (
+      { configuration: { clientID, countryCode }, repository },
+      {
+        handleError,
+        handleMessage,
+        makeAuthorizationRequest = handleError(async scopes => {
+          await repository.grabid.nonPOP.authorize({
+            clientID,
+            countryCode,
+            scopes
+          });
+        }),
+        makeTokenRequest = handleError(async scopes => {
+          await repository.grabid.nonPOP.requestToken({
+            clientID,
+            countryCode,
+            scopes
+          });
 
-        await repository.navigation.reloadPage();
-        handleMessage(CommonMessages.grabid.requestToken);
-      })
-    }) => ({ makeAuthorizationRequest, makeTokenRequest })
+          await repository.navigation.reloadPage();
+          handleMessage(CommonMessages.grabid.requestToken);
+        })
+      }
+    ) => ({ makeAuthorizationRequest, makeTokenRequest, repository })
   ),
-  withProps(({ scopes, makeAuthorizationRequest, makeTokenRequest }) => ({
-    makeAuthorizationRequest: () => makeAuthorizationRequest(scopes),
-    makeTokenRequest: () => makeTokenRequest(scopes)
-  })),
   withState("accessToken", "setAccessToken", ""),
   withState("idToken", "setIDToken", ""),
   withState("state", "setState", ""),
@@ -185,11 +184,6 @@ function PrivateGrabIDRedirect({ returnURI }) {
 export const GrabIDNonPOPRedirect = compose(
   handleErrorHOC(),
   connect(({ repository }) => ({ repository })),
-  withProps(({ handleAuthorizationCodeFlowResponse, handleError }) => ({
-    handleAuthorizationCodeFlowResponse: handleError(
-      handleAuthorizationCodeFlowResponse
-    )
-  })),
   withState("returnURI", "setReturnURI", ""),
   lifecycle({
     async componentDidMount() {
