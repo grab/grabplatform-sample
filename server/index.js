@@ -21,9 +21,9 @@ const payment = require("./handler/payment");
 const messaging = require("./handler/messaging");
 const port = 8000;
 
-function requireTruthy(object) {
+function requireTruthy(key, object) {
   if (!object) {
-    throw new Error(`Value is not truthy`);
+    throw new Error(`Value ${key} is not truthy`);
   }
 
   return object;
@@ -37,10 +37,13 @@ async function initialize() {
   });
 
   const httpClient = await createHTTPClient({
-    env: requireTruthy(process.env.NODE_ENV)
+    env: requireTruthy("NODE_ENV", process.env.NODE_ENV)
   });
 
-  app.use(cors({ origin: requireTruthy(process.env.CLIENT_URL) }));
+  app.use(
+    cors({ origin: requireTruthy("CLIENT_URL", process.env.CLIENT_URL) })
+  );
+
   app.use(express.json());
 
   app.use(

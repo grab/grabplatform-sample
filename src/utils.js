@@ -1,16 +1,17 @@
 import GrabID from "@grab-id/grab-id-client";
 
-function requireTruthy(object) {
+function requireTruthy(key, object) {
   if (!object) {
-    throw new Error(`Value is not truthy`);
+    throw new Error(`Value ${key} is not truthy`);
   }
 
   return object;
 }
 
 export function environment() {
-  return requireTruthy(process.env.REACT_APP_NODE_ENV) === "production" ||
-    requireTruthy(process.env.NODE_ENV) === "production"
+  return requireTruthy("REACT_APP_NODE_ENV", process.env.REACT_APP_NODE_ENV) ===
+    "production" ||
+    requireTruthy("NODE_ENV", process.env.NODE_ENV) === "production"
     ? "production"
     : "development";
 }
@@ -29,7 +30,11 @@ export async function makeRequest(
   window,
   { additionalHeaders = {}, body, method, path }
 ) {
-  const baseURL = requireTruthy(process.env.REACT_APP_SERVER_URL);
+  const baseURL = requireTruthy(
+    "REACT_APP_SERVER_URL",
+    process.env.REACT_APP_SERVER_URL
+  );
+
   const { accessToken } = GrabID.getResult();
 
   const config = {
