@@ -37,8 +37,6 @@ exports.handleError = function(requestHandler) {
     try {
       await requestHandler(req, res);
     } catch (e) {
-      console.log(e);
-
       const {
         response: {
           data: { message },

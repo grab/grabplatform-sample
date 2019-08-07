@@ -52,7 +52,7 @@ axios.interceptors.response.use(
       console.log("--");
     } else console.error(error);
 
-    return error;
+    throw error;
   }
 );
 
