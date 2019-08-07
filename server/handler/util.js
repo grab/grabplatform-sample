@@ -38,9 +38,9 @@ exports.handleError = function(requestHandler) {
       await requestHandler(req, res);
     } catch (e) {
       const {
-        response: {
-          data: { message },
-          status
+        message: errorMessage,
+        response: { data: { message = errorMessage }, status = 500 } = {
+          data: {}
         }
       } = e;
 
