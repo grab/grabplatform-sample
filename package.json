@@ -33,6 +33,7 @@
     "start:prd:fe": "HTTPS=true HOST=grabplatform.grab.com REACT_APP_NODE_ENV=production NODE_PATH=\"src/\" react-scripts start",
     "start:prd:be": "NODE_ENV=production nodemon",
     "start:prd": "concurrently \"yarn start:prd:fe\" \"yarn start:prd:be\"",
+    "build:set-env": "cross-env",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
