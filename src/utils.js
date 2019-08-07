@@ -10,20 +10,24 @@ function requireTruthy(key, object) {
 
 export function environment() {
   return requireTruthy("REACT_APP_NODE_ENV", process.env.REACT_APP_NODE_ENV) ===
-    "production" ||
+    "production" &&
     requireTruthy("NODE_ENV", process.env.NODE_ENV) === "production"
     ? "production"
     : "development";
 }
 
+/** We need to make sure to exclude the root path. */
 export function getRelativeURLPath(url) {
   const a = document.createElement("a");
+  const rootURLPath = process.env.REACT_APP_ROOT_PATH || "";
   a.href = url;
-  return `${a.pathname}${a.search}`;
+  return `${a.pathname.substr(rootURLPath.length)}${a.search}`;
 }
 
+/** We need to make sure to include the root path. */
 export function getAbsoluteURLPath(window, relativeURL) {
-  return `${window.location.origin}${relativeURL}`;
+  const rootURLPath = process.env.REACT_APP_ROOT_PATH || "";
+  return `${window.location.origin}${rootURLPath}${relativeURL}`;
 }
 
 export async function makeRequest(

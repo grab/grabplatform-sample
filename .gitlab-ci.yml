@@ -2,8 +2,10 @@ stages:
   - build
   - deploy
 
-build:
+build-stg:
   stage: build
+  environment:
+    name: staging
   image: node:latest
   cache:
     paths:
@@ -14,18 +16,24 @@ build:
     expire_in: 5 minutes
   script:
     - npm install
-    - PUBLIC_URL=$PUBLIC_URL REACT_APP_ROOT_PATH=$PUBLIC_URL REACT_APP_SERVER_URL=$SERVER_URL npm run build
+    - PUBLIC_URL=$PUBLIC_URL
+      REACT_APP_NODE_ENV=development
+      REACT_APP_ROOT_PATH=$PUBLIC_URL
+      REACT_APP_SERVER_URL=$SERVER_URL
+      npm run build
 
-deploy-to-s3:
+deploy-to-s3-stg:
   stage: deploy
+  environment:
+    name: staging
   dependencies:
-    - build
+    - build-stg
   image: python:latest
   script:
     - pip install awscli
     - aws configure set profile.pe.aws_access_key_id $AWS_ACCESS_KEY_ID
     - aws configure set profile.pe.aws_secret_access_key $AWS_SECRET_ACCESS_KEY
     - aws configure set profile.pe.region $AWS_REGION
-    - aws s3 sync ./build s3://$AWS_S3_BUCKET --profile pe
+    - aws s3 sync ./build s3://$AWS_S3_BUCKET_STG --profile pe
   only:
     - development
