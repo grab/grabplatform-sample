@@ -34,11 +34,7 @@ export async function makeRequest(
   window,
   { additionalHeaders = {}, body, method, path }
 ) {
-  const baseURL = requireTruthy(
-    "REACT_APP_SERVER_URL",
-    process.env.REACT_APP_SERVER_URL
-  );
-
+  const baseURL = process.env.REACT_APP_SERVER_URL || "";
   const { accessToken } = GrabID.getResult();
 
   const config = {

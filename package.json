@@ -64,5 +64,7 @@
     "nodemon": "^1.19.1",
     "typescript": "^3.5.2"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "host": "grabplatform.stg-myteksi.com",
+  "proxy": "https://grabplatform.stg-myteksi.com:8000"
 }

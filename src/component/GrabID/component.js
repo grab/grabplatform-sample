@@ -158,14 +158,14 @@ export const GrabIDLogin = compose(
       const { repository, setAccessToken, setIDToken, setState } = this.props;
 
       const {
-        accessToken = "",
-        idToken = "",
-        state = ""
+        accessToken,
+        idToken,
+        state
       } = await repository.grabid.getGrabIDResult();
 
-      setAccessToken(accessToken);
-      setIDToken(idToken);
-      setState(state);
+      setAccessToken(accessToken || "");
+      setIDToken(idToken || "");
+      setState(state || "");
     }
   })
 )(PrivateGrabIDLogin);
