@@ -1,8 +1,16 @@
 import GrabID from "@grab-id/grab-id-client";
 
+function requireTruthy(object) {
+  if (!object) {
+    throw new Error(`Value is not truthy`);
+  }
+
+  return object;
+}
+
 export function environment() {
-  return process.env.REACT_APP_NODE_ENV === "production" ||
-    process.env.NODE_ENV === "production"
+  return requireTruthy(process.env.REACT_APP_NODE_ENV) === "production" ||
+    requireTruthy(process.env.NODE_ENV) === "production"
     ? "production"
     : "development";
 }
@@ -21,6 +29,7 @@ export async function makeRequest(
   window,
   { additionalHeaders = {}, body, method, path }
 ) {
+  const baseURL = requireTruthy(process.env.REACT_APP_SERVER_URL);
   const { accessToken } = GrabID.getResult();
 
   const config = {
@@ -34,7 +43,7 @@ export async function makeRequest(
     mode: "cors"
   };
 
-  const response = await window.fetch(path, config);
+  const response = await window.fetch(`${baseURL}${path}`, config);
   if (response.status === 204) return {};
   const json = await response.json();
   if (!`${response.status}`.startsWith("2")) throw json;

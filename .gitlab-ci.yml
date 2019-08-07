@@ -14,7 +14,7 @@ build:
     expire_in: 5 minutes
   script:
     - npm install
-    - PUBLIC_URL=$PUBLIC_URL REACT_APP_ROOT_URL_PATH=$PUBLIC_URL npm run build
+    - PUBLIC_URL=$PUBLIC_URL REACT_APP_ROOT_PATH=$PUBLIC_URL REACT_APP_SERVER_URL=$SERVER_URL npm run build
 
 deploy-to-s3:
   stage: deploy

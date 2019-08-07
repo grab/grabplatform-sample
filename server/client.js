@@ -56,9 +56,9 @@ axios.interceptors.response.use(
   }
 );
 
-exports.createHTTPClient = function() {
+exports.createHTTPClient = function({ env = "development" }) {
   const baseURL =
-    process.env.NODE_ENV === "production"
+    env === "production"
       ? "https://partner-api.grab.com"
       : "https://partner-api.stg-myteksi.com";
 
@@ -81,13 +81,8 @@ exports.createHTTPClient = function() {
   };
 };
 
-exports.createDBClient = async function() {
-  const redis = await createRedisClient({
-    host: process.env.REDIS_HOST,
-    port: parseInt(process.env.REDIS_PORT, undefined) || undefined,
-    url: process.env.REDIS_URL
-  });
-
+exports.createDBClient = async function({ host, port, url }) {
+  const redis = await createRedisClient({ host, port, url });
   const baseGet = promisify(redis.get).bind(redis);
   const baseSet = promisify(redis.set).bind(redis);
   const get = async k => baseGet(`${process.env.NODE_ENV}-${k}`);

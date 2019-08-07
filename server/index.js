@@ -2,6 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
+const cors = require("cors");
 const dotenv = require("dotenv");
 const express = require("express");
 const session = require("express-session");
@@ -20,10 +21,26 @@ const payment = require("./handler/payment");
 const messaging = require("./handler/messaging");
 const port = 8000;
 
-async function initialize() {
-  const dbClient = await createDBClient();
-  const httpClient = await createHTTPClient();
+function requireTruthy(object) {
+  if (!object) {
+    throw new Error(`Value is not truthy`);
+  }
 
+  return object;
+}
+
+async function initialize() {
+  const dbClient = await createDBClient({
+    host: process.env.REDIS_HOST,
+    port: parseInt(process.env.REDIS_PORT, undefined) || undefined,
+    url: process.env.REDIS_URL
+  });
+
+  const httpClient = await createHTTPClient({
+    env: requireTruthy(process.env.NODE_ENV)
+  });
+
+  app.use(cors({ origin: requireTruthy(process.env.CLIENT_URL) }));
   app.use(express.json());
 
   app.use(

@@ -35,7 +35,7 @@ const store = createStore(
   )
 );
 
-const rootPath = process.env.REACT_APP_ROOT_URL_PATH;
+const rootPath = process.env.REACT_APP_ROOT_PATH;
 
 ReactDOM.render(
   <Provider store={store}>
