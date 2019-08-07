@@ -40,10 +40,12 @@ async function initialize() {
     env: requireTruthy("NODE_ENV", process.env.NODE_ENV)
   });
 
-  app.use(
-    cors({ origin: requireTruthy("CLIENT_URL", process.env.CLIENT_URL) })
-  );
+  const corsOptions = {
+    origin: requireTruthy("CLIENT_URL", process.env.CLIENT_URL)
+  };
 
+  app.options("*", cors(corsOptions));
+  app.use(cors(corsOptions));
   app.use(express.json());
 
   app.use(
