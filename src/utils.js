@@ -10,8 +10,7 @@ function requireTruthy(key, object) {
 
 export function environment() {
   return requireTruthy("REACT_APP_NODE_ENV", process.env.REACT_APP_NODE_ENV) ===
-    "production" &&
-    requireTruthy("NODE_ENV", process.env.NODE_ENV) === "production"
+    "production"
     ? "production"
     : "development";
 }
