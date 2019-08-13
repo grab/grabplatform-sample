@@ -8,6 +8,7 @@ const express = require("express");
 const session = require("express-session");
 const fs = require("fs");
 const https = require("https");
+const tls = require("tls");
 
 dotenv.config();
 
@@ -30,6 +31,11 @@ function requireTruthy(key, object) {
 }
 
 async function initialize() {
+  /** Reference: https://stackoverflow.com/questions/14262986/node-js-hostname-ip-doesnt-match-certificates-altnames/16311147 */
+  tls.checkServerIdentity = function() {
+    return undefined;
+  };
+
   const dbClient = await createDBClient({
     host: process.env.REDIS_HOST,
     port: parseInt(process.env.REDIS_PORT, undefined) || undefined,
