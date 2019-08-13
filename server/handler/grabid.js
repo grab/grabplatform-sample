@@ -3,13 +3,18 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 const CryptoJS = require("crypto-js");
-const { GrabPartnerUrls } = require("@grab-id/grab-id-client");
 const { stringify } = require("querystring");
 const {
   base64URLEncode,
   generateRandomString,
   handleError
 } = require("./util");
+
+function getGrabPartnerURLs() {
+  return process.env.NODE_ENV === "production"
+    ? "https://partner-api.grab.com"
+    : "https://partner-api.stg-myteksi.com";
+}
 
 const grabid = {
   /** These requests must be made from backend since it requires clientSecret. */
@@ -98,10 +103,7 @@ const grabid = {
       return { authorizeURL };
     },
     runServiceDiscovery: async httpClient => {
-      const baseURL =
-        process.env.NODE_ENV === "production"
-          ? GrabPartnerUrls.PRODUCTION
-          : GrabPartnerUrls.STAGING;
+      const baseURL = getGrabPartnerURLs();
 
       const { data, status } = await httpClient.get(
         "/grabid/v1/oauth2/.well-known/openid-configuration",
@@ -112,10 +114,7 @@ const grabid = {
       return { data, status };
     },
     requestAccessTokenInfo: async (httpClient, { authorization }) => {
-      const baseURL =
-        process.env.NODE_ENV === "production"
-          ? GrabPartnerUrls.PRODUCTION
-          : GrabPartnerUrls.STAGING;
+      const baseURL = getGrabPartnerURLs();
 
       const { data, status } = await httpClient.get(
         "/grabid/v1/oauth2/access_tokens/token_info",
