@@ -924,13 +924,12 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-9.0.1.tgz#c27b391d8457d1e893f1eddeaf5e5412d12ffbb5"
   integrity sha512-6It2EVfGskxZCQhuykrfnALg7oVeiI6KclWSmGDqB0AiInVrTGB9Jp9i4/Ad21u9Jde/voVQz6eFX/eSg/UsPA==
 
-"@grab-id/grab-id-client@1.1.8":
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/@grab-id/grab-id-client/-/grab-id-client-1.1.7.tgz#e3b31887dcc131e908dc16992d04efd2cc527e33"
-  integrity sha512-zsGv9qJwI+RWf0Ft7wUHHy1TMuIbdh1w56z953Jy5Nzrw0fr4F/N8S7v1rB9J8zJIj0klZcj874zKpE0o7ygKA==
+"@grab-id/grab-id-client@1.1.6":
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/@grab-id/grab-id-client/-/grab-id-client-1.1.6.tgz#28bebec2b33c82dd5dacb11987e34fe03f8f7c1b"
+  integrity sha512-DU5rk44gYOpLfrhQJLZyZh0VJg5V5Lk2yoz6ehltnrYWbBtf2KCMJad74aNH0/SU18rYySE6H9SeoLqhoNMn7A==
   dependencies:
     crypto-js "^3.1.9-1"
-    whatwg-fetch "^3.0.0"
 
 "@hapi/address@2.x.x":
   version "2.0.0"
@@ -11298,7 +11297,7 @@ whatwg-encoding@^1.0.1, whatwg-encoding@^1.0.3, whatwg-encoding@^1.0.5:
   dependencies:
     iconv-lite "0.4.24"
 
-whatwg-fetch@3.0.0, whatwg-fetch@>=0.10.0, whatwg-fetch@^3.0.0:
+whatwg-fetch@3.0.0, whatwg-fetch@>=0.10.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/whatwg-fetch/-/whatwg-fetch-3.0.0.tgz#fc804e458cc460009b1a2b966bc8817d2578aefb"
   integrity sha512-9GSJUgz1D4MfyKU7KRqwOjXCXTqWdFNvEr7eUBYchQiVc744mqK/MzXPNR2WsPkmkOa4ywfg8C2n8h+13Bey1Q==
