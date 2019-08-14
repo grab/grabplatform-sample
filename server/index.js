@@ -3,11 +3,13 @@
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
 const cors = require("cors");
+const connectRedis = require("connect-redis");
 const dotenv = require("dotenv");
 const express = require("express");
 const session = require("express-session");
 const fs = require("fs");
 const https = require("https");
+const { createClient: createRedisClient } = require("redis");
 const tls = require("tls");
 
 dotenv.config();
@@ -36,11 +38,15 @@ async function initialize() {
     return undefined;
   };
 
-  const dbClient = await createDBClient({
+  const redisClient = await createRedisClient({
     host: process.env.REDIS_HOST,
     port: parseInt(process.env.REDIS_PORT, undefined) || undefined,
     url: process.env.REDIS_URL
   });
+
+  const dbClient = await createDBClient(redisClient);
+  const SessionRedis = connectRedis(session);
+  const sessionRedis = new SessionRedis({ client: redisClient });
 
   const httpClient = await createHTTPClient({
     env: requireTruthy("NODE_ENV", process.env.NODE_ENV)
@@ -57,8 +63,9 @@ async function initialize() {
   app.use(
     session({
       resave: true,
-      secret: "grabplatform-sample",
-      saveUninitialized: true
+      saveUninitialized: true,
+      secret: requireTruthy("SESSION_SECRET", process.env.SESSION_SECRET),
+      store: sessionRedis
     })
   );
 

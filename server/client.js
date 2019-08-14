@@ -81,8 +81,7 @@ exports.createHTTPClient = function({ env = "development" }) {
   };
 };
 
-exports.createDBClient = async function({ host, port, url }) {
-  const redis = await createRedisClient({ host, port, url });
+exports.createDBClient = async function(redis) {
   const baseGet = promisify(redis.get).bind(redis);
   const baseSet = promisify(redis.set).bind(redis);
   const get = async k => baseGet(`${process.env.NODE_ENV}-${k}`);
