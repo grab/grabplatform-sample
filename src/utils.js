@@ -29,10 +29,13 @@ export function getAbsoluteURLPath(window, relativeURL) {
   return `${window.location.origin}${rootURLPath}${relativeURL}`;
 }
 
-export async function makeRequest(
-  window,
-  { additionalHeaders = {}, body, method, path }
-) {
+export async function makeHTTPRequest(...args) {
+  const fetch = args[0].fetch || window.fetch;
+
+  const { additionalHeaders = {}, body, method, path } = !!args[0].fetch
+    ? args[1]
+    : args[0];
+
   const baseURL = process.env.REACT_APP_SERVER_URL || "";
   const { accessToken } = GrabID.getResult();
 
@@ -40,14 +43,14 @@ export async function makeRequest(
     body: JSON.stringify(body),
     method,
     headers: {
-      "Content-Type": "application/json",
-      ...(!!accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      "content-type": "application/json",
+      ...(!!accessToken ? { authorization: `Bearer ${accessToken}` } : {}),
       ...additionalHeaders
     },
     mode: "cors"
   };
 
-  const response = await window.fetch(`${baseURL}${path}`, config);
+  const response = await fetch(`${baseURL}${path}`, config);
   if (response.status === 204) return {};
   const json = await response.json();
   if (!`${response.status}`.startsWith("2")) throw json;

@@ -3,7 +3,7 @@ import {
   environment,
   getAbsoluteURLPath,
   getRelativeURLPath,
-  makeRequest,
+  makeHTTPRequest,
   requireAllValid
 } from "utils";
 
@@ -91,7 +91,7 @@ export default function createGrabIDRepository(window) {
           const { clientID, redirectURI } = requireAllValid(args);
           const { code } = await repository.grabid.getGrabIDResult();
 
-          return makeRequest(window, {
+          return makeHTTPRequest(window, {
             body: {
               clientID,
               code,
@@ -111,7 +111,7 @@ export default function createGrabIDRepository(window) {
               args
             );
 
-            const { authorizeURL } = await makeRequest(window, {
+            const { authorizeURL } = await makeHTTPRequest(window, {
               body: {
                 clientID,
                 countryCode,

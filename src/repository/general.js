@@ -1,30 +1,29 @@
-import { makeRequest, requireAllValid } from "utils";
+import { makeHTTPRequest, requireAllValid } from "utils";
 
 export default function createGrabAPIRepository(window) {
   return {
     configuration: {
       getConfigurationFromPersistence: () =>
-        makeRequest(window, { method: "GET", path: "/configuration" }),
+        makeHTTPRequest(window, { method: "GET", path: "/configuration" }),
       persistConfiguration: config =>
-        makeRequest(window, {
+        makeHTTPRequest(window, {
           body: config,
           method: "POST",
           path: "/configuration"
         })
     },
-    identity: {
-      getBasicProfile: () =>
-        makeRequest(window, { method: "GET", path: "/identity/basic-profile" })
-    },
     loyalty: {
       getRewardsTier: () =>
-        makeRequest(window, { method: "GET", path: "/loyalty/rewards-tier" })
+        makeHTTPRequest(window, {
+          method: "GET",
+          path: "/loyalty/rewards-tier"
+        })
     },
     messaging: {
       sendInboxMessage: async args => {
         const { templateID, templateParams } = requireAllValid(args);
 
-        return makeRequest(window, {
+        return makeHTTPRequest(window, {
           body: { templateID, templateParams },
           method: "POST",
           path: "/messaging/inbox"
@@ -33,7 +32,7 @@ export default function createGrabAPIRepository(window) {
       sendPushMessage: async args => {
         const { templateID, templateParams } = requireAllValid(args);
 
-        return makeRequest(window, {
+        return makeHTTPRequest(window, {
           body: { templateID, templateParams },
           method: "POST",
           path: "/messaging/push"

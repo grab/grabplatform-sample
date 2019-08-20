@@ -1,4 +1,4 @@
-import { makeRequest, requireAllValid } from "utils";
+import { makeHTTPRequest, requireAllValid } from "utils";
 
 export default function createGrabPayRepository(window) {
   return {
@@ -6,7 +6,7 @@ export default function createGrabPayRepository(window) {
       checkWallet: async args => {
         const { currency } = requireAllValid(args);
 
-        return makeRequest(window, {
+        return makeHTTPRequest(window, {
           body: { currency },
           method: "POST",
           path: "/payment/recurring-charge/wallet"
@@ -21,7 +21,7 @@ export default function createGrabPayRepository(window) {
             partnerGroupTxID
           } = requireAllValid(args);
 
-          return makeRequest(window, {
+          return makeHTTPRequest(window, {
             body: {
               amount,
               currency,
@@ -33,7 +33,7 @@ export default function createGrabPayRepository(window) {
           });
         },
         confirm: async () =>
-          makeRequest(window, {
+          makeHTTPRequest(window, {
             method: "POST",
             path: "/payment/one-time-charge/confirm"
           })
@@ -42,7 +42,7 @@ export default function createGrabPayRepository(window) {
         bind: async args => {
           const { countryCode } = requireAllValid(args);
 
-          return makeRequest(window, {
+          return makeHTTPRequest(window, {
             body: { countryCode },
             method: "POST",
             path: "/payment/recurring-charge/bind"
@@ -56,7 +56,7 @@ export default function createGrabPayRepository(window) {
             partnerGroupTxID
           } = requireAllValid(args);
 
-          return makeRequest(window, {
+          return makeHTTPRequest(window, {
             body: {
               amount,
               currency,
@@ -68,7 +68,7 @@ export default function createGrabPayRepository(window) {
           });
         },
         unbind: async () =>
-          makeRequest(window, {
+          makeHTTPRequest(window, {
             method: "POST",
             path: "/payment/recurring-charge/unbind"
           })

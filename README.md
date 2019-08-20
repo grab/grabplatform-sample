@@ -2,6 +2,8 @@
 
 This is a consolidated sample for all products offered on [Grab's Developer Portal](https://developer.grab.com/products).
 
+Please note that the code in this sample does not necessarily reflect Grab's programming practices - its main purpose is to help engineers working on Grab API integration have a better idea of how to do so. For example, instead of directly calling HTTP endpoints correctly in view components, you should look for ways to perform dependency injection for easier testing.
+
 ## Prerequisites
 
 1. `Homebrew`: Run `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"` in terminal.
