@@ -17,7 +17,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { compose, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
-import { environment } from "utils";
+import { environment, makeHTTPRequest, requireAllValid } from "utils";
 import "./style.scss";
 
 const inboxDescription = `
@@ -185,9 +185,12 @@ export default compose(
       }
     ) => ({
       sendInboxMessage: handleError(async () => {
-        const { messageID } = await repository.messaging.sendInboxMessage({
-          templateID,
-          templateParams
+        requireAllValid({ templateID, templateParams });
+
+        const { messageID } = await makeHTTPRequest(window, {
+          body: { templateID, templateParams },
+          method: "POST",
+          path: "/messaging/inbox"
         });
 
         setMessageID(messageID);

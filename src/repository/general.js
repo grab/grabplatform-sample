@@ -1,4 +1,4 @@
-import { makeHTTPRequest, requireAllValid } from "utils";
+import { makeHTTPRequest } from "utils";
 
 export default function createGrabAPIRepository(window) {
   return {
@@ -11,26 +11,6 @@ export default function createGrabAPIRepository(window) {
           method: "POST",
           path: "/configuration"
         })
-    },
-    messaging: {
-      sendInboxMessage: async args => {
-        const { templateID, templateParams } = requireAllValid(args);
-
-        return makeHTTPRequest(window, {
-          body: { templateID, templateParams },
-          method: "POST",
-          path: "/messaging/inbox"
-        });
-      },
-      sendPushMessage: async args => {
-        const { templateID, templateParams } = requireAllValid(args);
-
-        return makeHTTPRequest(window, {
-          body: { templateID, templateParams },
-          method: "POST",
-          path: "/messaging/push"
-        });
-      }
     }
   };
 }
