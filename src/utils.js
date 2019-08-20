@@ -8,6 +8,37 @@ function requireTruthy(key, object) {
   return object;
 }
 
+export function createGrabIDClient(arg0, arg1) {
+  const windowObject = !!arg0.fetch ? arg0 : window;
+
+  const {
+    additionalACRValues: { consentContext, ...restACR },
+    clientID,
+    countryCode,
+    redirectURI,
+    request,
+    scopes
+  } = !!arg0.fetch ? arg1 : arg0;
+
+  const openIDURL =
+    environment() === "production"
+      ? GrabID.GrabPartnerUrls.PRODUCTION
+      : GrabID.GrabPartnerUrls.STAGING;
+
+  let appConfig = {
+    acrValues: {
+      additionalValues: restACR,
+      consentContext: { ...consentContext, countryCode }
+    },
+    clientId: clientID,
+    redirectUri: getAbsoluteURLPath(windowObject, redirectURI),
+    request,
+    scope: ["openid", ...scopes].join(" ")
+  };
+
+  return new GrabID(openIDURL, appConfig);
+}
+
 export function environment() {
   return requireTruthy("REACT_APP_NODE_ENV", process.env.REACT_APP_NODE_ENV) ===
     "production"
@@ -29,12 +60,12 @@ export function getAbsoluteURLPath(window, relativeURL) {
   return `${window.location.origin}${rootURLPath}${relativeURL}`;
 }
 
-export async function makeHTTPRequest(...args) {
-  const fetch = args[0].fetch || window.fetch;
+export async function makeHTTPRequest(arg0, arg1) {
+  const fetch = arg0.fetch || window.fetch;
 
-  const { additionalHeaders = {}, body, method, path } = !!args[0].fetch
-    ? args[1]
-    : args[0];
+  const { additionalHeaders = {}, body, method, path } = !!arg0.fetch
+    ? arg1
+    : arg0;
 
   const baseURL = process.env.REACT_APP_SERVER_URL || "";
   const { accessToken } = GrabID.getResult();

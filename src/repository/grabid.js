@@ -1,50 +1,16 @@
 import GrabID from "@grab-id/grab-id-client";
 import {
-  environment,
+  createGrabIDClient,
   getAbsoluteURLPath,
-  getRelativeURLPath,
   makeHTTPRequest,
   requireAllValid
 } from "utils";
-
-function createGrabIDClient(
-  window,
-  {
-    additionalACRValues: { consentContext, ...restACR },
-    clientID,
-    countryCode,
-    redirectURI,
-    request,
-    scopes
-  }
-) {
-  const openIDURL =
-    environment() === "production"
-      ? GrabID.GrabPartnerUrls.PRODUCTION
-      : GrabID.GrabPartnerUrls.STAGING;
-
-  let appConfig = {
-    acrValues: {
-      additionalValues: restACR,
-      consentContext: { ...consentContext, countryCode }
-    },
-    clientId: clientID,
-    redirectUri: getAbsoluteURLPath(window, redirectURI),
-    request,
-    scope: ["openid", ...scopes].join(" ")
-  };
-
-  return new GrabID(openIDURL, appConfig);
-}
 
 export default function createGrabIDRepository(window) {
   const LOCAL_ID_TOKEN_KEY = "your_id_token_key";
 
   const repository = {
     grabid: {
-      getGrabIDResult: async () => GrabID.getResult(),
-      getLoginReturnURI: async () =>
-        getRelativeURLPath(GrabID.getLoginReturnURI()),
       persistInitialIDToken: async idToken =>
         window.localStorage.setItem(LOCAL_ID_TOKEN_KEY, idToken),
       persistAuthorizationCode: async code =>
@@ -89,7 +55,7 @@ export default function createGrabIDRepository(window) {
       pop: {
         requestToken: async args => {
           const { clientID, redirectURI } = requireAllValid(args);
-          const { code } = await repository.grabid.getGrabIDResult();
+          const { code } = GrabID.getResult();
 
           return makeHTTPRequest(window, {
             body: {

@@ -2,6 +2,7 @@
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
  * Use of this source code is governed by an MIT-style license that can be found in the LICENSE file
  */
+import GrabID from "@grab-id/grab-id-client";
 import {
   copyToClipboardHOC,
   handleErrorHOC,
@@ -14,6 +15,7 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { compose, lifecycle, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
+import { getRelativeURLPath } from "utils";
 import "./style.scss";
 
 // ############################## GRABID AUTH ##############################
@@ -155,14 +157,8 @@ export const GrabIDLogin = compose(
   withState("state", "setState", ""),
   lifecycle({
     async componentDidMount() {
-      const { repository, setAccessToken, setIDToken, setState } = this.props;
-
-      const {
-        accessToken,
-        idToken,
-        state
-      } = await repository.grabid.getGrabIDResult();
-
+      const { setAccessToken, setIDToken, setState } = this.props;
+      const { accessToken, idToken, state } = GrabID.getResult();
       setAccessToken(accessToken || "");
       setIDToken(idToken || "");
       setState(state || "");
@@ -189,8 +185,9 @@ export const GrabIDNonPOPRedirect = compose(
     async componentDidMount() {
       const { repository, setReturnURI } = this.props;
       await repository.grabid.handleAuthorizationCodeFlowResponse();
-      const returnURI = await repository.grabid.getLoginReturnURI();
-      setReturnURI(returnURI);
+      const fullReturnURI = GrabID.getLoginReturnURI();
+      const relativeReturnURI = getRelativeURLPath(fullReturnURI);
+      setReturnURI(relativeReturnURI);
     }
   })
 )(PrivateGrabIDRedirect);
@@ -204,8 +201,9 @@ export const GrabIDPOPRedirect = compose(
     async componentDidMount() {
       const { code, repository, setReturnURI } = this.props;
       await repository.grabid.persistAuthorizationCode(code);
-      const returnURI = await repository.grabid.getLoginReturnURI();
-      setReturnURI(returnURI);
+      const fullReturnURI = GrabID.getLoginReturnURI();
+      const relativeReturnURI = getRelativeURLPath(fullReturnURI);
+      setReturnURI(relativeReturnURI);
     }
   })
 )(PrivateGrabIDRedirect);
