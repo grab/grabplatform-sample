@@ -12,13 +12,6 @@ export default function createGrabAPIRepository(window) {
           path: "/configuration"
         })
     },
-    loyalty: {
-      getRewardsTier: () =>
-        makeHTTPRequest(window, {
-          method: "GET",
-          path: "/loyalty/rewards-tier"
-        })
-    },
     messaging: {
       sendInboxMessage: async args => {
         const { templateID, templateParams } = requireAllValid(args);

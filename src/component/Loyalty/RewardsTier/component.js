@@ -10,9 +10,9 @@ import {
 import { GrabIDLogin } from "component/GrabID/component";
 import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
-import { connect } from "react-redux";
-import { compose, withState } from "recompose";
+import { compose, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
+import { makeHTTPRequest } from "utils";
 import "./style.scss";
 
 function PrivateRewardsTier({
@@ -63,9 +63,13 @@ export default compose(
   handleErrorHOC(),
   stageSwitcherHOC(),
   withState("rewardsTier", "setRewardsTier", ""),
-  connect(({ repository }, { handleError, handleMessage, setRewardsTier }) => ({
+  withProps(({ handleError, handleMessage, setRewardsTier }) => ({
     getRewardsTier: handleError(async () => {
-      const rewardsTier = await repository.loyalty.getRewardsTier();
+      const rewardsTier = await makeHTTPRequest({
+        method: "GET",
+        path: "/loyalty/rewards-tier"
+      });
+
       setRewardsTier(rewardsTier);
       handleMessage(CommonMessages.loyalty.rewardsTier);
     })
