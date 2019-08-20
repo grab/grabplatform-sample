@@ -10,9 +10,9 @@ import {
 import { GrabIDLogin } from "component/GrabID/component";
 import StageSwitch from "component/StageSwitcher/component";
 import React from "react";
-import { connect } from "react-redux";
-import { compose, withState } from "recompose";
+import { compose, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
+import { makeHTTPRequest } from "utils";
 import "./style.scss";
 
 function PrivateBasicProfile({
@@ -71,13 +71,15 @@ export default compose(
   handleErrorHOC(),
   stageSwitcherHOC(),
   withState("basicProfile", "setBasicProfile", {}),
-  connect(
-    ({ repository }, { handleError, handleMessage, setBasicProfile }) => ({
-      getBasicProfile: handleError(async () => {
-        const profile = await repository.identity.getBasicProfile();
-        setBasicProfile(profile);
-        handleMessage(CommonMessages.identity.basicProfile);
-      })
+  withProps(({ handleError, handleMessage, setBasicProfile }) => ({
+    getBasicProfile: handleError(async () => {
+      const profile = await makeHTTPRequest({
+        method: "GET",
+        path: "/identity/basic-profile"
+      });
+
+      setBasicProfile(profile);
+      handleMessage(CommonMessages.identity.basicProfile);
     })
-  )
+  }))
 )(PrivateBasicProfile);
