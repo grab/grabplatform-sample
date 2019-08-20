@@ -11,13 +11,6 @@ export default function createGrabIDRepository(window) {
 
   const repository = {
     grabid: {
-      persistInitialIDToken: async idToken =>
-        window.localStorage.setItem(LOCAL_ID_TOKEN_KEY, idToken),
-      persistAuthorizationCode: async code =>
-        window.localStorage.setItem("grabid:code", code),
-      handleAuthorizationCodeFlowResponse: async () => {
-        GrabID.handleAuthorizationCodeFlowResponse();
-      },
       nonPOP: (() => {
         const extraConfig = {
           additionalACRValues: { service: "PASSENGER" },

@@ -11,6 +11,7 @@ import Identity from "component/Identity/component";
 import Loyalty from "component/Loyalty/component";
 import Messaging from "component/Messaging/component";
 import Payment from "component/Payment/component";
+import { LOCAL_ID_TOKEN_KEY } from "constant";
 import querystring from "querystring";
 import React from "react";
 import { connect } from "react-redux";
@@ -115,13 +116,8 @@ const AppContent = compose(
   withState("showConfiguration", "setShowConfiguration", false),
   lifecycle({
     async componentDidMount() {
-      const {
-        getConfigurationFromPersistence,
-        idToken,
-        repository
-      } = this.props;
-
-      await repository.grabid.persistInitialIDToken(idToken);
+      const { getConfigurationFromPersistence, idToken } = this.props;
+      window.localStorage.setItem(LOCAL_ID_TOKEN_KEY, idToken);
       await getConfigurationFromPersistence();
     }
   })

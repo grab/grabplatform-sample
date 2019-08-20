@@ -9,6 +9,7 @@ import {
   handleMessageHOC
 } from "component/customHOC";
 import Documentation from "component/Documentation/component";
+import { GRABID_AUTHORIZATION_CODE_KEY } from "constant";
 import { parse } from "querystring";
 import React from "react";
 import { connect } from "react-redux";
@@ -179,12 +180,11 @@ function PrivateGrabIDRedirect({ returnURI }) {
 
 export const GrabIDNonPOPRedirect = compose(
   handleErrorHOC(),
-  connect(({ repository }) => ({ repository })),
   withState("returnURI", "setReturnURI", ""),
   lifecycle({
     async componentDidMount() {
-      const { repository, setReturnURI } = this.props;
-      await repository.grabid.handleAuthorizationCodeFlowResponse();
+      const { setReturnURI } = this.props;
+      GrabID.handleAuthorizationCodeFlowResponse();
       const fullReturnURI = GrabID.getLoginReturnURI();
       const relativeReturnURI = getRelativeURLPath(fullReturnURI);
       setReturnURI(relativeReturnURI);
@@ -195,12 +195,11 @@ export const GrabIDNonPOPRedirect = compose(
 export const GrabIDPOPRedirect = compose(
   withProps(({ location: { search } }) => parse(search.substr(1))),
   handleErrorHOC(),
-  connect(({ repository }) => ({ repository })),
   withState("returnURI", "setReturnURI", ""),
   lifecycle({
     async componentDidMount() {
-      const { code, repository, setReturnURI } = this.props;
-      await repository.grabid.persistAuthorizationCode(code);
+      const { code, setReturnURI } = this.props;
+      window.localStorage.setItem(GRABID_AUTHORIZATION_CODE_KEY, code);
       const fullReturnURI = GrabID.getLoginReturnURI();
       const relativeReturnURI = getRelativeURLPath(fullReturnURI);
       setReturnURI(relativeReturnURI);
