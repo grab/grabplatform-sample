@@ -14,13 +14,11 @@ import { alertMiddleware, thunkUnwrapMiddleware } from "redux/middleware";
 import reducer from "redux/reducer";
 import createGeneralRepository from "repository/general";
 import createGrabIDRepository from "repository/grabid";
-import createGrabPayRepository from "repository/grabpay";
 import createWindowRepository from "repository/window";
 import * as serviceWorker from "./serviceWorker";
 
 const repository = {
   ...createGrabIDRepository(window),
-  ...createGrabPayRepository(window),
   ...createWindowRepository(window),
   ...createGeneralRepository(window)
 };

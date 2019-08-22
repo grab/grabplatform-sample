@@ -369,21 +369,26 @@ export default compose(
       return {
         checkWallet,
         bindCharge: handleError(async () => {
-          const {
-            partnerTxID,
-            request
-          } = await repository.grabpay.recurringCharge.bind({ countryCode });
+          const { partnerTxID, request } = await makeHTTPRequest({
+            body: requireAllValid({ countryCode }),
+            method: "POST",
+            path: "/payment/recurring-charge/bind"
+          });
 
           setPartnerTxID(partnerTxID);
           setRequest(request);
           handleMessage(CommonMessages.grabpay.recurringCharge.bind);
         }),
         chargeUser: handleError(async () => {
-          const { status } = await repository.grabpay.recurringCharge.charge({
-            amount,
-            currency,
-            description,
-            partnerGroupTxID
+          const { status } = await makeHTTPRequest({
+            body: requireAllValid({
+              amount,
+              currency,
+              description,
+              partnerGroupTxID
+            }),
+            method: "POST",
+            path: "/payment/recurring-charge/charge"
           });
 
           setStatus(status);
@@ -391,7 +396,11 @@ export default compose(
           await checkWallet();
         }),
         unbindCharge: handleError(async () => {
-          await repository.grabpay.recurringCharge.unbind();
+          await makeHTTPRequest({
+            method: "POST",
+            path: "/payment/recurring-charge/unbind"
+          });
+
           handleMessage(CommonMessages.grabpay.recurringCharge.unbind);
         })
       };
