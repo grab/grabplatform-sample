@@ -343,8 +343,7 @@ export default compose(
           countryCode,
           currency,
           transaction: { amount, description, partnerGroupTxID }
-        },
-        repository
+        }
       },
       {
         handleError,

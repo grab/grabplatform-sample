@@ -14,8 +14,7 @@ import { GrabIDLogin } from "component/GrabID/component";
 import Template from "component/Messaging/Template/component";
 import StageSwitcher from "component/StageSwitcher/component";
 import React from "react";
-import { connect } from "react-redux";
-import { compose, withState } from "recompose";
+import { compose, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import { environment, makeHTTPRequest, requireAllValid } from "utils";
 import "./style.scss";
@@ -225,16 +224,13 @@ export default compose(
   messagingTemplateHOC(templates),
   stageSwitcherHOC(),
   withState("messageID", "setMessageID", ""),
-  connect(
-    (
-      { repository },
-      {
-        handleError,
-        handleMessage,
-        setMessageID,
-        templateParams: { id: templateID, ...templateParams }
-      }
-    ) => ({
+  withProps(
+    ({
+      handleError,
+      handleMessage,
+      setMessageID,
+      templateParams: { id: templateID, ...templateParams }
+    }) => ({
       sendPushMessage: handleError(async () => {
         const { messageID } = await makeHTTPRequest({
           body: requireAllValid({ templateID, templateParams }),

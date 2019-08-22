@@ -6,7 +6,11 @@ import { parse } from "querystring";
 import { connect } from "react-redux";
 import { compose, withProps, withState } from "recompose";
 import { CommonActionCreators, CommonMessages } from "redux/action/common";
-import { copyToClipboard } from "utils";
+import {
+  authorizeGrabIDForPaymentFromServer,
+  copyToClipboard,
+  requestGrabIDTokenForPaymentFromServer
+} from "utils";
 
 export function copyToClipboardHOC() {
   return compose(
@@ -56,12 +60,12 @@ export function grabidPaymentHOC() {
     handleErrorHOC(),
     connect(
       (
-        { configuration: { clientID, currency, countryCode }, repository },
+        { configuration: { clientID, currency, countryCode } },
         { handleError, handleMessage }
       ) => ({
         /** GrabPay requires an additional request parameter. */
         makeAuthorizationRequest: handleError(async scopes => {
-          await repository.grabid.payment.authorize({
+          await authorizeGrabIDForPaymentFromServer({
             clientID,
             countryCode,
             currency,
@@ -70,7 +74,7 @@ export function grabidPaymentHOC() {
         }),
         /** GrabPay requires an additional request parameter. */
         makeTokenRequest: handleError(async () => {
-          await repository.grabid.payment.requestToken({ clientID });
+          await requestGrabIDTokenForPaymentFromServer({ clientID });
           handleMessage(CommonMessages.grabid.requestToken);
         })
       })

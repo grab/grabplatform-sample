@@ -57,7 +57,4 @@ function configuration(
   }
 }
 
-export default combineReducers({
-  configuration,
-  repository: (state = {}) => state
-});
+export default combineReducers({ configuration });

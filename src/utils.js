@@ -1,4 +1,5 @@
 import GrabID from "@grab-id/grab-id-client";
+import { LOCAL_ID_TOKEN_KEY } from "constant";
 import { parse, stringify } from "querystring";
 
 function requireTruthy(key, object) {
@@ -7,6 +8,78 @@ function requireTruthy(key, object) {
   }
 
   return object;
+}
+
+// ################################## GrabID ##################################
+
+export async function authorizeGrabIDFromClient({
+  clientID,
+  countryCode,
+  scopes
+}) {
+  const client = createGrabIDClient({
+    ...requireAllValid({ clientID, countryCode, scopes }),
+    additionalACRValues: { service: "PASSENGER" },
+    redirectURI: "/grabid/redirect/nonpop"
+  });
+
+  const idTokenHint = window.localStorage.getItem(LOCAL_ID_TOKEN_KEY);
+  await client.makeAuthorizationRequest(undefined, idTokenHint);
+}
+
+export async function authorizeGrabIDForPaymentFromServer({
+  clientID,
+  countryCode,
+  currency,
+  scopes
+}) {
+  const redirectURI = "/grabid/redirect/pop";
+
+  const { authorizeURL } = await makeHTTPRequest(window, {
+    body: {
+      ...requireAllValid({ clientID, countryCode, currency, scopes }),
+      redirectURI: getAbsoluteURLPath(window, redirectURI)
+    },
+    method: "POST",
+    path: "/grabid/payment/authorize"
+  });
+
+  window.localStorage.setItem("grabid:login_return_uri", window.location.href);
+  window.location.assign(authorizeURL);
+}
+
+export async function requestGrabIDTokenFromClient({
+  clientID,
+  countryCode,
+  scopes
+}) {
+  const client = createGrabIDClient({
+    ...requireAllValid({ clientID, countryCode, scopes }),
+    additionalACRValues: { service: "PASSENGER" },
+    redirectURI: "/grabid/redirect/nonpop"
+  });
+
+  await client.makeTokenRequest();
+}
+
+export async function requestGrabIDTokenForPaymentFromServer({ clientID }) {
+  return requestGrabIDTokenFromServer({
+    ...requireAllValid({ clientID }),
+    redirectURI: "/grabid/redirect/pop"
+  });
+}
+
+export async function requestGrabIDTokenFromServer({ clientID, redirectURI }) {
+  const { code } = GrabID.getResult();
+
+  return makeHTTPRequest(window, {
+    body: {
+      ...requireAllValid({ clientID, code }),
+      redirectURI: getAbsoluteURLPath(window, redirectURI)
+    },
+    method: "POST",
+    path: "/grabid/token"
+  });
 }
 
 export function copyToClipboard(text) {

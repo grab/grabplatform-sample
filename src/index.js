@@ -12,21 +12,11 @@ import { applyMiddleware, createStore } from "redux";
 import thunkMiddleware from "redux-thunk";
 import { alertMiddleware, thunkUnwrapMiddleware } from "redux/middleware";
 import reducer from "redux/reducer";
-import createGrabIDRepository from "repository/grabid";
 import * as serviceWorker from "./serviceWorker";
-
-const repository = {
-  ...createGrabIDRepository(window)
-};
 
 const store = createStore(
   reducer,
-  { repository },
-  applyMiddleware(
-    alertMiddleware,
-    thunkUnwrapMiddleware,
-    thunkMiddleware.withExtraArgument(repository)
-  )
+  applyMiddleware(alertMiddleware, thunkUnwrapMiddleware, thunkMiddleware)
 );
 
 const rootPath = process.env.REACT_APP_ROOT_PATH;

@@ -16,7 +16,11 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
 import { compose, lifecycle, withProps, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
-import { getRelativeURLPath } from "utils";
+import {
+  authorizeGrabIDFromClient,
+  getRelativeURLPath,
+  requestGrabIDTokenFromClient
+} from "utils";
 import "./style.scss";
 
 // ############################## GRABID AUTH ##############################
@@ -129,19 +133,19 @@ export const GrabIDLogin = compose(
   copyToClipboardHOC(),
   connect(
     (
-      { configuration: { clientID, countryCode }, repository },
+      { configuration: { clientID, countryCode } },
       {
         handleError,
         handleMessage,
         makeAuthorizationRequest = handleError(async scopes => {
-          await repository.grabid.nonPOP.authorize({
+          await authorizeGrabIDFromClient({
             clientID,
             countryCode,
             scopes
           });
         }),
         makeTokenRequest = handleError(async scopes => {
-          await repository.grabid.nonPOP.requestToken({
+          await requestGrabIDTokenFromClient({
             clientID,
             countryCode,
             scopes
@@ -151,7 +155,7 @@ export const GrabIDLogin = compose(
           handleMessage(CommonMessages.grabid.requestToken);
         })
       }
-    ) => ({ makeAuthorizationRequest, makeTokenRequest, repository })
+    ) => ({ makeAuthorizationRequest, makeTokenRequest })
   ),
   withState("accessToken", "setAccessToken", ""),
   withState("idToken", "setIDToken", ""),

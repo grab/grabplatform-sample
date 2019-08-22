@@ -94,16 +94,7 @@ const AppContent = compose(
   withProps(({ location: { hash } }) => querystring.parse(hash.substr(1))),
   withProps(({ id_token: idToken }) => ({ idToken })),
   connect(
-    ({ repository }) => ({
-      repository,
-      toggleDocumentation: async () => {
-        overrideNavigationQuery(({ documentation }) => ({
-          documentation: documentation !== "true"
-        }));
-
-        window.location.reload();
-      }
-    }),
+    () => ({}),
     dispatch => ({
       getConfigurationFromPersistence: () =>
         dispatch(
@@ -114,6 +105,13 @@ const AppContent = compose(
   withProps(() => ({
     clearEverything: () => {
       window.localStorage.clear();
+      window.location.reload();
+    },
+    toggleDocumentation: async () => {
+      overrideNavigationQuery(({ documentation }) => ({
+        documentation: documentation !== "true"
+      }));
+
       window.location.reload();
     }
   })),
