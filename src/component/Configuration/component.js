@@ -5,6 +5,7 @@ import { compose, lifecycle, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
 import { ConfigurationActionCreators } from "redux/action/configuration";
 import "./style.scss";
+import { makeHTTPRequest } from "utils";
 
 // ########################### General configuration ###########################
 
@@ -242,12 +243,17 @@ export default compose(
   handleErrorHOC(),
   connect(
     (
-      { configuration, repository },
+      { configuration },
       { closeConfiguration, handleError, handleMessage }
     ) => ({
       configuration,
       persistConfiguration: handleError(async () => {
-        await repository.configuration.persistConfiguration(configuration);
+        await makeHTTPRequest({
+          body: configuration,
+          method: "POST",
+          path: "/configuration"
+        });
+
         closeConfiguration();
         handleMessage(CommonMessages.configuration.setConfiguration);
       })

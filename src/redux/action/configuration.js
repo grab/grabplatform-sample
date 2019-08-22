@@ -1,4 +1,5 @@
 import { CommonActionCreators } from "./common";
+import { makeHTTPRequest } from "utils";
 
 /**
  * Copyright 2019 Grabtaxi Holdings PTE LTE (GRAB), All rights reserved.
@@ -58,13 +59,13 @@ export const ConfigurationActionCreators = {
     type: ConfigurationActions.SET_PARTNER_ID
   }),
   triggerGetConfigurationFromPersistence: () => ({
-    payload: async (
-      dispatch,
-      getState,
-      { configuration: { getConfigurationFromPersistence } }
-    ) => {
+    payload: async dispatch => {
       try {
-        const configuration = await getConfigurationFromPersistence();
+        const configuration = await makeHTTPRequest({
+          method: "GET",
+          path: "/configuration"
+        });
+
         dispatch(ConfigurationActionCreators.setConfiguration(configuration));
       } catch (e) {
         dispatch(CommonActionCreators.setError(e));
