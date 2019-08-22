@@ -11,14 +11,13 @@ import Identity from "component/Identity/component";
 import Loyalty from "component/Loyalty/component";
 import Messaging from "component/Messaging/component";
 import Payment from "component/Payment/component";
-import { LOCAL_ID_TOKEN_KEY } from "constant";
 import querystring from "querystring";
 import React from "react";
 import { connect } from "react-redux";
 import { NavLink, Route, Switch } from "react-router-dom";
 import { compose, lifecycle, withProps, withState } from "recompose";
 import { ConfigurationActionCreators } from "redux/action/configuration";
-import { overrideNavigationQuery } from "utils";
+import { LOCAL_ID_TOKEN_KEY, overrideNavigationQuery } from "utils";
 import "./App.scss";
 
 const categories = [

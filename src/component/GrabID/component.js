@@ -9,7 +9,6 @@ import {
   handleMessageHOC
 } from "component/customHOC";
 import Documentation from "component/Documentation/component";
-import { GRABID_AUTHORIZATION_CODE_KEY } from "constant";
 import { parse } from "querystring";
 import React from "react";
 import { connect } from "react-redux";
@@ -19,6 +18,7 @@ import { CommonMessages } from "redux/action/common";
 import {
   authorizeGrabIDFromClient,
   getRelativeURLPath,
+  GRABID_AUTHORIZATION_CODE_KEY,
   requestGrabIDTokenFromClient
 } from "utils";
 import "./style.scss";

@@ -1,5 +1,4 @@
 import GrabID from "@grab-id/grab-id-client";
-import { LOCAL_ID_TOKEN_KEY } from "constant";
 import { parse, stringify } from "querystring";
 
 function requireTruthy(key, object) {
@@ -10,7 +9,41 @@ function requireTruthy(key, object) {
   return object;
 }
 
-// ################################## GrabID ##################################
+// ################################# GrabID #################################
+
+export const GRABID_AUTHORIZATION_CODE_KEY = "grabid:code";
+export const LOCAL_ID_TOKEN_KEY = "your_id_token_key";
+
+function createGrabIDClient(arg0, arg1) {
+  const windowObject = !!arg0.fetch ? arg0 : window;
+
+  const {
+    additionalACRValues: { consentContext, ...restACR },
+    clientID,
+    countryCode,
+    redirectURI,
+    request,
+    scopes
+  } = !!arg0.fetch ? arg1 : arg0;
+
+  const openIDURL =
+    environment() === "production"
+      ? GrabID.GrabPartnerUrls.PRODUCTION
+      : GrabID.GrabPartnerUrls.STAGING;
+
+  let appConfig = {
+    acrValues: {
+      additionalValues: restACR,
+      consentContext: { ...consentContext, countryCode }
+    },
+    clientId: clientID,
+    redirectUri: getAbsoluteURLPath(windowObject, redirectURI),
+    request,
+    scope: ["openid", ...scopes].join(" ")
+  };
+
+  return new GrabID(openIDURL, appConfig);
+}
 
 export async function authorizeGrabIDFromClient({
   clientID,
@@ -82,6 +115,17 @@ export async function requestGrabIDTokenFromServer({ clientID, redirectURI }) {
   });
 }
 
+// ############################### Environment ###############################
+
+export function environment() {
+  return requireTruthy("REACT_APP_NODE_ENV", process.env.REACT_APP_NODE_ENV) ===
+    "production"
+    ? "production"
+    : "development";
+}
+
+// ################################ General #################################
+
 export function copyToClipboard(text) {
   const el = document.createElement("textarea");
   el.value = text;
@@ -91,62 +135,19 @@ export function copyToClipboard(text) {
   document.body.removeChild(el);
 }
 
-export function createGrabIDClient(arg0, arg1) {
-  const windowObject = !!arg0.fetch ? arg0 : window;
+export function requireAllValid(args) {
+  if (typeof args === "object" && !!Object.keys(args).length) {
+    Object.entries(args).forEach(([key, value]) => {
+      if (value === null || value === undefined || !requireAllValid(value)) {
+        throw new Error(`Invalid ${key}: ${undefined}`);
+      }
+    });
+  }
 
-  const {
-    additionalACRValues: { consentContext, ...restACR },
-    clientID,
-    countryCode,
-    redirectURI,
-    request,
-    scopes
-  } = !!arg0.fetch ? arg1 : arg0;
-
-  const openIDURL =
-    environment() === "production"
-      ? GrabID.GrabPartnerUrls.PRODUCTION
-      : GrabID.GrabPartnerUrls.STAGING;
-
-  let appConfig = {
-    acrValues: {
-      additionalValues: restACR,
-      consentContext: { ...consentContext, countryCode }
-    },
-    clientId: clientID,
-    redirectUri: getAbsoluteURLPath(windowObject, redirectURI),
-    request,
-    scope: ["openid", ...scopes].join(" ")
-  };
-
-  return new GrabID(openIDURL, appConfig);
+  return args;
 }
 
-export function environment() {
-  return requireTruthy("REACT_APP_NODE_ENV", process.env.REACT_APP_NODE_ENV) ===
-    "production"
-    ? "production"
-    : "development";
-}
-
-/** We need to make sure to exclude the root path. */
-export function getRelativeURLPath(url) {
-  const a = document.createElement("a");
-  const rootURLPath = process.env.REACT_APP_ROOT_PATH || "";
-  a.href = url;
-  return `${a.pathname.substr(rootURLPath.length)}${a.search}`;
-}
-
-/** We need to make sure to include the root path. */
-export function getAbsoluteURLPath(window, relativeURL) {
-  const rootURLPath = process.env.REACT_APP_ROOT_PATH || "";
-  return `${window.location.origin}${rootURLPath}${relativeURL}`;
-}
-
-export function getNavigationQuery() {
-  const { search } = window.location;
-  return parse(search.substr(1));
-}
+// ################################## HTTP ###################################
 
 export async function makeHTTPRequest(arg0, arg1) {
   const fetch = arg0.fetch || window.fetch;
@@ -176,6 +177,27 @@ export async function makeHTTPRequest(arg0, arg1) {
   return json;
 }
 
+// ############################### Navigation ################################
+
+export function getNavigationQuery() {
+  const { search } = window.location;
+  return parse(search.substr(1));
+}
+
+/** We need to make sure to exclude the root path. */
+export function getRelativeURLPath(url) {
+  const a = document.createElement("a");
+  const rootURLPath = process.env.REACT_APP_ROOT_PATH || "";
+  a.href = url;
+  return `${a.pathname.substr(rootURLPath.length)}${a.search}`;
+}
+
+/** We need to make sure to include the root path. */
+export function getAbsoluteURLPath(window, relativeURL) {
+  const rootURLPath = process.env.REACT_APP_ROOT_PATH || "";
+  return `${window.location.origin}${rootURLPath}${relativeURL}`;
+}
+
 export function overrideNavigationQuery(queryFn) {
   const { origin, pathname, search } = window.location;
   const currentURL = `${origin}${pathname}`;
@@ -188,16 +210,4 @@ export function overrideNavigationQuery(queryFn) {
 
   const newSearch = `?${stringify(newQuery)}`;
   window.history.replaceState(null, null, `${currentURL}${newSearch}`);
-}
-
-export function requireAllValid(args) {
-  if (typeof args === "object" && !!Object.keys(args).length) {
-    Object.entries(args).forEach(([key, value]) => {
-      if (value === null || value === undefined || !requireAllValid(value)) {
-        throw new Error(`Invalid ${key}: ${undefined}`);
-      }
-    });
-  }
-
-  return args;
 }
