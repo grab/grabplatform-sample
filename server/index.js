@@ -53,7 +53,8 @@ async function initialize() {
   });
 
   const corsOptions = {
-    origin: requireTruthy("CLIENT_URL", process.env.CLIENT_URL)
+    origin: requireTruthy("CLIENT_URL", process.env.CLIENT_URL),
+    credentials: true
   };
 
   app.options("*", cors(corsOptions));

@@ -160,6 +160,7 @@ export async function makeHTTPRequest(arg0, arg1) {
   const { accessToken } = GrabID.getResult();
 
   const config = {
+    credentials: "include",
     body: JSON.stringify(body),
     method,
     headers: {
