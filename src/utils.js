@@ -1,4 +1,5 @@
 import GrabID from "@grab-id/grab-id-client";
+import { parse, stringify } from "querystring";
 
 function requireTruthy(key, object) {
   if (!object) {
@@ -6,6 +7,15 @@ function requireTruthy(key, object) {
   }
 
   return object;
+}
+
+export function copyToClipboard(text) {
+  const el = document.createElement("textarea");
+  el.value = text;
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand("copy");
+  document.body.removeChild(el);
 }
 
 export function createGrabIDClient(arg0, arg1) {
@@ -60,6 +70,11 @@ export function getAbsoluteURLPath(window, relativeURL) {
   return `${window.location.origin}${rootURLPath}${relativeURL}`;
 }
 
+export function getNavigationQuery() {
+  const { search } = window.location;
+  return parse(search.substr(1));
+}
+
 export async function makeHTTPRequest(arg0, arg1) {
   const fetch = arg0.fetch || window.fetch;
 
@@ -86,6 +101,20 @@ export async function makeHTTPRequest(arg0, arg1) {
   const json = await response.json();
   if (!`${response.status}`.startsWith("2")) throw json;
   return json;
+}
+
+export function overrideNavigationQuery(queryFn) {
+  const { origin, pathname, search } = window.location;
+  const currentURL = `${origin}${pathname}`;
+  const oldQuery = parse(search.substr(1));
+
+  const newQuery =
+    queryFn instanceof Function
+      ? { ...oldQuery, ...queryFn(oldQuery) }
+      : { ...oldQuery, ...queryFn };
+
+  const newSearch = `?${stringify(newQuery)}`;
+  window.history.replaceState(null, null, `${currentURL}${newSearch}`);
 }
 
 export function requireAllValid(args) {

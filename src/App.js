@@ -17,8 +17,8 @@ import React from "react";
 import { connect } from "react-redux";
 import { NavLink, Route, Switch } from "react-router-dom";
 import { compose, lifecycle, withProps, withState } from "recompose";
-import { CommonActionCreators } from "redux/action/common";
 import { ConfigurationActionCreators } from "redux/action/configuration";
+import { overrideNavigationQuery } from "utils";
 import "./App.scss";
 
 const categories = [
@@ -97,22 +97,26 @@ const AppContent = compose(
     ({ repository }) => ({
       repository,
       toggleDocumentation: async () => {
-        await repository.navigation.overrideQuery(({ documentation }) => ({
+        overrideNavigationQuery(({ documentation }) => ({
           documentation: documentation !== "true"
         }));
 
-        await repository.navigation.reloadPage();
+        window.location.reload();
       }
     }),
     dispatch => ({
-      clearEverything: () =>
-        dispatch(CommonActionCreators.triggerClearEverything()),
       getConfigurationFromPersistence: () =>
         dispatch(
           ConfigurationActionCreators.triggerGetConfigurationFromPersistence()
         )
     })
   ),
+  withProps(() => ({
+    clearEverything: () => {
+      window.localStorage.clear();
+      window.location.reload();
+    }
+  })),
   withState("showConfiguration", "setShowConfiguration", false),
   lifecycle({
     async componentDidMount() {

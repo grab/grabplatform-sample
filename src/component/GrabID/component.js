@@ -147,7 +147,7 @@ export const GrabIDLogin = compose(
             scopes
           });
 
-          await repository.navigation.reloadPage();
+          window.location.reload();
           handleMessage(CommonMessages.grabid.requestToken);
         })
       }

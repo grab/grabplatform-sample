@@ -6,16 +6,17 @@ import { parse } from "querystring";
 import { connect } from "react-redux";
 import { compose, withProps, withState } from "recompose";
 import { CommonActionCreators, CommonMessages } from "redux/action/common";
+import { copyToClipboard } from "utils";
 
 export function copyToClipboardHOC() {
   return compose(
-    connect(
-      () => ({}),
-      dispatch => ({
-        copyToClipboard: text =>
-          dispatch(CommonActionCreators.triggerCopyToClipboard(text))
-      })
-    )
+    handleMessageHOC(),
+    withProps(({ handleMessage }) => ({
+      copyToClipboard: text => {
+        copyToClipboard(text);
+        handleMessage(CommonMessages.common.copiedToClipboard);
+      }
+    }))
   );
 }
 

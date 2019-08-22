@@ -4,10 +4,7 @@
  */
 export const CommonActions = {
   SET_MESSAGE: "COMMON.SET_MESSAGE",
-  SET_ERROR: "COMMON.SET_ERROR",
-
-  TRIGGER_CLEAR_EVERYTHING: "COMMON.TRIGGER_CLEAR_EVERYTHING",
-  TRIGGER_COPY_TO_CLIPBOARD: "TRIGGER_COPY_TO_CLIPBOARD"
+  SET_ERROR: "COMMON.SET_ERROR"
 };
 
 export const CommonActionCreators = {
@@ -18,28 +15,6 @@ export const CommonActionCreators = {
   setError: (error = new Error("Unexpected error")) => ({
     payload: error,
     type: CommonActions.SET_ERROR
-  }),
-
-  triggerClearEverything: () => ({
-    payload: async (
-      dispatch,
-      getState,
-      { localStorage: { clearEverything }, navigation: { reloadPage } }
-    ) => {
-      await clearEverything();
-      await reloadPage();
-    },
-    type: CommonActions.TRIGGER_CLEAR_EVERYTHING
-  }),
-  triggerCopyToClipboard: (text = "") => ({
-    payload: async (dispatch, getState, { clipboard: { copyToClipboard } }) => {
-      await copyToClipboard(text);
-
-      dispatch(
-        CommonActionCreators.setMessage(CommonMessages.common.copiedToClipboard)
-      );
-    },
-    type: CommonActions.TRIGGER_COPY_TO_CLIPBOARD
   })
 };
 

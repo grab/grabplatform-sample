@@ -1,6 +1,6 @@
 import React from "react";
-import { connect } from "react-redux";
-import { compose } from "recompose";
+import { compose, withProps } from "recompose";
+import { overrideNavigationQuery } from "utils";
 import "./style.scss";
 
 function PrivateStageSwitcher({ currentStage, stageCount, setStage }) {
@@ -20,9 +20,9 @@ function PrivateStageSwitcher({ currentStage, stageCount, setStage }) {
 }
 
 export default compose(
-  connect(({ repository }, { setStage }) => ({
+  withProps(({ setStage }) => ({
     setStage: async stage => {
-      await repository.navigation.overrideQuery({ stage: stage + 1 });
+      overrideNavigationQuery({ stage: stage + 1 });
       setStage(stage);
     }
   }))
