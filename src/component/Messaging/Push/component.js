@@ -236,10 +236,8 @@ export default compose(
       }
     ) => ({
       sendPushMessage: handleError(async () => {
-        requireAllValid({ templateID, templateParams });
-
-        const { messageID } = await makeHTTPRequest(window, {
-          body: { templateID, templateParams },
+        const { messageID } = await makeHTTPRequest({
+          body: requireAllValid({ templateID, templateParams }),
           method: "POST",
           path: "/messaging/push"
         });

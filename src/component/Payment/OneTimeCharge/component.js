@@ -17,6 +17,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { compose, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
+import { makeHTTPRequest, requireAllValid } from "utils";
 import "./style.scss";
 
 const initDescription = `
@@ -236,20 +237,20 @@ export default compose(
         configuration: {
           currency,
           transaction: { amount, description, partnerGroupTxID }
-        },
-        repository
+        }
       },
       { handleError, handleMessage, setPartnerTxID, setRequest, setStatus }
     ) => ({
       initOneTimeCharge: handleError(async () => {
-        const {
-          partnerTxID,
-          request
-        } = await repository.grabpay.oneTimeCharge.init({
-          amount,
-          currency,
-          description,
-          partnerGroupTxID
+        const { partnerTxID, request } = await makeHTTPRequest({
+          body: requireAllValid({
+            amount,
+            currency,
+            description,
+            partnerGroupTxID
+          }),
+          method: "POST",
+          path: "/payment/one-time-charge/init"
         });
 
         setPartnerTxID(partnerTxID);
@@ -257,7 +258,11 @@ export default compose(
         handleMessage(CommonMessages.grabpay.oneTimeCharge.init);
       }),
       confirmOneTimeCharge: handleError(async () => {
-        const { status } = await repository.grabpay.oneTimeCharge.confirm();
+        const { status } = await makeHTTPRequest({
+          method: "POST",
+          path: "/payment/one-time-charge/confirm"
+        });
+
         setStatus(status);
         handleMessage(CommonMessages.grabpay.oneTimeCharge.confirm);
       })

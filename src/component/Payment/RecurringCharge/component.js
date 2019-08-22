@@ -17,6 +17,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { compose, withState } from "recompose";
 import { CommonMessages } from "redux/action/common";
+import { makeHTTPRequest, requireAllValid } from "utils";
 import "./style.scss";
 
 const bindDescription = `
@@ -355,7 +356,12 @@ export default compose(
       }
     ) => {
       const checkWallet = handleError(async () => {
-        const wallet = await repository.grabpay.checkWallet({ currency });
+        const wallet = await makeHTTPRequest({
+          body: requireAllValid({ currency }),
+          method: "POST",
+          path: "/payment/recurring-charge/wallet"
+        });
+
         setWallet(wallet);
         handleMessage(`Checked wallet successfully`);
       });
