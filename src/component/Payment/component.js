@@ -4,13 +4,15 @@
  */
 import React from "react";
 import ProductContainer from "../ProductContainer/component";
+import HomeCurrency from "./HomeCurrency/component";
 import OneTimeCharge from "./OneTimeCharge/component";
 import RecurringCharge from "./RecurringCharge/component";
 import "./style.scss";
 
 const products = [
   ["One-Time Charge", OneTimeCharge],
-  ["Recurring Charge", RecurringCharge]
+  ["Recurring Charge", RecurringCharge],
+  ["Home Currency", HomeCurrency]
 ];
 
 function PrivatePayment({ match: { path } }) {

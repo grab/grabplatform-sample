@@ -31,7 +31,8 @@ export const CommonMessages = {
       bind: "Bound successfully",
       charge: "Charged successfully",
       unbind: "Unbound successfully"
-    }
+    },
+    homeCurrency: "Requested home currency successfully"
   },
   identity: { basicProfile: "Requested basic profile successfully" },
   loyalty: { rewardsTier: "Requested rewards tier successfully" },

@@ -234,5 +234,18 @@ module.exports = {
         res.status(status).json(data);
       }
     );
+  },
+  homeCurrency: function(httpClient) {
+    return handleError(async ({ headers }, res) => {
+      const {
+        data: { homeCurrency },
+        status
+      } = await httpClient.get(
+        "/grabpay/partner/v2/wallet/home-currency",
+        headers
+      );
+
+      res.status(status).json({ homeCurrency });
+    });
   }
 };

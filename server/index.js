@@ -115,6 +115,7 @@ async function initialize() {
     "/payment/recurring-charge/unbind",
     payment.recurringCharge.unbind(dbClient, httpClient)
   );
+  app.get("/payment/home-currency", payment.homeCurrency(httpClient));
 
   if (process.env.USE_SELF_SIGNED_CERT !== "false") {
     https
