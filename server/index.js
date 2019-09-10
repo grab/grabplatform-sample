@@ -47,13 +47,15 @@ async function initialize() {
   const dbClient = await createDBClient(redisClient);
   const SessionRedis = connectRedis(session);
   const sessionRedis = new SessionRedis({ client: redisClient });
+  const { CLIENT_URL, NODE_ENV } = process.env;
 
   const httpClient = await createHTTPClient({
-    env: requireTruthy("NODE_ENV", process.env.NODE_ENV)
+    env: requireTruthy("NODE_ENV", NODE_ENV)
   });
 
   const corsOptions = {
-    origin: requireTruthy("CLIENT_URL", process.env.CLIENT_URL),
+    origin:
+      NODE_ENV !== "production" ? "*" : requireTruthy("CLIENT_URL", CLIENT_URL),
     credentials: true
   };
 
