@@ -10,9 +10,9 @@ import RecurringCharge from "./RecurringCharge/component";
 import "./style.scss";
 
 const products = [
+  ["Home Currency", HomeCurrency],
   ["One-Time Charge", OneTimeCharge],
-  ["Recurring Charge", RecurringCharge],
-  ["Home Currency", HomeCurrency]
+  ["Recurring Charge", RecurringCharge]
 ];
 
 function PrivatePayment({ match: { path } }) {
