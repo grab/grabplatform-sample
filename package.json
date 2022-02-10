@@ -62,7 +62,7 @@
     "@types/recompose": "^0.30.6",
     "@types/redis": "^2.8.13",
     "concurrently": "^4.1.0",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "nodemon": "^1.19.1",
     "typescript": "^3.5.2"
   },
