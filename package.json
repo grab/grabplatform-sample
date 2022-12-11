@@ -12,7 +12,7 @@
     "cors": "^2.8.5",
     "crypto-js": "^3.1.9-1",
     "dotenv": "^8.0.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-session": "^1.16.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
